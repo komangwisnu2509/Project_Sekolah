@@ -104,25 +104,25 @@
     <div class="col-12 mb-4">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
             <div class="col">
-                <div class="card border-0 shadow-sm h-100 p-3 border-start border-4 border-primary">
+                <div class="card border-0 shadow-sm p-3 border-start border-4 border-primary">
                     <small class="text-muted fw-bold text-uppercase d-block mb-1">Tugas Kelas {{ $siswa->kelas }}</small>
                     <h3 class="fw-bold text-dark mb-0">{{ $totalTugasSiswa }}</h3>
                 </div>
             </div>
             <div class="col">
-                <div class="card border-0 shadow-sm h-100 p-3 border-start border-4 border-warning">
+                <div class="card border-0 shadow-sm p-3 border-start border-4 border-warning">
                     <small class="text-muted fw-bold text-uppercase d-block mb-1">Belum Dikumpulkan</small>
                     <h3 class="fw-bold text-warning mb-0">{{ $pendingCount }}</h3>
                 </div>
             </div>
             <div class="col">
-                <div class="card border-0 shadow-sm h-100 p-3 border-start border-4 border-success">
+                <div class="card border-0 shadow-sm p-3 border-start border-4 border-success">
                     <small class="text-muted fw-bold text-uppercase d-block mb-1">Sudah Dikumpulkan</small>
                     <h3 class="fw-bold text-success mb-0">{{ $completedCount }}</h3>
                 </div>
             </div>
             <div class="col">
-                <div class="card border-0 shadow-sm h-100 p-3 border-start border-4 border-info">
+                <div class="card border-0 shadow-sm p-3 border-start border-4 border-info">
                     <small class="text-muted fw-bold text-uppercase d-block mb-1">Arsip Kelas Sebelumnya</small>
                     <h3 class="fw-bold text-info mb-0">{{ $pastTasksCount }}</h3>
                 </div>
@@ -162,103 +162,101 @@
                         $lateStatus = $sub?->status_izin_terlambat;
                     @endphp
                     <div class="col">
-                        <div class="card border-0 shadow-sm h-100 border-start border-4 {{ $hasSubmittedWork ? 'border-success' : ($isPastDeadline ? 'border-danger' : 'border-primary') }}">
-                            <div class="card-body p-4 d-flex flex-column justify-content-between">
-                                <div>
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div>
-                                            <span class="badge bg-primary mb-2 fs-6">{{ $item->mata_pelajaran ?? 'Mata Pelajaran' }}</span>
-                                            <h4 class="fw-bold text-dark mb-1">{{ $item->judul }}</h4>
-                                        </div>
-                                        @if($hasSubmittedWork)
-                                            <span class="badge bg-success px-3 py-2 fs-6"><i class="bi bi-check-circle-fill me-1"></i>Selesai</span>
-                                        @elseif($lateStatus === 'Pending')
-                                            <span class="badge bg-warning text-dark px-3 py-2 fs-6"><i class="bi bi-clock-history me-1"></i>Menunggu ACC Guru</span>
-                                        @elseif($lateStatus === 'Disetujui')
-                                            <span class="badge bg-info text-dark px-3 py-2 fs-6"><i class="bi bi-check2-circle me-1"></i>Izin Terlambat ACC</span>
-                                        @elseif($isPastDeadline)
-                                            <span class="badge bg-danger px-3 py-2 fs-6"><i class="bi bi-exclamation-circle-fill me-1"></i>Lewat Deadline</span>
-                                        @else
-                                            <span class="badge bg-primary px-3 py-2 fs-6"><i class="bi bi-clock me-1"></i>Aktif</span>
-                                        @endif
+                        <div class="card border-0 shadow-sm border-start border-4 {{ $hasSubmittedWork ? 'border-success' : ($isPastDeadline ? 'border-danger' : 'border-primary') }}">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <span class="badge bg-primary mb-2 fs-6">{{ $item->mata_pelajaran ?? 'Mata Pelajaran' }}</span>
+                                        <h4 class="fw-bold text-dark mb-1">{{ $item->judul }}</h4>
                                     </div>
-
-                                    <p class="text-secondary small mb-3">{{ $item->deskripsi }}</p>
-
-                                    @if($item->foto)
-                                        <div class="mb-3">
-                                            <small class="text-muted d-block fw-bold mb-1"><i class="bi bi-image me-1"></i>Lampiran Gambar Tugas:</small>
-                                            <a href="{{ asset('storage/'.$item->foto) }}" target="_blank">
-                                                <img src="{{ asset('storage/'.$item->foto) }}" alt="Lampiran {{ $item->judul }}" class="img-thumbnail rounded" style="max-height: 160px; object-fit: cover;">
-                                            </a>
-                                        </div>
-                                    @endif
-
-                                    @if($item->guru)
-                                        <div class="small text-muted mb-3">
-                                            <i class="bi bi-person-fill text-primary me-1"></i>Guru Pengajar: <strong>{{ $item->guru->nama }}</strong>
-                                        </div>
-                                    @endif
-
-                                    <!-- Submitted Answer & Grade Section -->
                                     @if($hasSubmittedWork)
-                                        <div class="bg-light p-3 rounded mb-3 border">
-                                            <small class="text-muted d-block fw-bold mb-1"><i class="bi bi-chat-left-text-fill me-1 text-success"></i>Jawaban Anda:</small>
-                                            <p class="mb-2 text-dark small">{{ $sub->catatan ?? '-' }}</p>
-                                            @if($sub->file_path)
-                                                <a href="{{ asset('storage/'.$sub->file_path) }}" class="btn btn-outline-primary btn-sm px-3 mb-2" target="_blank">
-                                                    <i class="bi bi-download me-1"></i> Unduh Berkas Jawaban
-                                                </a>
-                                            @endif
-                                            <div class="text-muted small mb-2">
-                                                Dikumpulkan pada: {{ \App\Helpers\WaktuHelper::format($sub->dikumpulkan_pada) }}
-                                            </div>
-
-                                            <!-- DISPLAY GRADE & TEACHER RESPONSE FOR STUDENT -->
-                                            @if($sub->nilai !== null)
-                                                <div class="alert alert-success border border-success border-opacity-25 shadow-sm rounded-3 mt-2 p-3 mb-0">
-                                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                                        <span class="fw-bold text-success"><i class="bi bi-star-fill me-1 text-warning"></i> Nilai Tugas Guru:</span>
-                                                        <span class="badge bg-success fs-5 px-3 py-1">⭐ {{ $sub->nilai }} / 100</span>
-                                                    </div>
-                                                    @if($sub->respon_guru)
-                                                        <div class="pt-2 border-top border-success border-opacity-25">
-                                                            <small class="fw-bold text-dark d-block mb-1"><i class="bi bi-chat-left-quote-fill me-1 text-primary"></i> Respon &amp; Catatan Guru:</small>
-                                                            <p class="mb-0 text-dark small fst-italic">"{{ $sub->respon_guru }}"</p>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            @else
-                                                <div class="alert alert-warning border-0 shadow-sm mt-2 p-2 text-center mb-0">
-                                                    <small class="fw-bold text-dark"><i class="bi bi-clock-history me-1"></i> Tugas telah dikumpulkan &amp; menunggu penilaian guru</small>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    @endif
-
-                                    <!-- Late Permission Status Notifications -->
-                                    @if(!$hasSubmittedWork && $isPastDeadline)
-                                        @if($lateStatus === 'Pending')
-                                            <div class="p-3 bg-warning bg-opacity-10 border border-warning rounded-3 mb-3">
-                                                <small class="fw-bold text-warning-emphasis d-block mb-1"><i class="bi bi-hourglass-split me-1"></i>Permohonan Izin Terlambat Terkirim</small>
-                                                <p class="small text-secondary mb-1">Alasan: "{{ $sub->alasan_terlambat }}"</p>
-                                                <span class="badge bg-warning text-dark small">Menunggu Persetujuan Guru</span>
-                                            </div>
-                                        @elseif($lateStatus === 'Disetujui')
-                                            <div class="p-3 bg-success bg-opacity-10 border border-success rounded-3 mb-3">
-                                                <small class="fw-bold text-success d-block mb-1"><i class="bi bi-check-circle-fill me-1"></i>Izin Terlambat Disetujui Guru!</small>
-                                                <p class="small text-secondary mb-0">Guru telah memberikan persetujuan. Anda kini dapat mengumpulkan tugas di bawah ini.</p>
-                                            </div>
-                                        @elseif($lateStatus === 'Ditolak')
-                                            <div class="p-3 bg-danger bg-opacity-10 border border-danger rounded-3 mb-3">
-                                                <small class="fw-bold text-danger d-block mb-1"><i class="bi bi-x-circle-fill me-1"></i>Permohonan Terlambat Ditolak Guru</small>
-                                                <p class="small text-secondary mb-0">Maaf, guru pengajar menolak permohonan izin kumpul terlambat untuk tugas ini.</p>
-                                            </div>
-                                        @endif
+                                        <span class="badge bg-success px-3 py-2 fs-6"><i class="bi bi-check-circle-fill me-1"></i>Selesai</span>
+                                    @elseif($lateStatus === 'Pending')
+                                        <span class="badge bg-warning text-dark px-3 py-2 fs-6"><i class="bi bi-clock-history me-1"></i>Menunggu ACC Guru</span>
+                                    @elseif($lateStatus === 'Disetujui')
+                                        <span class="badge bg-info text-dark px-3 py-2 fs-6"><i class="bi bi-check2-circle me-1"></i>Izin Terlambat ACC</span>
+                                    @elseif($isPastDeadline)
+                                        <span class="badge bg-danger px-3 py-2 fs-6"><i class="bi bi-exclamation-circle-fill me-1"></i>Lewat Deadline</span>
+                                    @else
+                                        <span class="badge bg-primary px-3 py-2 fs-6"><i class="bi bi-clock me-1"></i>Aktif</span>
                                     @endif
                                 </div>
 
-                                <div>
+                                <p class="text-secondary small mb-3">{{ $item->deskripsi }}</p>
+
+                                @if($item->foto)
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block fw-bold mb-1"><i class="bi bi-image me-1"></i>Lampiran Gambar Tugas:</small>
+                                        <a href="{{ asset('storage/'.$item->foto) }}" target="_blank">
+                                            <img src="{{ asset('storage/'.$item->foto) }}" alt="Lampiran {{ $item->judul }}" class="img-thumbnail rounded" style="max-height: 160px; object-fit: cover;">
+                                        </a>
+                                    </div>
+                                @endif
+
+                                @if($item->guru)
+                                    <div class="small text-muted mb-3">
+                                        <i class="bi bi-person-fill text-primary me-1"></i>Guru Pengajar: <strong>{{ $item->guru->nama }}</strong>
+                                    </div>
+                                @endif
+
+                                <!-- Submitted Answer & Grade Section -->
+                                @if($hasSubmittedWork)
+                                    <div class="bg-light p-3 rounded mb-3 border">
+                                        <small class="text-muted d-block fw-bold mb-1"><i class="bi bi-chat-left-text-fill me-1 text-success"></i>Jawaban Anda:</small>
+                                        <p class="mb-2 text-dark small">{{ $sub->catatan ?? '-' }}</p>
+                                        @if($sub->file_path)
+                                            <a href="{{ asset('storage/'.$sub->file_path) }}" class="btn btn-outline-primary btn-sm px-3 mb-2" target="_blank">
+                                                <i class="bi bi-download me-1"></i> Unduh Berkas Jawaban
+                                            </a>
+                                        @endif
+                                        <div class="text-muted small mb-2">
+                                            Dikumpulkan pada: {{ \App\Helpers\WaktuHelper::format($sub->dikumpulkan_pada) }}
+                                        </div>
+
+                                        <!-- DISPLAY GRADE & TEACHER RESPONSE FOR STUDENT -->
+                                        @if($sub->nilai !== null)
+                                            <div class="alert alert-success border border-success border-opacity-25 shadow-sm rounded-3 mt-2 p-3 mb-0">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="fw-bold text-success"><i class="bi bi-star-fill me-1 text-warning"></i> Nilai Tugas Guru:</span>
+                                                    <span class="badge bg-success fs-5 px-3 py-1">⭐ {{ $sub->nilai }} / 100</span>
+                                                </div>
+                                                @if($sub->respon_guru)
+                                                    <div class="pt-2 border-top border-success border-opacity-25">
+                                                        <small class="fw-bold text-dark d-block mb-1"><i class="bi bi-chat-left-quote-fill me-1 text-primary"></i> Respon &amp; Catatan Guru:</small>
+                                                        <p class="mb-0 text-dark small fst-italic">"{{ $sub->respon_guru }}"</p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <div class="alert alert-warning border-0 shadow-sm mt-2 p-2 text-center mb-0">
+                                                <small class="fw-bold text-dark"><i class="bi bi-clock-history me-1"></i> Tugas telah dikumpulkan &amp; menunggu penilaian guru</small>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                <!-- Late Permission Status Notifications -->
+                                @if(!$hasSubmittedWork && $isPastDeadline)
+                                    @if($lateStatus === 'Pending')
+                                        <div class="p-3 bg-warning bg-opacity-10 border border-warning rounded-3 mb-3">
+                                            <small class="fw-bold text-warning-emphasis d-block mb-1"><i class="bi bi-hourglass-split me-1"></i>Permohonan Izin Terlambat Terkirim</small>
+                                            <p class="small text-secondary mb-1">Alasan: "{{ $sub->alasan_terlambat }}"</p>
+                                            <span class="badge bg-warning text-dark small">Menunggu Persetujuan Guru</span>
+                                        </div>
+                                    @elseif($lateStatus === 'Disetujui')
+                                        <div class="p-3 bg-success bg-opacity-10 border border-success rounded-3 mb-3">
+                                            <small class="fw-bold text-success d-block mb-1"><i class="bi bi-check-circle-fill me-1"></i>Izin Terlambat Disetujui Guru!</small>
+                                            <p class="small text-secondary mb-0">Guru telah memberikan persetujuan. Anda kini dapat mengumpulkan tugas di bawah ini.</p>
+                                        </div>
+                                    @elseif($lateStatus === 'Ditolak')
+                                        <div class="p-3 bg-danger bg-opacity-10 border border-danger rounded-3 mb-3">
+                                            <small class="fw-bold text-danger d-block mb-1"><i class="bi bi-x-circle-fill me-1"></i>Permohonan Terlambat Ditolak Guru</small>
+                                            <p class="small text-secondary mb-0">Maaf, guru pengajar menolak permohonan izin kumpul terlambat untuk tugas ini.</p>
+                                        </div>
+                                    @endif
+                                @endif
+
+                                <div class="mt-3">
                                     <div class="border-top pt-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
                                         <span class="{{ $isPastDeadline && !$hasSubmittedWork ? 'text-danger' : 'text-primary' }} small fw-bold">
                                             <i class="bi bi-calendar-event me-1"></i>Deadline: {{ \App\Helpers\WaktuHelper::format($item->deadline) }}
@@ -316,15 +314,16 @@
                                 </div>
                             </div>
                         </div>
-                    @empty
-                        <div class="col-12">
-                            <div class="card border-0 shadow-sm p-5 text-center text-muted">
-                                <i class="bi bi-clipboard-x fs-1 text-secondary mb-2 d-block"></i>
-                                Belum ada tugas sekolah yang diberikan untuk Kelas {{ $siswa->kelas }}.
-                            </div>
+                    </div>
+                @empty
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm p-5 text-center text-muted">
+                            <i class="bi bi-clipboard-x fs-1 text-secondary mb-2 d-block"></i>
+                            Belum ada tugas sekolah yang diberikan untuk Kelas {{ $siswa->kelas }}.
                         </div>
-                    @endforelse
-                </div>
+                    </div>
+                @endforelse
+            </div>
         </div>
 
         <!-- Tab 2: Belum Dikumpulkan -->
@@ -337,51 +336,49 @@
                         $lateStatus = $sub?->status_izin_terlambat;
                     @endphp
                     <div class="col">
-                        <div class="card border-0 shadow-sm h-100 border-start border-4 border-warning">
-                            <div class="card-body p-4 d-flex flex-column justify-content-between">
-                                <div>
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div>
-                                            <span class="badge bg-primary mb-2 fs-6">{{ $item->mata_pelajaran ?? 'Mata Pelajaran' }}</span>
-                                            <h4 class="fw-bold text-dark mb-1">{{ $item->judul }}</h4>
-                                        </div>
-                                        <span class="badge bg-warning text-dark px-3 py-2 fs-6"><i class="bi bi-clock-history me-1"></i>Belum Dikumpulkan</span>
+                        <div class="card border-0 shadow-sm border-start border-4 border-warning">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <span class="badge bg-primary mb-2 fs-6">{{ $item->mata_pelajaran ?? 'Mata Pelajaran' }}</span>
+                                        <h4 class="fw-bold text-dark mb-1">{{ $item->judul }}</h4>
                                     </div>
-                                    <p class="text-secondary small mb-3">{{ $item->deskripsi }}</p>
-
-                                    @if($item->foto)
-                                        <div class="mb-3">
-                                            <a href="{{ asset('storage/'.$item->foto) }}" target="_blank">
-                                                <img src="{{ asset('storage/'.$item->foto) }}" alt="Lampiran" class="img-thumbnail rounded" style="max-height: 150px;">
-                                            </a>
-                                        </div>
-                                    @endif
-
-                                    @if($item->guru)
-                                        <div class="small text-muted mb-3">
-                                            <i class="bi bi-person-fill text-primary me-1"></i>Guru Pengajar: <strong>{{ $item->guru->nama }}</strong>
-                                        </div>
-                                    @endif
-
-                                    @if($isPastDeadline)
-                                        @if($lateStatus === 'Pending')
-                                            <div class="p-3 bg-warning bg-opacity-10 border border-warning rounded-3 mb-3">
-                                                <small class="fw-bold text-warning-emphasis d-block mb-1"><i class="bi bi-hourglass-split me-1"></i>Permohonan Terlambat Terkirim</small>
-                                                <p class="small text-secondary mb-0">Alasan: "{{ $sub->alasan_terlambat }}" (Menunggu ACC Guru)</p>
-                                            </div>
-                                        @elseif($lateStatus === 'Disetujui')
-                                            <div class="p-3 bg-success bg-opacity-10 border border-success rounded-3 mb-3">
-                                                <small class="fw-bold text-success d-block mb-0"><i class="bi bi-check-circle-fill me-1"></i>Izin Terlambat Disetujui Guru! Anda dapat mengumpulkan sekarang.</small>
-                                            </div>
-                                        @elseif($lateStatus === 'Ditolak')
-                                            <div class="p-3 bg-danger bg-opacity-10 border border-danger rounded-3 mb-3">
-                                                <small class="fw-bold text-danger d-block mb-0"><i class="bi bi-x-circle-fill me-1"></i>Permohonan Izin Terlambat Ditolak Guru.</small>
-                                            </div>
-                                        @endif
-                                    @endif
+                                    <span class="badge bg-warning text-dark px-3 py-2 fs-6"><i class="bi bi-clock-history me-1"></i>Belum Dikumpulkan</span>
                                 </div>
+                                <p class="text-secondary small mb-3">{{ $item->deskripsi }}</p>
 
-                                <div>
+                                @if($item->foto)
+                                    <div class="mb-3">
+                                        <a href="{{ asset('storage/'.$item->foto) }}" target="_blank">
+                                            <img src="{{ asset('storage/'.$item->foto) }}" alt="Lampiran" class="img-thumbnail rounded" style="max-height: 150px;">
+                                        </a>
+                                    </div>
+                                @endif
+
+                                @if($item->guru)
+                                    <div class="small text-muted mb-3">
+                                        <i class="bi bi-person-fill text-primary me-1"></i>Guru Pengajar: <strong>{{ $item->guru->nama }}</strong>
+                                    </div>
+                                @endif
+
+                                @if($isPastDeadline)
+                                    @if($lateStatus === 'Pending')
+                                        <div class="p-3 bg-warning bg-opacity-10 border border-warning rounded-3 mb-3">
+                                            <small class="fw-bold text-warning-emphasis d-block mb-1"><i class="bi bi-hourglass-split me-1"></i>Permohonan Terlambat Terkirim</small>
+                                            <p class="small text-secondary mb-0">Alasan: "{{ $sub->alasan_terlambat }}" (Menunggu ACC Guru)</p>
+                                        </div>
+                                    @elseif($lateStatus === 'Disetujui')
+                                        <div class="p-3 bg-success bg-opacity-10 border border-success rounded-3 mb-3">
+                                            <small class="fw-bold text-success d-block mb-0"><i class="bi bi-check-circle-fill me-1"></i>Izin Terlambat Disetujui Guru! Anda dapat mengumpulkan sekarang.</small>
+                                        </div>
+                                    @elseif($lateStatus === 'Ditolak')
+                                        <div class="p-3 bg-danger bg-opacity-10 border border-danger rounded-3 mb-3">
+                                            <small class="fw-bold text-danger d-block mb-0"><i class="bi bi-x-circle-fill me-1"></i>Permohonan Izin Terlambat Ditolak Guru.</small>
+                                        </div>
+                                    @endif
+                                @endif
+
+                                <div class="mt-3">
                                     <div class="border-top pt-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
                                         <span class="text-danger small fw-bold">
                                             <i class="bi bi-calendar-event me-1"></i>Deadline: {{ \App\Helpers\WaktuHelper::format($item->deadline) }}
@@ -453,58 +450,62 @@
                 @forelse($completedTasks as $item)
                     @php $sub = $submissions->get($item->id) ?? $submissions->firstWhere('tugas_id', $item->id); @endphp
                     <div class="col">
-                        <div class="card border-0 shadow-sm h-100 border-start border-4 border-success">
-                            <div class="card-body p-4 d-flex flex-column justify-content-between">
-                                <div>
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div>
-                                            <span class="badge bg-primary mb-2 fs-6">{{ $item->mata_pelajaran ?? 'Mata Pelajaran' }}</span>
-                                            <h4 class="fw-bold text-dark mb-1">{{ $item->judul }}</h4>
-                                        </div>
-                                        <span class="badge bg-success px-3 py-2 fs-6"><i class="bi bi-check-circle-fill me-1"></i>Selesai</span>
+                        <div class="card border-0 shadow-sm border-start border-4 border-success">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <span class="badge bg-primary mb-2 fs-6">{{ $item->mata_pelajaran ?? 'Mata Pelajaran' }}</span>
+                                        <h4 class="fw-bold text-dark mb-1">{{ $item->judul }}</h4>
                                     </div>
-                                    <p class="text-secondary small mb-3">{{ $item->deskripsi }}</p>
+                                    <span class="badge bg-success px-3 py-2 fs-6"><i class="bi bi-check-circle-fill me-1"></i>Selesai</span>
+                                </div>
+                                <p class="text-secondary small mb-3">{{ $item->deskripsi }}</p>
 
-                                    @if($item->guru)
-                                        <div class="small text-muted mb-3">
-                                            <i class="bi bi-person-fill text-primary me-1"></i>Guru Pengajar: <strong>{{ $item->guru->nama }}</strong>
+                                @if($item->guru)
+                                    <div class="small text-muted mb-3">
+                                        <i class="bi bi-person-fill text-primary me-1"></i>Guru Pengajar: <strong>{{ $item->guru->nama }}</strong>
+                                    </div>
+                                @endif
+
+                                <div class="bg-light p-3 rounded mb-3 border">
+                                    <small class="text-muted d-block fw-bold mb-1"><i class="bi bi-chat-left-text-fill me-1 text-success"></i>Jawaban Anda:</small>
+                                    <p class="mb-2 text-dark small">{{ $sub->catatan ?? '-' }}</p>
+                                    @if($sub && $sub->file_path)
+                                        <a href="{{ asset('storage/'.$sub->file_path) }}" class="btn btn-outline-primary btn-sm px-3 mb-2" target="_blank">
+                                            <i class="bi bi-download me-1"></i> Unduh Berkas Jawaban
+                                        </a>
+                                    @endif
+                                    @if($sub)
+                                        <div class="text-muted small mb-2">
+                                            Dikumpulkan pada: {{ \App\Helpers\WaktuHelper::format($sub->dikumpulkan_pada) }}
                                         </div>
                                     @endif
 
-                                    <div class="bg-light p-3 rounded mb-3 border">
-                                        <small class="text-muted d-block fw-bold mb-1"><i class="bi bi-chat-left-text-fill me-1 text-success"></i>Jawaban Anda:</small>
-                                        <p class="mb-2 text-dark small">{{ $sub->catatan ?? '-' }}</p>
-                                        @if($sub && $sub->file_path)
-                                            <a href="{{ asset('storage/'.$sub->file_path) }}" class="btn btn-outline-primary btn-sm px-3 mb-2" target="_blank">
-                                                <i class="bi bi-download me-1"></i> Unduh Berkas Jawaban
-                                            </a>
-                                        @endif
-                                        @if($sub)
-                                            <div class="text-muted small mb-2">
-                                                Dikumpulkan pada: {{ \App\Helpers\WaktuHelper::format($sub->dikumpulkan_pada) }}
+                                    <!-- Teacher Grade & Response -->
+                                    @if($sub && $sub->nilai !== null)
+                                        <div class="alert alert-success border border-success border-opacity-25 shadow-sm rounded-3 mt-2 p-3 mb-0">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="fw-bold text-success"><i class="bi bi-star-fill me-1 text-warning"></i> Nilai Tugas Guru:</span>
+                                                <span class="badge bg-success fs-5 px-3 py-1">⭐ {{ $sub->nilai }} / 100</span>
                                             </div>
-                                        @endif
-
-                                        <!-- Teacher Grade & Response -->
-                                        @if($sub && $sub->nilai !== null)
-                                            <div class="alert alert-success border border-success border-opacity-25 shadow-sm rounded-3 mt-2 p-3 mb-0">
-                                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                                    <span class="fw-bold text-success"><i class="bi bi-star-fill me-1 text-warning"></i> Nilai Tugas Guru:</span>
-                                                    <span class="badge bg-success fs-5 px-3 py-1">⭐ {{ $sub->nilai }} / 100</span>
+                                            @if($sub->respon_guru)
+                                                <div class="pt-2 border-top border-success border-opacity-25">
+                                                    <small class="fw-bold text-dark d-block mb-1"><i class="bi bi-chat-left-quote-fill me-1 text-primary"></i> Respon &amp; Catatan Guru:</small>
+                                                    <p class="mb-0 text-dark small fst-italic">"{{ $sub->respon_guru }}"</p>
                                                 </div>
-                                                @if($sub->respon_guru)
-                                                    <div class="pt-2 border-top border-success border-opacity-25">
-                                                        <small class="fw-bold text-dark d-block mb-1"><i class="bi bi-chat-left-quote-fill me-1 text-primary"></i> Respon &amp; Catatan Guru:</small>
-                                                        <p class="mb-0 text-dark small fst-italic">"{{ $sub->respon_guru }}"</p>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        @else
-                                            <div class="alert alert-warning border-0 shadow-sm mt-2 p-2 text-center mb-0">
-                                                <small class="fw-bold text-dark"><i class="bi bi-clock-history me-1"></i> Tugas telah dikumpulkan &amp; menunggu penilaian guru</small>
-                                            </div>
-                                        @endif
-                                    </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="alert alert-warning border-0 shadow-sm mt-2 p-2 text-center mb-0">
+                                            <small class="fw-bold text-dark"><i class="bi bi-clock-history me-1"></i> Tugas telah dikumpulkan &amp; menunggu penilaian guru</small>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="mt-3 border-top pt-3">
+                                    <span class="text-primary small fw-bold">
+                                        <i class="bi bi-calendar-event me-1"></i>Deadline: {{ \App\Helpers\WaktuHelper::format($item->deadline) }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -527,8 +528,8 @@
                     @foreach($tugasKelasLalu as $item)
                         @php $sub = $submissions->get($item->id) ?? $submissions->firstWhere('tugas_id', $item->id); @endphp
                         <div class="col">
-                            <div class="card border-0 shadow-sm h-100 border-start border-4 border-info bg-light bg-opacity-25">
-                                <div class="card-body p-4">
+                            <div class="card border-0 shadow-sm border-start border-4 border-info bg-light bg-opacity-25">
+                                <div class="card-body p-4 d-flex flex-column">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <div>
                                             <span class="badge bg-secondary mb-2 fs-6">Arsip Kelas {{ $item->kelas }}</span>
@@ -555,6 +556,12 @@
                                             @endif
                                         </div>
                                     @endif
+
+                                    <div class="mt-3 border-top pt-3">
+                                        <span class="text-secondary small fw-bold">
+                                            <i class="bi bi-calendar-event me-1"></i>Deadline: {{ \App\Helpers\WaktuHelper::format($item->deadline) }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
