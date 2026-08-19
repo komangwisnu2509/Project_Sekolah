@@ -488,26 +488,6 @@ class SiswaController extends Controller
 
     public function tugas()
     {
-        $user = auth()->user();
-        $siswa = $user->siswa;
-
-        if (!$siswa) {
-            return redirect()->route('dashboard')->with('error', 'Akun Anda tidak memiliki data siswa terkait.');
-        }
-
-        if ($siswa->status === 'Lulus') {
-            return redirect()->route('dashboard')->with('error', 'Siswa yang telah lulus tidak memiliki tugas sekolah aktif.');
-        }
-
-        $tugas = \App\Models\Tugas::with('guru')
-            ->where('kelas', $siswa->kelas)
-            ->orderBy('deadline', 'asc')
-            ->get();
-
-        $submissions = \App\Models\TugasSubmission::where('siswa_id', $siswa->id)
-            ->get()
-            ->keyBy('tugas_id');
-
-        return view('siswa.tugas', compact('siswa', 'tugas', 'submissions'));
+        return app(TugasController::class)->siswaIndex();
     }
 }
