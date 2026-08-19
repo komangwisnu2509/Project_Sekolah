@@ -14,7 +14,31 @@ class TugasController extends Controller
     // Student dedicated tasks view
     public function siswaIndex()
     {
-        return $this->index();
+        $user = auth()->user();
+        if (!$user->isSiswa() || !$user->siswa) {
+            return redirect()->route('dashboard')->with('error', 'Akun Anda tidak terhubung dengan data siswa.');
+        }
+
+        $siswa = $user->siswa;
+        if ($siswa->status === 'Lulus') {
+            return redirect()->route('dashboard')->with('error', 'Siswa yang telah lulus tidak memiliki tugas sekolah aktif.');
+        }
+
+        $tugas = Tugas::with('guru')
+            ->where('kelas', $siswa->kelas)
+            ->orderBy('deadline', 'asc')
+            ->get();
+
+        $submissions = TugasSubmission::where('siswa_id', $siswa->id)
+            ->get()
+            ->keyBy('tugas_id');
+
+        $tugasKelasLalu = Tugas::whereHas('submissions', fn($q) => $q->where('siswa_id', $siswa->id))
+            ->where('kelas', '!=', $siswa->kelas)
+            ->with('guru')
+            ->get();
+
+        return view('siswa.tugas', compact('siswa', 'tugas', 'submissions', 'tugasKelasLalu'));
     }
 
     // List assignments
