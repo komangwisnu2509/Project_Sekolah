@@ -351,11 +351,23 @@
                                             <span class="badge bg-info text-dark rounded-pill px-2 py-0.5 small">{{ \App\Models\Tugas::count() }}</span>
                                         </a>
                                     </li>
-                                    <li class="{{ request()->routeIs('profil-sekolah.*') ? 'active' : '' }} my-1">
-                                        <a href="{{ route('profil-sekolah.edit') }}" class="py-2">
-                                            <i class="bi bi-building-gear me-2"></i> Profil Sekolah
-                                        </a>
-                                    </li>
+                                     <li class="{{ request()->routeIs('admin.cms.*') ? 'active' : '' }} my-1">
+                                         <a href="{{ route('admin.cms.index') }}" class="py-2 d-flex align-items-center justify-content-between">
+                                             <span><i class="bi bi-window-stack me-2 text-success"></i> Kelola Beranda (CMS)</span>
+                                             <span class="badge bg-success rounded-pill small">Beranda</span>
+                                         </a>
+                                     </li>
+                                     <li class="{{ request()->routeIs('admin.smbp.*') ? 'active' : '' }} my-1">
+                                         <a href="{{ route('admin.smbp.index') }}" class="py-2 d-flex align-items-center justify-content-between">
+                                             <span><i class="bi bi-user-plus-fill me-2 text-warning"></i> Pendaftaran SMBP/PPDB</span>
+                                             <span class="badge bg-warning text-dark rounded-pill small">{{ \App\Models\SmbpPendaftaran::count() }}</span>
+                                         </a>
+                                     </li>
+                                     <li class="{{ request()->routeIs('profil-sekolah.*') ? 'active' : '' }} my-1">
+                                         <a href="{{ route('profil-sekolah.edit') }}" class="py-2">
+                                             <i class="bi bi-building-gear me-2"></i> Profil Sekolah
+                                         </a>
+                                     </li>
                                 </ul>
                             </div>
                         </li>

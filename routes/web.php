@@ -16,8 +16,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfilSekolahController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TugasController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\AdminLandingCmsController;
+use App\Http\Controllers\SmbpController;
 
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landing_page');
@@ -28,6 +29,11 @@ Route::get('/guru-staff', [LandingPageController::class, 'guruStaff'])->name('gu
 Route::get('/kurikulum', [LandingPageController::class, 'kurikulum'])->name('kurikulum');
 Route::get('/pengumuman', [LandingPageController::class, 'pengumuman'])->name('pengumuman');
 Route::get('/agenda', [LandingPageController::class, 'agenda'])->name('agenda');
+
+// Public SMBP / PPDB Pendaftaran Siswa Baru Routes
+Route::get('/smbp', [SmbpController::class, 'publicIndex'])->name('smbp.index');
+Route::post('/smbp/store', [SmbpController::class, 'storePublic'])->name('smbp.store');
+Route::get('/smbp/bukti/{no_pendaftaran}', [SmbpController::class, 'bukti'])->name('smbp.bukti');
 
 // Dashboard main route
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
@@ -144,8 +150,31 @@ Route::middleware('auth')->group(function () {
         Route::delete('/jadwal/{jadwal}', [JadwalController::class, 'destroy'])->name('jadwal.destroy');
 
         // Manage School Profile / Information
-        Route::get('/profil-sekolah', [ProfilSekolahController::class, 'edit'])->name('profil-sekolah.edit');
-        Route::put('/profil-sekolah', [ProfilSekolahController::class, 'update'])->name('profil-sekolah.update');
+Route::get('/profil-sekolah', [ProfilSekolahController::class, 'edit'])->name('profil-sekolah.edit');
+Route::put('/profil-sekolah', [ProfilSekolahController::class, 'update'])->name('profil-sekolah.update');
+
+// Admin Landing Page CMS & Berita/Event & SMBP Management
+Route::get('/admin/cms', [AdminLandingCmsController::class, 'index'])->name('admin.cms.index');
+Route::put('/admin/cms/profil', [AdminLandingCmsController::class, 'updateProfil'])->name('admin.cms.profil.update');
+Route::post('/admin/cms/fasilitas', [AdminLandingCmsController::class, 'storeFasilitas'])->name('admin.cms.fasilitas.store');
+Route::put('/admin/cms/fasilitas/{fasilitas}', [AdminLandingCmsController::class, 'updateFasilitas'])->name('admin.cms.fasilitas.update');
+Route::delete('/admin/cms/fasilitas/{fasilitas}', [AdminLandingCmsController::class, 'destroyFasilitas'])->name('admin.cms.fasilitas.destroy');
+Route::post('/admin/cms/galeri', [AdminLandingCmsController::class, 'storeGaleri'])->name('admin.cms.galeri.store');
+Route::delete('/admin/cms/galeri/{galeri}', [AdminLandingCmsController::class, 'destroyGaleri'])->name('admin.cms.galeri.destroy');
+Route::post('/admin/cms/testimoni', [AdminLandingCmsController::class, 'storeTestimoni'])->name('admin.cms.testimoni.store');
+Route::delete('/admin/cms/testimoni/{testimoni}', [AdminLandingCmsController::class, 'destroyTestimoni'])->name('admin.cms.testimoni.destroy');
+Route::post('/admin/cms/faq', [AdminLandingCmsController::class, 'storeFaq'])->name('admin.cms.faq.store');
+Route::delete('/admin/cms/faq/{faq}', [AdminLandingCmsController::class, 'destroyFaq'])->name('admin.cms.faq.destroy');
+Route::post('/admin/cms/berita', [AdminLandingCmsController::class, 'storeBerita'])->name('admin.cms.berita.store');
+Route::put('/admin/cms/berita/{berita}', [AdminLandingCmsController::class, 'updateBerita'])->name('admin.cms.berita.update');
+Route::delete('/admin/cms/berita/{berita}', [AdminLandingCmsController::class, 'destroyBerita'])->name('admin.cms.berita.destroy');
+Route::post('/admin/cms/agenda', [AdminLandingCmsController::class, 'storeAgenda'])->name('admin.cms.agenda.store');
+Route::delete('/admin/cms/agenda/{agenda}', [AdminLandingCmsController::class, 'destroyAgenda'])->name('admin.cms.agenda.destroy');
+
+// Admin SMBP / PPDB Management Routes
+Route::get('/admin/smbp', [SmbpController::class, 'adminIndex'])->name('admin.smbp.index');
+Route::put('/admin/smbp/{smbpPendaftaran}/status', [SmbpController::class, 'adminUpdateStatus'])->name('admin.smbp.status.update');
+Route::delete('/admin/smbp/{smbpPendaftaran}', [SmbpController::class, 'adminDestroy'])->name('admin.smbp.destroy');
     });
 });
 

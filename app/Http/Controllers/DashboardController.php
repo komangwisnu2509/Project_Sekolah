@@ -126,6 +126,8 @@ class DashboardController extends Controller
         $siswas = \App\Models\Siswa::orderBy('nama')->get();
 
         $ekskulList = \App\Models\Ekstrakurikuler::orderBy('nama_ekskul')->get();
+        $beritaTerbaru = \App\Models\Berita::orderBy('tanggal_publikasi', 'desc')->take(4)->get();
+        $agendaMendatang = \App\Models\Agenda::where('tanggal', '>=', date('Y-m-d'))->orderBy('tanggal', 'asc')->take(4)->get();
 
         return view('dashboard', compact(
             'totalKelas',
@@ -154,7 +156,9 @@ class DashboardController extends Controller
             'activeIzinGurusSiswa',
             'prestasiList',
             'siswas',
-            'ekskulList'
+            'ekskulList',
+            'beritaTerbaru',
+            'agendaMendatang'
         ));
     }
 }

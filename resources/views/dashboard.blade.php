@@ -1215,6 +1215,113 @@
             </div>
         </div>
 
+        <!-- BERITA & EVENT SEKOLAH TERBARU SECTION -->
+        <div class="row g-4 mb-4">
+            <!-- Berita Terbaru Column -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-3 h-100 overflow-hidden">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-newspaper text-primary me-2"></i>Berita & Pengumuman Sekolah Terbaru</h5>
+                        @if(Auth::user()->isAdmin())
+                            <a href="{{ route('admin.cms.index') }}" class="btn btn-outline-primary btn-sm fw-bold">Kelola Berita (Admin)</a>
+                        @endif
+                    </div>
+                    <div class="card-body p-3 bg-light bg-opacity-50">
+                        <div class="row g-3">
+                            @forelse($beritaTerbaru as $b)
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm rounded-3 h-100 bg-white overflow-hidden">
+                                        @if($b->foto)
+                                            <img src="{{ $b->foto }}" class="card-img-top object-fit-cover" style="height: 130px;">
+                                        @else
+                                            <div class="bg-primary bg-opacity-10 text-primary p-4 text-center" style="height: 130px;">
+                                                <i class="bi bi-newspaper fs-1"></i>
+                                            </div>
+                                        @endif
+                                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <span class="badge bg-info text-dark small mb-1">{{ $b->kategori ?: 'Umum' }}</span>
+                                                <h6 class="fw-bold text-dark mb-1">{{ Str::limit($b->judul, 45) }}</h6>
+                                                <small class="text-muted d-block mb-2"><i class="bi bi-calendar3 me-1"></i>{{ \Carbon\Carbon::parse($b->tanggal_publikasi)->translatedFormat('d F Y') }}</small>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary fw-bold w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalBacaBerita{{ $b->id }}">
+                                                <i class="bi bi-book-half me-1"></i> Baca Selengkapnya
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal Baca Berita Detail -->
+                                <div class="modal fade" id="modalBacaBerita{{ $b->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content border-0 shadow-lg rounded-4">
+                                            <div class="modal-header bg-dark text-white border-0 py-3">
+                                                <h5 class="modal-title fw-bold"><i class="bi bi-newspaper text-warning me-2"></i>{{ $b->judul }}</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body p-4">
+                                                @if($b->foto)
+                                                    <img src="{{ $b->foto }}" class="img-fluid rounded-3 shadow-sm border mb-3 w-100 object-fit-cover" style="max-height: 320px;">
+                                                @endif
+                                                <div class="d-flex justify-content-between align-items-center mb-3 text-muted small">
+                                                    <span><i class="bi bi-calendar-event me-1 text-primary"></i>Dipublikasikan: {{ \Carbon\Carbon::parse($b->tanggal_publikasi)->translatedFormat('d F Y') }}</span>
+                                                    <span class="badge bg-info text-dark">{{ $b->kategori ?: 'Berita Sekolah' }}</span>
+                                                </div>
+                                                <div class="p-3 bg-light rounded-3 text-dark" style="line-height: 1.8; text-align: justify; white-space: pre-line;">
+                                                    {!! nl2br(e($b->konten)) !!}
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer bg-light border-0">
+                                                <button type="button" class="btn btn-secondary btn-sm px-4" data-bs-dismiss="modal">Tutup</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="col-12 text-center py-4 text-muted bg-white rounded border border-dashed">
+                                    <i class="bi bi-newspaper fs-1 d-block mb-2 opacity-50"></i>
+                                    Belum ada berita atau pengumuman sekolah terbaru.
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event / Agenda Mendatang Column -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-3 h-100 overflow-hidden">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-calendar-event text-warning me-2"></i>Agenda & Event Acara</h5>
+                        @if(Auth::user()->isAdmin())
+                            <a href="{{ route('admin.cms.index') }}" class="btn btn-outline-warning text-dark btn-sm fw-bold">Kelola Event</a>
+                        @endif
+                    </div>
+                    <div class="card-body p-3 bg-light bg-opacity-50">
+                        @forelse($agendaMendatang as $ag)
+                            <div class="bg-white p-3 rounded-3 shadow-sm mb-3 border border-start border-4 border-warning">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge bg-warning text-dark fw-bold">{{ $ag->kategori ?: 'Acara Sekolah' }}</span>
+                                    <span class="small text-muted font-monospace"><i class="bi bi-clock me-1 text-primary"></i>{{ date('H:i', strtotime($ag->waktu_mulai ?? '08:00')) }} WITA</span>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1">{{ $ag->judul }}</h6>
+                                <p class="small text-muted mb-2">{{ $ag->deskripsi }}</p>
+                                <div class="d-flex justify-content-between align-items-center small text-secondary border-top pt-2">
+                                    <span><i class="bi bi-calendar-check text-primary me-1"></i>{{ \Carbon\Carbon::parse($ag->tanggal)->translatedFormat('d F Y') }}</span>
+                                    <span><i class="bi bi-geo-alt text-danger me-1"></i>{{ $ag->lokasi ?: 'Sekolah' }}</span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-4 text-muted bg-white rounded border border-dashed">
+                                <i class="bi bi-calendar-x fs-1 d-block mb-2 text-warning opacity-50"></i>
+                                Belum ada agenda acara mendatang.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+
     @endif
 
 </div>
