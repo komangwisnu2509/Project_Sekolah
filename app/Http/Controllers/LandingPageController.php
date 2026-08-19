@@ -94,12 +94,4 @@ class LandingPageController extends Controller
         $agendas = Schema::hasTable('agendas') ? Agenda::orderBy('tanggal', 'desc')->get() : collect();
         return view('landing page.pages.agenda', compact('profil', 'agendas'));
     }
-
-    public function pengumuman() {
-        return view('landing page.pages.pengumuman');
-    }
-
-    public function agenda() {
-        return view('landing page.pages.agenda');
-    }
 }
