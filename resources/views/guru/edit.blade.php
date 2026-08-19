@@ -22,13 +22,19 @@
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label for="nip" class="form-label fw-bold">NIP</label>
-                            <input type="text" name="nip" id="nip" class="form-control @error('nip') is-invalid @enderror" value="{{ old('nip', $guru->nip) }}">
+                            <label for="nip" class="form-label fw-bold">
+                                NIP <span class="badge bg-secondary ms-1"><i class="bi bi-lock-fill me-1"></i>Dikunci</span>
+                            </label>
+                            <input type="text" name="nip" id="nip" class="form-control bg-light @error('nip') is-invalid @enderror" value="{{ old('nip', $guru->nip) }}" readonly style="background-color: #e9ecef;">
+                            <small class="text-muted"><i class="bi bi-info-circle me-1"></i>NIP dikunci dan tidak dapat diubah.</small>
                             @error('nip') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
-                            <label for="mata_pelajaran" class="form-label fw-bold">Mata Pelajaran</label>
-                            <input type="text" name="mata_pelajaran" id="mata_pelajaran" class="form-control @error('mata_pelajaran') is-invalid @enderror" value="{{ old('mata_pelajaran', $guru->mata_pelajaran) }}" required>
+                            <label for="mata_pelajaran" class="form-label fw-bold">
+                                Mata Pelajaran <span class="badge bg-secondary ms-1"><i class="bi bi-lock-fill me-1"></i>Dikunci</span>
+                            </label>
+                            <input type="text" name="mata_pelajaran" id="mata_pelajaran" class="form-control bg-light @error('mata_pelajaran') is-invalid @enderror" value="{{ old('mata_pelajaran', $guru->mata_pelajaran) }}" readonly required style="background-color: #e9ecef;">
+                            <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Mata pelajaran dikunci dan tidak dapat diubah.</small>
                             @error('mata_pelajaran') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>

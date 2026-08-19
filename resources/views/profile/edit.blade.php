@@ -122,12 +122,18 @@
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
-                                        <label for="nip" class="form-label fw-bold">NIP (Nomor Induk Pegawai)</label>
-                                        <input type="text" name="nip" id="nip" class="form-control" value="{{ old('nip', $guru->nip ?? '') }}" placeholder="Contoh: 19850315...">
+                                        <label for="nip" class="form-label fw-bold">
+                                            NIP (Nomor Induk Pegawai) <span class="badge bg-secondary ms-1"><i class="bi bi-lock-fill me-1"></i>Dikunci</span>
+                                        </label>
+                                        <input type="text" name="nip" id="nip" class="form-control bg-light" value="{{ old('nip', $guru->nip ?? '') }}" readonly style="background-color: #e9ecef;">
+                                        <small class="text-muted"><i class="bi bi-info-circle me-1"></i>NIP dikunci dan tidak dapat diubah.</small>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="mata_pelajaran" class="form-label fw-bold">Mata Pelajaran <span class="text-danger">*</span></label>
-                                        <input type="text" name="mata_pelajaran" id="mata_pelajaran" class="form-control" value="{{ old('mata_pelajaran', $guru->mata_pelajaran ?? '') }}" placeholder="Contoh: Matematika" required>
+                                        <label for="mata_pelajaran" class="form-label fw-bold">
+                                            Mata Pelajaran <span class="badge bg-secondary ms-1"><i class="bi bi-lock-fill me-1"></i>Dikunci</span>
+                                        </label>
+                                        <input type="text" name="mata_pelajaran" id="mata_pelajaran" class="form-control bg-light" value="{{ old('mata_pelajaran', $guru->mata_pelajaran ?? '') }}" readonly required style="background-color: #e9ecef;">
+                                        <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Mata pelajaran dikunci dan tidak dapat diubah.</small>
                                     </div>
                                 </div>
 

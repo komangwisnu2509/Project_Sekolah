@@ -29,8 +29,11 @@
                 <h5 class="text-secondary border-bottom pb-2 mb-3"><i class="bi bi-person-fill me-1"></i> Data Pribadi Siswa</h5>
 
                 <div class="mb-3">
-                    <label for="nis" class="form-label fw-bold">NIS</label>
-                    <input type="text" name="nis" id="nis" class="form-control" value="{{ old('nis', $siswa->nis) }}" required>
+                    <label for="nis" class="form-label fw-bold">
+                        NIS <span class="badge bg-secondary ms-1"><i class="bi bi-lock-fill me-1"></i>Dikunci</span>
+                    </label>
+                    <input type="text" name="nis" id="nis" class="form-control bg-light" value="{{ old('nis', $siswa->nis) }}" readonly style="background-color: #e9ecef;" required>
+                    <small class="text-muted"><i class="bi bi-info-circle me-1"></i>NIS dikunci dan tidak dapat diubah.</small>
                 </div>
 
                 <div class="mb-3">

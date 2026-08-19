@@ -10,7 +10,7 @@
         <div class="card-body">
             <form action="/siswa/update/{{ $siswa->id }}" method="POST">
                 @csrf @method('PUT')
-                <div class="mb-3"><label>NIS</label><input type="text" name="nis" class="form-control" value="{{ $siswa->nis }}"></div>
+                <div class="mb-3"><label>NIS <span class="badge bg-secondary">Dikunci</span></label><input type="text" name="nis" class="form-control bg-light" value="{{ $siswa->nis }}" readonly style="background-color: #e9ecef;"></div>
                 <div class="mb-3"><label>Nama</label><input type="text" name="nama" class="form-control" value="{{ $siswa->nama }}"></div>
                 <div class="mb-3"><label>Kelas</label><input type="text" name="kelas" class="form-control" value="{{ $siswa->kelas }}"></div>
                 <div class="mb-3"><label>Jurusan</label><input type="text" name="jurusan" class="form-control" value="{{ $siswa->jurusan }}"></div>
