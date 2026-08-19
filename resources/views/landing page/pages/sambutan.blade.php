@@ -20,16 +20,24 @@
         <div class="container" style="padding: 5rem 5%; margin-top: -3rem;">
             <div style="max-width: 900px; margin: 0 auto; background: var(--white); padding: 4rem; border-radius: var(--radius-lg); box-shadow: 0 20px 40px rgba(0,0,0,0.08); position: relative; z-index: 10;">
                 <div style="text-align: center; margin-bottom: 3rem;">
-                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2000&auto=format&fit=crop" alt="Kepala Sekolah" style="width: 180px; height: 180px; object-fit: cover; border-radius: 50%; margin: 0 auto 1.5rem; border: 5px solid var(--bg-light); box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
-                    <h2 class="section-title" style="font-size: 2.2rem; margin-bottom: 0.5rem;">Bpk. Drs. H. Ahmad Dahlan, M.Pd.</h2>
-                    <p style="color: var(--accent); font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">Kepala Sekolah Astika Dharma</p>
+                @php
+                    $fotoKepsek = $profil?->foto_kepala_sekolah ? (str_starts_with($profil->foto_kepala_sekolah, 'http') ? $profil->foto_kepala_sekolah : asset('storage/'.$profil->foto_kepala_sekolah)) : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2000&auto=format&fit=crop';
+                @endphp
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <img src="{{ $fotoKepsek }}" alt="Kepala Sekolah" style="width: 180px; height: 180px; object-fit: cover; border-radius: 50%; margin: 0 auto 1.5rem; border: 5px solid var(--bg-light); box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                    <h2 class="section-title" style="font-size: 2.2rem; margin-bottom: 0.5rem;">{{ $profil?->nama_kepala_sekolah ?: ($profil?->kepala_sekolah ?: 'Dr. H. Ahmad Wijaya, M.Pd.') }}</h2>
+                    <p style="color: var(--accent); font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">Kepala {{ $profil?->nama_sekolah ?? 'Sekolah Astika Dharma' }}</p>
                 </div>
                 <div style="color: var(--text-main); font-size: 1.15rem; line-height: 1.9; text-align: justify;">
-                    <p style="margin-bottom: 1.5rem;">Assalamu’alaikum Warahmatullahi Wabarakatuh, Salam sejahtera bagi kita semua.</p>
-                    <p style="margin-bottom: 1.5rem;">Selamat datang di website resmi <strong>Sekolah Astika Dharma</strong>. Puji syukur senantiasa kita panjatkan ke hadirat Tuhan Yang Maha Esa atas segala rahmat dan karunia-Nya. Kami hadir untuk memberikan layanan pendidikan berkualitas demi mencetak generasi muda yang cerdas, berkarakter, dan berdaya saing global.</p>
-                    <p style="margin-bottom: 1.5rem;">Melalui portal website ini, kami berharap dapat memberikan informasi terkini secara cepat dan transparan kepada seluruh peserta didik, orang tua wali, serta masyarakat umum. Kami terus berupaya meningkatkan fasilitas dan kualitas pendidikan agar selaras dengan perkembangan zaman dan teknologi.</p>
-                    <p style="margin-bottom: 2rem;">Terima kasih atas kepercayaan yang diberikan. Mari bersama-sama kita wujudkan cita-cita bangsa melalui pendidikan yang bermutu.</p>
-                    <p style="font-weight: 600; font-style: italic;">Wassalamu’alaikum Warahmatullahi Wabarakatuh.</p>
+                    @if(!empty($profil?->sambutan_kepala_sekolah))
+                        {!! nl2br(e($profil->sambutan_kepala_sekolah)) !!}
+                    @else
+                        <p style="margin-bottom: 1.5rem;">Assalamu’alaikum Warahmatullahi Wabarakatuh, Salam sejahtera bagi kita semua.</p>
+                        <p style="margin-bottom: 1.5rem;">Selamat datang di website resmi <strong>{{ $profil?->nama_sekolah ?? 'Sekolah Astika Dharma' }}</strong>. Puji syukur senantiasa kita panjatkan ke hadirat Tuhan Yang Maha Esa atas segala rahmat dan karunia-Nya. Kami hadir untuk memberikan layanan pendidikan berkualitas demi mencetak generasi muda yang cerdas, berkarakter, dan berdaya saing global.</p>
+                        <p style="margin-bottom: 1.5rem;">Melalui portal website ini, kami berharap dapat memberikan informasi terkini secara cepat dan transparan kepada seluruh peserta didik, orang tua wali, serta masyarakat umum. Kami terus berupaya meningkatkan fasilitas dan kualitas pendidikan agar selaras dengan perkembangan zaman dan teknologi.</p>
+                        <p style="margin-bottom: 2rem;">Terima kasih atas kepercayaan yang diberikan. Mari bersama-sama kita wujudkan cita-cita bangsa melalui pendidikan yang bermutu.</p>
+                        <p style="font-weight: 600; font-style: italic;">Wassalamu’alaikum Warahmatullahi Wabarakatuh.</p>
+                    @endif
                 </div>
             </div>
         </div>

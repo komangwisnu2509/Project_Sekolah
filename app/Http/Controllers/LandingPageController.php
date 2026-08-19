@@ -58,25 +58,41 @@ class LandingPageController extends Controller
     }
 
     public function sambutan() {
-        return view('landing page.pages.sambutan');
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        return view('landing page.pages.sambutan', compact('profil'));
     }
 
     public function sejarah() {
-        return view('landing page.pages.sejarah');
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        return view('landing page.pages.sejarah', compact('profil'));
     }
 
     public function visiMisi() {
-        $profil = ProfilSekolah::first();
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
         return view('landing page.pages.visi_misi', compact('profil'));
     }
 
     public function guruStaff() {
-        $gurus = Guru::all();
-        return view('landing page.pages.guru_staff', compact('gurus'));
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        $gurus = Schema::hasTable('gurus') ? Guru::all() : collect();
+        return view('landing page.pages.guru_staff', compact('profil', 'gurus'));
     }
 
     public function kurikulum() {
-        return view('landing page.pages.kurikulum');
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        return view('landing page.pages.kurikulum', compact('profil'));
+    }
+
+    public function pengumuman() {
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        $beritas = Schema::hasTable('beritas') ? Berita::latest()->get() : collect();
+        return view('landing page.pages.pengumuman', compact('profil', 'beritas'));
+    }
+
+    public function agenda() {
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        $agendas = Schema::hasTable('agendas') ? Agenda::orderBy('tanggal', 'desc')->get() : collect();
+        return view('landing page.pages.agenda', compact('profil', 'agendas'));
     }
 
     public function pengumuman() {

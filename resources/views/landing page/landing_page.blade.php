@@ -2,14 +2,17 @@
 
 @section('content')
 <!-- Hero -->
+    @php
+        $heroBannerImg = $profil?->hero_banner ? (str_starts_with($profil->hero_banner, 'http') ? $profil->hero_banner : asset('storage/'.$profil->hero_banner)) : 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop';
+    @endphp
     <header class="hero" id="beranda">
-        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop" alt="Sekolah Astika Dharma" class="hero-bg">
+        <img src="{{ $heroBannerImg }}" alt="{{ $profil?->nama_sekolah ?? 'Sekolah Astika Dharma' }}" class="hero-bg">
         <div class="hero-overlay"></div>
         <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
-            <h1>MEMBENTUK GENERASI UNGGUL UNTUK MASA DEPAN</h1>
-            <p>Pendidikan berkualitas untuk membangun karakter, kompetensi, dan kreativitas peserta didik. Mari mulai perjalanan prestasimu bersama Astika Dharma.</p>
+            <h1>{{ strtoupper($profil?->nama_sekolah ?? 'SEKOLAH ASTIKA DHARMA') }}</h1>
+            <p>{{ $profil?->slogan ?: 'Membentuk Generasi Unggul, Berkarakter, Berkualitas, dan Berbasis Teknologi Terdepan untuk Masa Depan Gemilang.' }}</p>
             <div class="hero-btns">
-                <a href="{{ route('register') }}" class="btn btn-primary">Daftar Sekarang</a>
+                <a href="{{ route('ppdb.index') }}" class="btn btn-primary">Daftar PPDB Online</a>
                 <a href="#profil" class="btn btn-outline">Jelajahi Sekolah</a>
             </div>
         </div>

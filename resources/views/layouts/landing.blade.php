@@ -874,12 +874,15 @@
     </style>
 </head>
 <body>
+    @php
+        $profilGlobal = $profil ?? \App\Models\ProfilSekolah::first();
+    @endphp
 
     <!-- Navbar -->
     <nav class="navbar transparent" id="navbar">
-        <a href="#" class="nav-brand">
+        <a href="{{ route('landing_page') }}" class="nav-brand fw-bold">
             <i data-lucide="graduation-cap" stroke-width="2.5" size="28"></i>
-            Astika Dharma
+            {{ $profilGlobal?->nama_sekolah ?? 'Sekolah Astika Dharma' }}
         </a>
         
         <ul class="nav-links">
@@ -924,12 +927,11 @@
                 <a href="{{ route('dashboard') }}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">Dashboard</a>
             @else
                 <a href="{{ route('login') }}" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">Login</a>
-                <a href="{{ route('ppdb.index') }}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">PPDB 2026</a>
+                <a href="{{ route('ppdb.index') }}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">PPDB {{ date('Y') }}</a>
             @endauth
         </div>
     </nav>
 
-    
     <!-- Main Content -->
     <main style="min-height: 80vh;">
         @yield('content')
@@ -940,56 +942,61 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <h3><i data-lucide="graduation-cap" size="24"></i> Astika Dharma</h3>
-                    <p>Sekolah yang membangun generasi unggul dan berkarakter dengan pendidikan holistik bertaraf internasional.</p>
+                    <h3><i data-lucide="graduation-cap" size="24"></i> {{ $profilGlobal?->nama_sekolah ?? 'Sekolah Astika Dharma' }}</h3>
+                    <p>{{ $profilGlobal?->slogan ?: 'Sekolah yang membangun generasi unggul, berkarakter, dan berdaya saing tinggi dalam teknologi dan keahlian vokasional.' }}</p>
                 </div>
                 
                 <div class="footer-col">
                     <h4>Navigasi</h4>
                     <ul>
-                        <li><a href="#beranda">Beranda</a></li>
+                        <li><a href="{{ route('landing_page') }}#beranda">Beranda</a></li>
                         <li><a href="{{ route('landing_page') }}#profil">Profil Sekolah</a></li>
                         <li><a href="{{ route('landing_page') }}#akademik">Akademik</a></li>
-                        <li><a href="#ppdb">PPDB 2026</a></li>
+                        <li><a href="{{ route('ppdb.index') }}">PPDB Online {{ date('Y') }}</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-col">
                     <h4>Informasi</h4>
                     <ul>
-                        <li><a href="{{ route('landing_page') }}#berita">Berita</a></li>
-                        <li><a href="#">Pengumuman</a></li>
-                        <li><a href="{{ route('landing_page') }}#galeri">Galeri</a></li>
-                        <li><a href="#">Agenda</a></li>
+                        <li><a href="{{ route('landing_page') }}#berita">Berita Terbaru</a></li>
+                        <li><a href="{{ route('landing_page') }}#agenda">Agenda Sekolah</a></li>
+                        <li><a href="{{ route('landing_page') }}#galeri">Galeri Foto</a></li>
+                        <li><a href="{{ route('landing_page') }}#fasilitas">Fasilitas</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-col">
-                    <h4>Kontak Kami</h4>
+                    <h4>Kontak Resmi Sekolah</h4>
                     <ul class="footer-contact">
                         <li>
                             <i data-lucide="map-pin" size="18" style="flex-shrink: 0; margin-top: 3px;"></i>
-                            <span>Jl. Pendidikan No. 123, Karangasem, Bali 80811</span>
+                            <span>{{ $profilGlobal?->alamat ?: 'Jl. Pendidikan No. 45, Kompleks Edukasi Terpadu' }}</span>
                         </li>
                         <li>
                             <i data-lucide="phone" size="18" style="flex-shrink: 0;"></i>
-                            <span>(0361) 1234567<br>0812-3456-7890</span>
+                            <span>{{ $profilGlobal?->telepon ?: '081234567890' }}</span>
                         </li>
                         <li>
                             <i data-lucide="mail" size="18" style="flex-shrink: 0;"></i>
-                            <span>info@astikadharma.sch.id</span>
+                            <span>{{ $profilGlobal?->email ?: 'info@astikadharma.sch.id' }}</span>
                         </li>
                     </ul>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <div>&copy; 2026 Sekolah Astika Dharma. All rights reserved.</div>
+                <div>&copy; {{ date('Y') }} {{ $profilGlobal?->nama_sekolah ?? 'Sekolah Astika Dharma' }}. All rights reserved.</div>
                 <div class="social-links">
-                    <a href="#"><i data-lucide="instagram" size="20"></i></a>
-                    <a href="#"><i data-lucide="facebook" size="20"></i></a>
-                    <a href="#"><i data-lucide="twitter" size="20"></i></a>
-                    <a href="#"><i data-lucide="youtube" size="20"></i></a>
+                    @if($profilGlobal?->instagram)
+                        <a href="https://instagram.com/{{ ltrim($profilGlobal->instagram, '@') }}" target="_blank" title="Instagram Resmi"><i data-lucide="instagram" size="20"></i></a>
+                    @endif
+                    @if($profilGlobal?->youtube)
+                        <a href="{{ $profilGlobal->youtube }}" target="_blank" title="YouTube Resmi"><i data-lucide="youtube" size="20"></i></a>
+                    @endif
+                    @if($profilGlobal?->facebook)
+                        <a href="{{ $profilGlobal->facebook }}" target="_blank" title="Facebook Resmi"><i data-lucide="facebook" size="20"></i></a>
+                    @endif
                 </div>
             </div>
         </div>

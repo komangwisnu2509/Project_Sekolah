@@ -11,16 +11,5 @@ class ProfilSekolah extends Model
 
     protected $table = 'profil_sekolahs';
 
-    protected $fillable = [
-        'nama_sekolah',
-        'npsn_status',
-        'kepala_sekolah',
-        'akreditasi',
-        'jam_operasional',
-        'alamat',
-        'email',
-        'telepon',
-        'visi',
-        'misi',
-    ];
+    protected $guarded = [];
 }
