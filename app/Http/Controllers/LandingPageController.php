@@ -9,7 +9,7 @@ use App\Models\Fasilitas;
 use App\Models\Galeri;
 use App\Models\Guru;
 use App\Models\Jurusan;
-use App\Models\Prestasi;
+use App\Models\PrestasiSiswa;
 use App\Models\ProfilSekolah;
 use App\Models\Siswa;
 use App\Models\Testimoni;
@@ -22,22 +22,22 @@ class LandingPageController extends Controller
         // Counts for stats
         $siswaCount = Siswa::count() ?: 500;
         $guruCount = Guru::count() ?: 50;
-        $alumniCount = 1000; // Static for now, no Alumni table
+        $alumniCount = 1000; // Static for now
         $tahunDedikasi = 25; // Static for now
 
         // Get single records
         $profil = ProfilSekolah::first();
-        $prestasiUtama = Prestasi::latest()->first();
+        $prestasiUtama = class_exists(\App\Models\PrestasiSiswa::class) ? PrestasiSiswa::latest()->first() : null;
 
         // Get multiple records
-        $jurusans = Jurusan::all();
-        $fasilitas = Fasilitas::all();
-        $ekstrakurikuler = Ekstrakurikuler::all();
-        $beritaHighlight = Berita::where('is_highlight', true)->latest()->first();
-        $beritaList = Berita::where('id', '!=', $beritaHighlight?->id)->latest()->take(3)->get();
-        $galeri = Galeri::all();
-        $testimoni = Testimoni::all();
-        $faqs = Faq::all();
+        $jurusans = class_exists(\App\Models\Jurusan::class) ? Jurusan::all() : collect();
+        $fasilitas = class_exists(\App\Models\Fasilitas::class) ? Fasilitas::all() : collect();
+        $ekstrakurikuler = class_exists(\App\Models\Ekstrakurikuler::class) ? Ekstrakurikuler::all() : collect();
+        $beritaHighlight = class_exists(\App\Models\Berita::class) ? Berita::where('is_highlight', true)->latest()->first() : null;
+        $beritaList = class_exists(\App\Models\Berita::class) && $beritaHighlight ? Berita::where('id', '!=', $beritaHighlight->id)->latest()->take(3)->get() : collect();
+        $galeri = class_exists(\App\Models\Galeri::class) ? Galeri::all() : collect();
+        $testimoni = class_exists(\App\Models\Testimoni::class) ? Testimoni::all() : collect();
+        $faqs = class_exists(\App\Models\Faq::class) ? Faq::all() : collect();
 
         return view('landing page.landing_page', compact(
             'siswaCount', 'guruCount', 'alumniCount', 'tahunDedikasi',
