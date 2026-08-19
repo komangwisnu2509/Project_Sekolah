@@ -119,9 +119,11 @@ class DashboardController extends Controller
 
         // Fetch Student Achievements & Extracurriculars for School Homepage Showcase
         $prestasiList = \App\Models\PrestasiSiswa::with('siswa')
-            ->where('tampilkan_di_beranda', true)
             ->orderBy('tahun', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
+
+        $siswas = \App\Models\Siswa::orderBy('nama')->get();
 
         $ekskulList = \App\Models\Ekstrakurikuler::orderBy('nama_ekskul')->get();
 
@@ -151,6 +153,7 @@ class DashboardController extends Controller
             'mySubstituteDuties',
             'activeIzinGurusSiswa',
             'prestasiList',
+            'siswas',
             'ekskulList'
         ));
     }

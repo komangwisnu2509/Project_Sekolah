@@ -862,16 +862,16 @@
                     <small class="text-secondary">Pencapaian kebanggaan dan kejuaraan siswa di tingkat Kota, Provinsi, Nasional & Internasional</small>
                 </div>
                 @if(Auth::user()->isAdmin())
-                    <a href="{{ route('admin.prestasi.index') }}" class="btn btn-warning text-dark fw-bold btn-sm px-3 shadow-sm">
-                        <i class="bi bi-gear-fill me-1"></i> Kelola Prestasi (Admin)
-                    </a>
+                    <button type="button" class="btn btn-warning text-dark fw-bold btn-sm px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTambahPrestasiDash">
+                        <i class="bi bi-plus-circle-fill me-1"></i> Tambah Prestasi Baru
+                    </button>
                 @endif
             </div>
             <div class="card-body p-4 bg-light bg-opacity-25">
                 <div class="row g-3">
                     @forelse($prestasiList as $p)
                         <div class="col-md-6 col-lg-4">
-                            <div class="card border-0 shadow-sm rounded-3 h-100 bg-white">
+                            <div class="card border-0 shadow-sm rounded-3 h-100 bg-white position-relative">
                                 <div class="card-body p-3">
                                     <div class="d-flex align-items-center gap-3 mb-3">
                                         @if($p->foto_bukti)
@@ -881,7 +881,7 @@
                                                 🏆
                                             </div>
                                         @endif
-                                        <div>
+                                        <div class="flex-grow-1">
                                             <h6 class="fw-bold text-dark mb-0">{{ $p->nama_siswa }}</h6>
                                             <small class="text-muted d-block">{{ $p->kelas ? 'Kelas '.$p->kelas : 'Siswa Sekolah' }}</small>
                                             <span class="badge bg-warning text-dark fw-bold px-2 py-0.5 mt-1 small">
@@ -895,10 +895,28 @@
                                         <span class="font-monospace">Thn {{ $p->tahun }}</span>
                                     </div>
 
-                                    <!-- Tombol Mata (View Detail Modal on Dashboard) -->
-                                    <button type="button" class="btn btn-sm btn-outline-primary fw-bold w-100 mt-3" data-bs-toggle="modal" data-bs-target="#modalDashboardPrestasi{{ $p->id }}">
-                                        <i class="bi bi-eye-fill me-1"></i> lihat Detail & Deskripsi Lomba
-                                    </button>
+                                    <div class="d-flex gap-1 mt-3">
+                                        <!-- Tombol Mata (View Detail Modal on Dashboard) -->
+                                        <button type="button" class="btn btn-sm btn-info text-white fw-bold flex-grow-1" data-bs-toggle="modal" data-bs-target="#modalDashboardPrestasi{{ $p->id }}">
+                                            <i class="bi bi-eye-fill me-1"></i> Detail
+                                        </button>
+
+                                        @if(Auth::user()->isAdmin())
+                                            <!-- Tombol Edit Admin -->
+                                            <button type="button" class="btn btn-sm btn-warning text-dark fw-bold px-2" data-bs-toggle="modal" data-bs-target="#modalEditDashPrestasi{{ $p->id }}" title="Edit Prestasi">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+
+                                            <!-- Tombol Hapus Admin -->
+                                            <form action="{{ route('admin.prestasi.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Hapus prestasi ini?')" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger px-2" title="Hapus Prestasi">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -969,17 +987,181 @@
                                 </div>
                             </div>
                         </div>
+
+                        @if(Auth::user()->isAdmin())
+                            <!-- Modal Edit Prestasi Dashboard (ADMIN ONLY) -->
+                            <div class="modal fade" id="modalEditDashPrestasi{{ $p->id }}" tabindex="-1" aria-labelledby="labelEditDash{{ $p->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content border-0 shadow-lg rounded-4">
+                                        <div class="modal-header bg-warning text-dark border-0 py-3">
+                                            <h5 class="modal-title fw-bold" id="labelEditDash{{ $p->id }}">
+                                                <i class="bi bi-pencil-square me-2"></i>Edit Data Prestasi Siswa
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ route('admin.prestasi.update', $p->id) }}" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-body p-4">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-bold small">Pilih Siswa (Opsional)</label>
+                                                        <select name="siswa_id" class="form-select form-select-sm">
+                                                            <option value="">-- Pilih dari Data Siswa --</option>
+                                                            @foreach($siswas as $s)
+                                                                <option value="{{ $s->id }}" {{ $p->siswa_id == $s->id ? 'selected' : '' }}>{{ $s->nama }} (Kelas {{ $s->kelas }})</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-bold small">Nama Siswa (Manual)</label>
+                                                        <input type="text" name="nama_siswa" class="form-control form-control-sm" value="{{ $p->nama_siswa }}">
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label class="form-label fw-bold small">Judul / Nama Kejuaraan <span class="text-danger">*</span></label>
+                                                        <input type="text" name="judul_prestasi" class="form-control form-control-sm" value="{{ $p->judul_prestasi }}" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-bold small">Kategori</label>
+                                                        <select name="kategori" class="form-select form-select-sm">
+                                                            @foreach(['Akademik', 'Olahraga', 'Seni & Budaya', 'Teknologi & IT', 'Kepemimpinan'] as $kat)
+                                                                <option value="{{ $kat }}" {{ $p->kategori == $kat ? 'selected' : '' }}>{{ $kat }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-bold small">Tingkat</label>
+                                                        <select name="tingkat" class="form-select form-select-sm">
+                                                            @foreach(['Kota/Kabupaten', 'Provinsi', 'Nasional', 'Internasional'] as $tingk)
+                                                                <option value="{{ $tingk }}" {{ $p->tingkat == $tingk ? 'selected' : '' }}>{{ $tingk }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label fw-bold small">Peringkat / Medali</label>
+                                                        <input type="text" name="peringkat" class="form-control form-control-sm" value="{{ $p->peringkat }}" required>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label fw-bold small">Tahun</label>
+                                                        <input type="text" name="tahun" class="form-control form-control-sm" value="{{ $p->tahun }}" required>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label fw-bold small">Penyelenggara</label>
+                                                        <input type="text" name="penyelenggara" class="form-control form-control-sm" value="{{ $p->penyelenggara }}">
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label class="form-label fw-bold small">Deskripsi / Rincian Lomba</label>
+                                                        <textarea name="deskripsi" class="form-control form-control-sm" rows="3" placeholder="Tuliskan deskripsi singkat mengenai jalannya lomba...">{{ $p->deskripsi }}</textarea>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label class="form-label fw-bold small">Ganti Foto Bukti / Piala (Opsional)</label>
+                                                        <input type="file" name="foto_bukti" class="form-control form-control-sm" accept="image/*">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer bg-light border-0 py-3">
+                                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-warning text-dark fw-bold btn-sm"><i class="bi bi-save me-1"></i> Simpan Perubahan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @empty
                         <div class="col-12">
                             <div class="text-center py-4 text-muted bg-white rounded border border-dashed">
                                 <i class="bi bi-trophy fs-1 d-block mb-2 text-warning opacity-50"></i>
-                                Belum ada prestasi siswa yang ditampilkan di halaman beranda.
+                                Belum ada data prestasi siswa terdaftar.
                             </div>
                         </div>
                     @endforelse
                 </div>
             </div>
         </div>
+
+        @if(Auth::user()->isAdmin())
+            <!-- Modal Tambah Prestasi Dashboard (ADMIN ONLY) -->
+            <div class="modal fade" id="modalTambahPrestasiDash" tabindex="-1" aria-labelledby="labelTambahDash" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 shadow-lg rounded-4">
+                        <div class="modal-header bg-dark text-white border-0 py-3">
+                            <h5 class="modal-title fw-bold" id="labelTambahDash">
+                                <i class="bi bi-plus-circle-fill text-warning me-2"></i>Tambah Data Prestasi Siswa Baru
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('admin.prestasi.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="modal-body p-4">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small">Pilih Siswa (Opsional)</label>
+                                        <select name="siswa_id" class="form-select form-select-sm">
+                                            <option value="">-- Pilih dari Data Siswa --</option>
+                                            @foreach($siswas as $s)
+                                                <option value="{{ $s->id }}">{{ $s->nama }} (Kelas {{ $s->kelas }})</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small">Nama Siswa (Manual)</label>
+                                        <input type="text" name="nama_siswa" class="form-control form-control-sm" placeholder="Nama lengkap siswa berprestasi...">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold small">Judul / Nama Kejuaraan <span class="text-danger">*</span></label>
+                                        <input type="text" name="judul_prestasi" class="form-control form-control-sm" placeholder="Contoh: Juara 1 Olimpiade Sains Nasional" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small">Kategori</label>
+                                        <select name="kategori" class="form-select form-select-sm">
+                                            <option value="Akademik">Akademik</option>
+                                            <option value="Olahraga">Olahraga</option>
+                                            <option value="Seni & Budaya">Seni & Budaya</option>
+                                            <option value="Teknologi & IT">Teknologi & IT</option>
+                                            <option value="Kepemimpinan">Kepemimpinan</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small">Tingkat</label>
+                                        <select name="tingkat" class="form-select form-select-sm">
+                                            <option value="Kota/Kabupaten">Kota / Kabupaten</option>
+                                            <option value="Provinsi">Provinsi</option>
+                                            <option value="Nasional" selected>Nasional</option>
+                                            <option value="Internasional">Internasional</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Peringkat / Medali</label>
+                                        <input type="text" name="peringkat" class="form-control form-control-sm" value="Juara 1" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Tahun</label>
+                                        <input type="text" name="tahun" class="form-control form-control-sm" value="{{ date('Y') }}" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold small">Penyelenggara</label>
+                                        <input type="text" name="penyelenggara" class="form-control form-control-sm" placeholder="Contoh: Kementerian Pendidikan">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold small">Deskripsi / Rincian Lomba</label>
+                                        <textarea name="deskripsi" class="form-control form-control-sm" rows="3" placeholder="Tuliskan deskripsi singkat mengenai perlombaan..."></textarea>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold small">Foto Siswa / Penyerahan Piala</label>
+                                        <input type="file" name="foto_bukti" class="form-control form-control-sm" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer bg-light border-0 py-3">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-warning text-dark fw-bold btn-sm"><i class="bi bi-save me-1"></i> Simpan Prestasi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <!-- EKSTRAKURIKULER SEKOLAH SHOWCASE SECTION -->
         <div class="card border-0 shadow-sm rounded-3 mb-4 overflow-hidden">
