@@ -90,9 +90,12 @@
             </div>
             
             <div class="fac-grid">
-                @foreach($fasilitas as $index => $fac)
+                @forelse($fasilitas as $index => $fac)
+                @php
+                    $fotoFac = $fac->foto ? (str_starts_with($fac->foto, 'http') ? $fac->foto : asset($fac->foto)) : 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=600&q=80';
+                @endphp
                 <div class="fac-item {{ $fac->is_large ? 'large' : '' }}" @if($index == 0) data-aos="zoom-in" data-aos-duration="800" @endif>
-                    <img src="{{ $fac->foto }}" alt="{{ $fac->nama_fasilitas }}">
+                    <img src="{{ $fotoFac }}" alt="{{ $fac->nama_fasilitas }}">
                     <div class="fac-overlay">
                         <div class="fac-content">
                             <h3>{{ $fac->nama_fasilitas }}</h3>
@@ -102,7 +105,9 @@
                         </div>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="text-center py-4 text-muted w-100">Belum ada foto fasilitas terdaftar.</div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -373,48 +378,145 @@
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;" data-aos="fade-up">
                 <div>
-                    <h2 class="section-title" style="margin-bottom: 0;">Berita Terbaru</h2>
+                    <h2 class="section-title" style="margin-bottom: 0;">Berita & Pengumuman Terbaru</h2>
                 </div>
-                <a href="#" class="link-arrow">Semua Berita <i data-lucide="arrow-right" size="18"></i></a>
             </div>
 
             <div class="news-grid">
                 <!-- Highlight News -->
                 @if($beritaHighlight)
+                @php
+                    $fotoHighlight = $beritaHighlight->foto ? (str_starts_with($beritaHighlight->foto, 'http') ? $beritaHighlight->foto : asset($beritaHighlight->foto)) : 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80';
+                @endphp
                 <div class="news-main" data-aos="fade-right">
-                    <img src="{{ $beritaHighlight->foto }}" alt="{{ $beritaHighlight->judul }}">
+                    <img src="{{ $fotoHighlight }}" alt="{{ $beritaHighlight->judul }}">
                     <div class="news-main-overlay">
                         <span class="news-date">{{ \Carbon\Carbon::parse($beritaHighlight->tanggal_publikasi)->translatedFormat('d F Y') }}</span>
                         <h3>{{ $beritaHighlight->judul }}</h3>
-                        <a href="#" class="link-arrow" style="color: var(--white); opacity: 0.9;">Baca selengkapnya <i data-lucide="arrow-right" size="16"></i></a>
+                        <p class="text-white-50 small mb-2 d-none d-md-block">{{ Str::limit(strip_tags($beritaHighlight->konten), 120) }}</p>
+                        <button type="button" class="btn btn-sm btn-light fw-bold rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalBeritaLanding{{ $beritaHighlight->id }}">
+                            Baca Selengkapnya &rarr;
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Detail Highlight -->
+                <div class="modal fade" id="modalBeritaLanding{{ $beritaHighlight->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content border-0 shadow-lg rounded-4">
+                            <div class="modal-header bg-dark text-white py-3">
+                                <h5 class="modal-title fw-bold text-white"><i class="bi bi-newspaper me-2 text-warning"></i>{{ $beritaHighlight->judul }}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <img src="{{ $fotoHighlight }}" class="img-fluid rounded-3 mb-3 w-100 object-fit-cover" style="max-height: 350px;">
+                                <small class="text-muted d-block mb-3">📅 Dipublikasikan pada: {{ \Carbon\Carbon::parse($beritaHighlight->tanggal_publikasi)->translatedFormat('d F Y') }} | Kategori: {{ $beritaHighlight->kategori ?: 'Pengumuman' }}</small>
+                                <div class="text-dark" style="line-height: 1.8;">{!! nl2br(e($beritaHighlight->konten)) !!}</div>
+                            </div>
+                            <div class="modal-footer bg-light border-0 py-2">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 @endif
-                <!-- Small News -->
+
+                <!-- Small News List -->
                 <div class="news-list">
-                    @foreach($beritaList as $berita)
-                    <div class="news-card">
-                        <img src="{{ $berita->foto }}" alt="{{ $berita->judul }}">
-                        <div class="news-card-content">
+                    @forelse($beritaList as $berita)
+                    @php
+                        $fotoB = $berita->foto ? (str_starts_with($berita->foto, 'http') ? $berita->foto : asset($berita->foto)) : 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80';
+                    @endphp
+                    <div class="news-card shadow-sm rounded-3 overflow-hidden bg-white mb-3">
+                        <img src="{{ $fotoB }}" alt="{{ $berita->judul }}">
+                        <div class="news-card-content p-3">
                             <span class="news-date" style="font-size: 0.75rem; color: var(--accent);">{{ \Carbon\Carbon::parse($berita->tanggal_publikasi)->translatedFormat('d F Y') }}</span>
-                            <h4>{{ $berita->judul }}</h4>
-                            <a href="#" class="link-arrow" style="font-size: 0.9rem; margin-top: 0.5rem;">Baca selengkapnya <i data-lucide="arrow-right" size="14"></i></a>
+                            <h4 class="fw-bold mb-2" style="font-size: 1rem;">{{ $berita->judul }}</h4>
+                            <button type="button" class="btn btn-link text-primary p-0 border-0 fw-bold small text-decoration-none" data-bs-toggle="modal" data-bs-target="#modalBeritaLanding{{ $berita->id }}">
+                                Baca selengkapnya &rarr;
+                            </button>
                         </div>
                     </div>
-                    @endforeach
+
+                    <!-- Modal Detail Small Berita -->
+                    <div class="modal fade" id="modalBeritaLanding{{ $berita->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content border-0 shadow-lg rounded-4">
+                                <div class="modal-header bg-dark text-white py-3">
+                                    <h5 class="modal-title fw-bold text-white"><i class="bi bi-newspaper me-2 text-warning"></i>{{ $berita->judul }}</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <img src="{{ $fotoB }}" class="img-fluid rounded-3 mb-3 w-100 object-fit-cover" style="max-height: 350px;">
+                                    <small class="text-muted d-block mb-3">📅 Dipublikasikan pada: {{ \Carbon\Carbon::parse($berita->tanggal_publikasi)->translatedFormat('d F Y') }} | Kategori: {{ $berita->kategori ?: 'Berita' }}</small>
+                                    <div class="text-dark" style="line-height: 1.8;">{!! nl2br(e($berita->konten)) !!}</div>
+                                </div>
+                                <div class="modal-footer bg-light border-0 py-2">
+                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    @if(!$beritaHighlight)
+                        <div class="text-center py-4 text-muted w-100">Belum ada berita atau pengumuman dipublikasikan.</div>
+                    @endif
+                    @endforelse
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Agenda & Event Acara Sekolah -->
+    @if(count($agendas) > 0)
+    <section class="agenda bg-white py-5" id="agenda">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">📅 Kalender Kegiatan</span>
+                <h2 class="section-title text-center mt-1" style="margin-bottom: 0;">Agenda & Event Acara Sekolah</h2>
+                <p class="text-muted mt-2 mx-auto" style="max-width: 600px;">Jadwal kegiatan, seminar, ujian, dan acara penting sekolah yang akan datang.</p>
+            </div>
+
+            <div class="row g-4">
+                @foreach($agendas as $agenda)
+                <div class="col-md-6 col-lg-4" data-aos="fade-up">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-light border-start border-4 border-primary">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-primary text-white rounded-3 p-3 text-center" style="min-width: 65px;">
+                                <span class="d-block fw-bold fs-4" style="line-height: 1;">{{ \Carbon\Carbon::parse($agenda->tanggal)->format('d') }}</span>
+                                <span class="small text-uppercase">{{ \Carbon\Carbon::parse($agenda->tanggal)->translatedFormat('M Y') }}</span>
+                            </div>
+                            <div>
+                                <span class="badge bg-primary bg-opacity-10 text-primary small border border-primary mb-1">{{ $agenda->kategori ?: 'Agenda Sekolah' }}</span>
+                                <h5 class="fw-bold text-dark mb-0" style="font-size: 1.1rem;">{{ $agenda->judul }}</h5>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-3">{{ $agenda->deskripsi ?: 'Kegiatan penting sekolah.' }}</p>
+                        <div class="mt-auto d-flex justify-content-between align-items-center small text-muted border-top pt-2">
+                            <span><i class="bi bi-clock me-1"></i>{{ $agenda->waktu_mulai ? substr($agenda->waktu_mulai,0,5) : '08:00' }} WITA</span>
+                            <span><i class="bi bi-geo-alt me-1"></i>{{ $agenda->lokasi ?: 'Aula Sekolah' }}</span>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
 
     <!-- Galeri (Masonry) -->
     <section class="gallery bg-light" id="galeri">
         <div class="container">
             <h2 class="section-title text-center" style="margin-bottom: 2rem;">Galeri Sekolah</h2>
             <div class="gallery-grid">
-                @foreach($galeri as $gal)
-                <div class="gallery-item"><img src="{{ $gal->foto }}" alt="{{ $gal->judul }}"></div>
-                @endforeach
+                @forelse($galeri as $gal)
+                @php
+                    $fotoG = $gal->foto ? (str_starts_with($gal->foto, 'http') ? $gal->foto : asset($gal->foto)) : 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80';
+                @endphp
+                <div class="gallery-item"><img src="{{ $fotoG }}" alt="{{ $gal->judul }}"></div>
+                @empty
+                <div class="text-center py-4 text-muted w-100">Belum ada foto galeri terdaftar.</div>
+                @endforelse
             </div>
         </div>
     </section>
