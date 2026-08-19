@@ -155,8 +155,13 @@
             @endif
 
             <!-- Grid Daftar Prestasi Siswa -->
+            @php
+                $initialPrestasi = $prestasiList->take(3);
+                $remainingPrestasi = $prestasiList->skip(3);
+            @endphp
+
             <div id="daftar-prestasi-grid" class="row g-4 mt-2">
-                @forelse($prestasiList as $index => $p)
+                @forelse($initialPrestasi as $index => $p)
                 <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ ($index % 3) * 100 }}">
                     <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white hover-top" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
                         <div class="position-relative">
@@ -175,7 +180,7 @@
                             <div>
                                 <span class="badge bg-primary bg-opacity-10 text-primary small mb-2 border border-primary">Tingkat {{ $p->tingkat }}</span>
                                 <h4 class="fw-bold text-dark mb-1" style="font-size: 1.15rem; line-height: 1.4;">{{ $p->judul_prestasi }}</h4>
-                                <small class="text-muted d-block mb-2">👤 {{ $p->nama_siswa }} | Class {{ $p->kelas }}</small>
+                                <small class="text-muted d-block mb-2">👤 {{ $p->nama_siswa }} | Kelas {{ $p->kelas }}</small>
                                 <p class="text-muted small mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                     {{ $p->deskripsi ?: 'Prestasi luar biasa yang diraih oleh siswa dalam kejuaraan ' . $p->tingkat . '.' }}
                                 </p>
@@ -244,6 +249,103 @@
                 </div>
                 @endforelse
             </div>
+
+            <!-- Collapsible Grid for Remaining Prestasi Items -->
+            @if(count($remainingPrestasi) > 0)
+                <div class="collapse mt-4" id="collapseMorePrestasi">
+                    <div class="row g-4">
+                        @foreach($remainingPrestasi as $index => $p)
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white hover-top" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                                <div class="position-relative">
+                                    @if($p->foto_bukti)
+                                        <img src="{{ asset('storage/'.$p->foto_bukti) }}" class="card-img-top object-fit-cover" style="height: 200px;" alt="{{ $p->judul_prestasi }}">
+                                    @else
+                                        <div class="bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center p-4 text-center" style="height: 200px;">
+                                            <i data-lucide="trophy" size="64" class="text-warning"></i>
+                                        </div>
+                                    @endif
+                                    <span class="position-absolute top-0 end-0 m-3 badge bg-warning text-dark fw-bold px-3 py-1 shadow-sm fs-7">
+                                        {{ $p->peringkat }}
+                                    </span>
+                                </div>
+                                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary small mb-2 border border-primary">Tingkat {{ $p->tingkat }}</span>
+                                        <h4 class="fw-bold text-dark mb-1" style="font-size: 1.15rem; line-height: 1.4;">{{ $p->judul_prestasi }}</h4>
+                                        <small class="text-muted d-block mb-2">👤 {{ $p->nama_siswa }} | Kelas {{ $p->kelas }}</small>
+                                        <p class="text-muted small mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                            {{ $p->deskripsi ?: 'Prestasi luar biasa yang diraih oleh siswa dalam kejuaraan ' . $p->tingkat . '.' }}
+                                        </p>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary w-100 fw-bold rounded-3" data-bs-toggle="modal" data-bs-target="#modalLandingPrestasi{{ $p->id }}" style="border-radius: 10px;">
+                                        👁️ Detail & Deskripsi Singkat
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Detail Pop-up Prestasi -->
+                        <div class="modal fade" id="modalLandingPrestasi{{ $p->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                                    <div class="modal-header bg-dark text-white border-0 py-3" style="background: linear-gradient(90deg, #0F172A 0%, #1E293B 100%);">
+                                        <h5 class="modal-title fw-bold text-white mb-0">
+                                            🏆 Detail Prestasi Siswa: {{ $p->judul_prestasi }}
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body p-4" style="background: #FFFFFF;">
+                                        <div class="row g-4 align-items-center">
+                                            <div class="col-md-5 text-center">
+                                                @if($p->foto_bukti)
+                                                    <img src="{{ asset('storage/'.$p->foto_bukti) }}" alt="{{ $p->judul_prestasi }}" class="img-fluid rounded-3 shadow border object-fit-cover w-100" style="max-height: 280px;">
+                                                @else
+                                                    <div class="bg-light p-4 rounded-3 border text-center">
+                                                        <i data-lucide="trophy" size="64" class="text-warning mx-auto mb-2"></i>
+                                                        <small class="text-muted d-block">Foto Dokumentasi Piala</small>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="col-md-7">
+                                                <span class="badge bg-warning text-dark fw-bold px-3 py-1 fs-6 mb-2">{{ $p->peringkat }} - Tingkat {{ $p->tingkat }}</span>
+                                                <h3 class="fw-bold text-primary mb-2">{{ $p->judul_prestasi }}</h3>
+                                                
+                                                <div class="p-3 bg-light rounded-3 mb-3 border">
+                                                    <div class="row g-2 small">
+                                                        <div class="col-6"><strong>Nama Siswa:</strong> <br><span class="text-dark fw-bold">{{ $p->nama_siswa }}</span></div>
+                                                        <div class="col-6"><strong>Kelas:</strong> <br><span class="text-dark">{{ $p->kelas }}</span></div>
+                                                        <div class="col-6 mt-2"><strong>Tahun Diraih:</strong> <br><span class="text-dark">{{ $p->tahun }}</span></div>
+                                                        <div class="col-6 mt-2"><strong>Penyelenggara:</strong> <br><span class="text-dark">{{ $p->penyelenggara ?: '-' }}</span></div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="border-top pt-2">
+                                                    <h6 class="fw-bold text-dark mb-1">Deskripsi Singkat Kejuaraan:</h6>
+                                                    <p class="text-muted small mb-0" style="line-height: 1.7;">
+                                                        {{ $p->deskripsi ?: 'Siswa berhasil membuktikan keunggulannya dalam kompetisi ini dengan penuh semangat dan kerja keras hingga meraih juara.' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer bg-light border-0 py-3">
+                                        <button type="button" class="btn btn-secondary btn-sm px-4" data-bs-dismiss="modal">Tutup Modal</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Big Interactive Toggle Button -->
+                <div class="text-center mt-5" data-aos="fade-up">
+                    <button class="btn btn-outline-primary btn-lg rounded-pill fw-bold px-5 py-3 shadow-sm border-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMorePrestasi" aria-expanded="false" aria-controls="collapseMorePrestasi" id="btnTogglePrestasi" style="transition: all 0.3s ease;">
+                        <i class="bi bi-chevron-down me-2"></i> Tampilkan Selengkapnya (Lihat {{ count($remainingPrestasi) }} Prestasi Lainnya)
+                    </button>
+                </div>
+            @endif
         </div>
     </section>
 
@@ -354,4 +456,23 @@
             </div>
         </div>
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const collapseElem = document.getElementById('collapseMorePrestasi');
+            const toggleBtn = document.getElementById('btnTogglePrestasi');
+            if (collapseElem && toggleBtn) {
+                collapseElem.addEventListener('show.bs.collapse', function () {
+                    toggleBtn.innerHTML = '<i class="bi bi-chevron-up me-2"></i> Sembunyikan / Tutup Kembali';
+                    toggleBtn.classList.remove('btn-outline-primary');
+                    toggleBtn.classList.add('btn-primary', 'text-white');
+                });
+                collapseElem.addEventListener('hide.bs.collapse', function () {
+                    toggleBtn.innerHTML = '<i class="bi bi-chevron-down me-2"></i> Tampilkan Selengkapnya (Lihat {{ isset($remainingPrestasi) ? count($remainingPrestasi) : 0 }} Prestasi Lainnya)';
+                    toggleBtn.classList.remove('btn-primary', 'text-white');
+                    toggleBtn.classList.add('btn-outline-primary');
+                });
+            }
+        });
+    </script>
 @endsection
