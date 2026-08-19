@@ -170,6 +170,25 @@
                                                     <div class="text-muted small mt-2">
                                                         Dikumpulkan pada: {{ \Carbon\Carbon::parse($sub->dikumpulkan_pada)->translatedFormat('d F Y (H:i)') }}
                                                     </div>
+
+                                                    @if($sub->nilai !== null)
+                                                        <div class="mt-3 p-3 bg-success bg-opacity-10 border border-success rounded-3">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="badge bg-success fs-6"><i class="bi bi-star-fill me-1"></i> Nilai Guru: {{ $sub->nilai }} / 100</span>
+                                                                <small class="text-success fw-bold"><i class="bi bi-check-all me-1"></i>Sudah Dinilai</small>
+                                                            </div>
+                                                            @if($sub->respon_guru)
+                                                                <div class="mt-2 text-dark small border-top border-success border-opacity-25 pt-2">
+                                                                    <strong>Catatan Guru:</strong><br>
+                                                                    <span class="fst-italic text-secondary">"{{ $sub->respon_guru }}"</span>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    @else
+                                                        <div class="mt-2">
+                                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary small"><i class="bi bi-hourglass-split me-1"></i>Menunggu Penilaian Guru</span>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             @endif
 

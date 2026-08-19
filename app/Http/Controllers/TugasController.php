@@ -11,6 +11,12 @@ use Illuminate\Http\Request;
 
 class TugasController extends Controller
 {
+    // Student dedicated tasks view
+    public function siswaIndex()
+    {
+        return $this->index();
+    }
+
     // List assignments
     public function index()
     {
@@ -24,18 +30,22 @@ class TugasController extends Controller
                 ->where('guru_id', $user->guru->id)
                 ->orderBy('deadline', 'asc')
                 ->get();
-        } else if ($user->isSiswa() && $user->siswa) {
-            if ($user->siswa->status === 'Lulus') {
-                return redirect()->route('dashboard')->with('error', 'Siswa yang telah lulus tidak memiliki tugas sekolah aktif.');
-            }
-            $tugas = Tugas::with('guru')
-                ->where('kelas', $user->siswa->kelas)
-                ->orderBy('deadline', 'asc')
-                ->get();
+        } else if ($user->isSiswa()) {
+            if ($user->siswa) {
+                if ($user->siswa->status === 'Lulus') {
+                    return redirect()->route('dashboard')->with('error', 'Siswa yang telah lulus tidak memiliki tugas sekolah aktif.');
+                }
+                $tugas = Tugas::with('guru')
+                    ->where('kelas', $user->siswa->kelas)
+                    ->orderBy('deadline', 'asc')
+                    ->get();
 
-            $submissions = TugasSubmission::where('siswa_id', $user->siswa->id)
-                ->get()
-                ->keyBy('tugas_id');
+                $submissions = TugasSubmission::where('siswa_id', $user->siswa->id)
+                    ->get()
+                    ->keyBy('tugas_id');
+            } else {
+                $tugas = collect();
+            }
         } else {
             $tugas = Tugas::with('guru')->orderBy('deadline', 'asc')->get();
         }
