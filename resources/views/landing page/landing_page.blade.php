@@ -108,16 +108,35 @@
     </section>
 
     <!-- Ekstrakurikuler -->
-    <section class="eksul" id="ekstrakurikuler">
+    <section class="eksul bg-white py-5" id="ekstrakurikuler">
         <div class="container">
-            <h2 class="section-title" style="margin-bottom: 2rem;" data-aos="fade-up">Ekstrakurikuler</h2>
+            <div class="text-center mb-5" data-aos="fade-up">
+                <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">🎨 Pengembangan Minat & Bakat</span>
+                <h2 class="section-title text-center mt-1" style="margin-bottom: 0;">Ekstrakurikuler Sekolah</h2>
+                <p class="text-muted mt-2 mx-auto" style="max-width: 600px;">Wadah bagi seluruh peserta didik untuk mengasah bakat, kepemimpinan, seni, dan kreativitas.</p>
+            </div>
+            
             <div class="eksul-wrapper" data-aos="fade-left" data-aos-delay="200">
-                @foreach($ekstrakurikuler as $eks)
+                @forelse($ekstrakurikuler as $eks)
+                @php
+                    $namaEkskul = $eks->nama_ekskul ?? $eks->nama_ekstrakurikuler ?? 'Ekstrakurikuler';
+                    $fotoEkskul = $eks->foto ? (str_contains($eks->foto, 'http') ? $eks->foto : asset('storage/'.$eks->foto)) : 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=600&q=80';
+                @endphp
                 <div class="eksul-card">
-                    <img src="{{ $eks->foto }}" alt="{{ $eks->nama_ekstrakurikuler }}">
-                    <div class="overlay"><h3>{{ $eks->nama_ekstrakurikuler }}</h3></div>
+                    <img src="{{ $fotoEkskul }}" alt="{{ $namaEkskul }}">
+                    <div class="overlay">
+                        @if(!empty($eks->kategori))
+                            <span class="badge bg-warning text-dark fw-bold mb-1 small">{{ $eks->kategori }}</span>
+                        @endif
+                        <h3>{{ $namaEkskul }}</h3>
+                        @if(!empty($eks->hari_latihan))
+                            <small class="text-white-50 d-block mt-1"><i class="bi bi-clock me-1"></i>Latihan: {{ $eks->hari_latihan }}</small>
+                        @endif
+                    </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="text-center py-4 text-muted w-100">Belum ada daftar ekstrakurikuler terdaftar.</div>
+                @endforelse
             </div>
         </div>
     </section>

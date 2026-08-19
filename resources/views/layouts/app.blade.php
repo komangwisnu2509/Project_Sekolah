@@ -352,10 +352,10 @@
                                         </a>
                                     </li>
                                      <li class="{{ request()->routeIs('admin.cms.*') ? 'active' : '' }} my-1">
-                                         <a href="{{ route('admin.cms.index') }}" class="py-2 d-flex align-items-center justify-content-between">
-                                             <span><i class="bi bi-window-stack me-2 text-success"></i> Kelola Beranda (CMS)</span>
-                                             <span class="badge bg-success rounded-pill small">Beranda</span>
-                                         </a>
+                                          <a href="{{ route('admin.cms.index') }}" class="py-2 d-flex align-items-center justify-content-between">
+                                              <span><i class="bi bi-globe me-2 text-success"></i> Web Sekolah (CMS)</span>
+                                              <span class="badge bg-success rounded-pill small">Website</span>
+                                          </a>
                                      </li>
                                      <li class="{{ request()->routeIs('admin.ppdb.*') ? 'active' : '' }} my-1">
                                          <a href="{{ route('admin.ppdb.index') }}" class="py-2 d-flex align-items-center justify-content-between">

@@ -170,6 +170,8 @@ Route::put('/admin/cms/berita/{berita}', [AdminLandingCmsController::class, 'upd
 Route::delete('/admin/cms/berita/{berita}', [AdminLandingCmsController::class, 'destroyBerita'])->name('admin.cms.berita.destroy');
 Route::post('/admin/cms/agenda', [AdminLandingCmsController::class, 'storeAgenda'])->name('admin.cms.agenda.store');
 Route::delete('/admin/cms/agenda/{agenda}', [AdminLandingCmsController::class, 'destroyAgenda'])->name('admin.cms.agenda.destroy');
+Route::post('/admin/cms/ekskul', [AdminLandingCmsController::class, 'storeEkskul'])->name('admin.cms.ekskul.store');
+Route::delete('/admin/cms/ekskul/{ekstrakurikuler}', [AdminLandingCmsController::class, 'destroyEkskul'])->name('admin.cms.ekskul.destroy');
 
 // Admin PPDB Management Routes
 Route::get('/admin/ppdb', [PpdbController::class, 'adminIndex'])->name('admin.ppdb.index');

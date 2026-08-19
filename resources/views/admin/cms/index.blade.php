@@ -6,10 +6,10 @@
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
             <h2 class="fw-bold text-dark mb-1">
-                <i class="bi bi-window-stack text-primary me-2"></i>Kelola Beranda Utama Sekolah (CMS)
+                <i class="bi bi-globe text-primary me-2"></i>Pengaturan & CMS Web Sekolah
             </h2>
             <p class="text-muted mb-0">
-                Edit profil sekolah, publikasikan berita & agenda acara, kelola foto fasilitas, galeri, testimoni, dan FAQ yang tampil di Beranda Utama.
+                Kelola profil sekolah, ekstrakurikuler, berita, event, foto fasilitas, galeri, testimoni, dan FAQ yang tampil di Beranda Utama.
             </p>
         </div>
         <a href="{{ route('landing_page') }}" class="btn btn-outline-primary fw-bold shadow-sm" target="_blank">
@@ -33,6 +33,11 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link active fw-bold py-2.5" id="tab-profil-tab" data-bs-toggle="tab" data-bs-target="#tab-profil" type="button" role="tab">
                 <i class="bi bi-building me-1"></i> Profil Sekolah
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold py-2.5" id="tab-ekskul-tab" data-bs-toggle="tab" data-bs-target="#tab-ekskul" type="button" role="tab">
+                <i class="bi bi-palette me-1"></i> Ekstrakurikuler
             </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -115,15 +120,75 @@
                                 <label class="form-label fw-bold small">Username Instagram</label>
                                 <input type="text" name="instagram" class="form-control" value="{{ old('instagram', $profil->instagram) }}" placeholder="@astikadharma">
                             </div>
-                            <div class="col-12">
-                                <label class="form-label fw-bold small">Alamat Lengkap Sekolah</label>
-                                <textarea name="alamat" class="form-control" rows="2">{{ old('alamat', $profil->alamat) }}</textarea>
+                            <div class="col-12 text-end mt-4 pt-3 border-top">
+                                <button type="submit" class="btn btn-primary fw-bold px-4"><i class="bi bi-save me-1"></i> Simpan Profil Sekolah</button>
                             </div>
                         </div>
-                        <div class="text-end mt-4 pt-3 border-top">
-                            <button type="submit" class="btn btn-primary fw-bold px-4"><i class="bi bi-save me-1"></i> Simpan Profil Sekolah</button>
-                        </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: EKSTRAKURIKULER -->
+        <div class="tab-pane fade" id="tab-ekskul" role="tabpanel">
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-palette me-2 text-primary"></i>Kelola Ekstrakurikuler Sekolah</h5>
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#modalTambahEkskul">
+                        <i class="bi bi-plus-circle me-1"></i> Tambah Ekskul Baru
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Nama Ekstrakurikuler</th>
+                                    <th>Kategori</th>
+                                    <th>Pembina</th>
+                                    <th>Jadwal Latihan</th>
+                                    <th>Lokasi</th>
+                                    <th class="pe-4 text-end">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($ekstrakurikulers as $ek)
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if($ek->foto)
+                                                    <img src="{{ asset('storage/'.$ek->foto) }}" class="rounded-3 object-fit-cover border" style="width: 45px; height: 45px;">
+                                                @else
+                                                    <div class="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center fw-bold" style="width: 45px; height: 45px;">
+                                                        <i class="bi bi-palette"></i>
+                                                    </div>
+                                                @endif
+                                                <div>
+                                                    <div class="fw-bold text-dark">{{ $ek->nama_ekskul }}</div>
+                                                    <small class="text-muted">{{ Str::limit($ek->deskripsi, 50) }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-warning text-dark">{{ $ek->kategori }}</span></td>
+                                        <td class="small">{{ $ek->pembina ?: '-' }}</td>
+                                        <td class="small">{{ $ek->hari_latihan ?: '-' }} ({{ $ek->jam_latihan ?: '-' }})</td>
+                                        <td class="small">{{ $ek->lokasi ?: '-' }}</td>
+                                        <td class="pe-4 text-end">
+                                            <form action="{{ route('admin.cms.ekskul.destroy', $ek->id) }}" method="POST" onsubmit="return confirm('Hapus ekstrakurikuler ini?')" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data ekstrakurikuler terdaftar.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -596,6 +661,62 @@
                 <div class="modal-footer bg-light border-0">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary fw-bold btn-sm px-4">Simpan FAQ</button>
+                </div>
+<!-- Modal Tambah Ekskul -->
+<div class="modal fade" id="modalTambahEkskul" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-dark text-white border-0 py-3">
+                <h5 class="modal-title fw-bold"><i class="bi bi-palette me-2 text-warning"></i>Tambah Ekstrakurikuler Baru</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('admin.cms.ekskul.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Nama Ekstrakurikuler <span class="text-danger">*</span></label>
+                            <input type="text" name="nama_ekskul" class="form-control" required placeholder="Contoh: Pramuka / Basket / Seni Tari...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Kategori <span class="text-danger">*</span></label>
+                            <select name="kategori" class="form-select" required>
+                                <option value="Olahraga">Olahraga</option>
+                                <option value="Seni & Budaya">Seni & Budaya</option>
+                                <option value="Sains & Teknologi">Sains & Teknologi</option>
+                                <option value="Keorganisasian">Keorganisasian</option>
+                                <option value="Keagamaan">Keagamaan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Nama Pembina</label>
+                            <input type="text" name="pembina" class="form-control" placeholder="Pembina ekskul...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Hari Latihan</label>
+                            <input type="text" name="hari_latihan" class="form-control" placeholder="Contoh: Jumat & Sabtu...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Jam Latihan</label>
+                            <input type="text" name="jam_latihan" class="form-control" placeholder="Contoh: 15:30 - 17:00 WITA...">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Lokasi Latihan</label>
+                            <input type="text" name="lokasi" class="form-control" placeholder="Lapangan Utama / Lab Komputer...">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Deskripsi Ekskul</label>
+                            <textarea name="deskripsi" class="form-control" rows="2" placeholder="Ringkasan kegiatan ekskul..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Foto Kegiatan Ekskul</label>
+                            <input type="file" name="foto" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary fw-bold btn-sm px-4">Simpan Ekskul</button>
                 </div>
             </form>
         </div>

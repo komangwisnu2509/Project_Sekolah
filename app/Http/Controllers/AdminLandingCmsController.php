@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Agenda;
 use App\Models\Berita;
+use App\Models\Ekstrakurikuler;
 use App\Models\Faq;
 use App\Models\Fasilitas;
 use App\Models\Galeri;
+use App\Models\PrestasiSiswa;
 use App\Models\ProfilSekolah;
 use App\Models\Testimoni;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ use Illuminate\Support\Str;
 class AdminLandingCmsController extends Controller
 {
     /**
-     * Dashboard CMS Beranda Utama
+     * Dashboard CMS Beranda Utama & Web Sekolah
      */
     public function index()
     {
@@ -27,8 +29,10 @@ class AdminLandingCmsController extends Controller
         $faqs = Faq::orderBy('urutan')->get();
         $beritas = Berita::latest()->get();
         $agendas = Agenda::orderBy('tanggal', 'desc')->get();
+        $ekstrakurikulers = Ekstrakurikuler::orderBy('nama_ekskul')->get();
+        $prestasis = PrestasiSiswa::orderBy('tahun', 'desc')->get();
 
-        return view('admin.cms.index', compact('profil', 'fasilitas', 'galeris', 'testimonis', 'faqs', 'beritas', 'agendas'));
+        return view('admin.cms.index', compact('profil', 'fasilitas', 'galeris', 'testimonis', 'faqs', 'beritas', 'agendas', 'ekstrakurikulers', 'prestasis'));
     }
 
     /**
@@ -268,5 +272,38 @@ class AdminLandingCmsController extends Controller
     {
         $agenda->delete();
         return redirect()->back()->with('success', 'Agenda/Event berhasil dihapus.');
+    }
+
+    // --- EKSTRAKURIKULER CRUD ---
+    public function storeEkskul(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_ekskul' => 'required|string|max:255',
+            'kategori' => 'required|string|max:100',
+            'pembina' => 'nullable|string|max:255',
+            'hari_latihan' => 'nullable|string|max:100',
+            'jam_latihan' => 'nullable|string|max:100',
+            'lokasi' => 'nullable|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+        ]);
+
+        if ($request->hasFile('foto')) {
+            $validated['foto'] = $request->file('foto')->store('ekskul', 'public');
+        }
+
+        $validated['status'] = 'Aktif';
+        Ekstrakurikuler::create($validated);
+
+        return redirect()->back()->with('success', 'Ekstrakurikuler sekolah baru berhasil ditambahkan.');
+    }
+
+    public function destroyEkskul(Ekstrakurikuler $ekstrakurikuler)
+    {
+        if ($ekstrakurikuler->foto && Storage::disk('public')->exists($ekstrakurikuler->foto)) {
+            Storage::disk('public')->delete($ekstrakurikuler->foto);
+        }
+        $ekstrakurikuler->delete();
+        return redirect()->back()->with('success', 'Ekstrakurikuler berhasil dihapus.');
     }
 }
