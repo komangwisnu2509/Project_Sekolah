@@ -357,10 +357,10 @@
                                              <span class="badge bg-success rounded-pill small">Beranda</span>
                                          </a>
                                      </li>
-                                     <li class="{{ request()->routeIs('admin.smbp.*') ? 'active' : '' }} my-1">
-                                         <a href="{{ route('admin.smbp.index') }}" class="py-2 d-flex align-items-center justify-content-between">
-                                             <span><i class="bi bi-user-plus-fill me-2 text-warning"></i> Pendaftaran SMBP/PPDB</span>
-                                             <span class="badge bg-warning text-dark rounded-pill small">{{ \App\Models\SmbpPendaftaran::count() }}</span>
+                                     <li class="{{ request()->routeIs('admin.ppdb.*') ? 'active' : '' }} my-1">
+                                         <a href="{{ route('admin.ppdb.index') }}" class="py-2 d-flex align-items-center justify-content-between">
+                                             <span><i class="bi bi-user-plus-fill me-2 text-warning"></i> Pendaftaran PPDB Online</span>
+                                             <span class="badge bg-warning text-dark rounded-pill small">{{ \App\Models\PpdbPendaftaran::count() }}</span>
                                          </a>
                                      </li>
                                      <li class="{{ request()->routeIs('profil-sekolah.*') ? 'active' : '' }} my-1">

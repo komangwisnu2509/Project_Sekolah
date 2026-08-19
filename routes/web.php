@@ -18,7 +18,7 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TugasController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\AdminLandingCmsController;
-use App\Http\Controllers\SmbpController;
+use App\Http\Controllers\PpdbController;
 
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landing_page');
@@ -30,10 +30,10 @@ Route::get('/kurikulum', [LandingPageController::class, 'kurikulum'])->name('kur
 Route::get('/pengumuman', [LandingPageController::class, 'pengumuman'])->name('pengumuman');
 Route::get('/agenda', [LandingPageController::class, 'agenda'])->name('agenda');
 
-// Public SMBP / PPDB Pendaftaran Siswa Baru Routes
-Route::get('/smbp', [SmbpController::class, 'publicIndex'])->name('smbp.index');
-Route::post('/smbp/store', [SmbpController::class, 'storePublic'])->name('smbp.store');
-Route::get('/smbp/bukti/{no_pendaftaran}', [SmbpController::class, 'bukti'])->name('smbp.bukti');
+// Public PPDB Pendaftaran Siswa Baru Routes
+Route::get('/ppdb', [PpdbController::class, 'publicIndex'])->name('ppdb.index');
+Route::post('/ppdb/store', [PpdbController::class, 'storePublic'])->name('ppdb.store');
+Route::get('/ppdb/bukti/{no_pendaftaran}', [PpdbController::class, 'bukti'])->name('ppdb.bukti');
 
 // Dashboard main route
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
@@ -153,7 +153,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/profil-sekolah', [ProfilSekolahController::class, 'edit'])->name('profil-sekolah.edit');
 Route::put('/profil-sekolah', [ProfilSekolahController::class, 'update'])->name('profil-sekolah.update');
 
-// Admin Landing Page CMS & Berita/Event & SMBP Management
+// Admin Landing Page CMS & Berita/Event & PPDB Management
 Route::get('/admin/cms', [AdminLandingCmsController::class, 'index'])->name('admin.cms.index');
 Route::put('/admin/cms/profil', [AdminLandingCmsController::class, 'updateProfil'])->name('admin.cms.profil.update');
 Route::post('/admin/cms/fasilitas', [AdminLandingCmsController::class, 'storeFasilitas'])->name('admin.cms.fasilitas.store');
@@ -171,10 +171,10 @@ Route::delete('/admin/cms/berita/{berita}', [AdminLandingCmsController::class, '
 Route::post('/admin/cms/agenda', [AdminLandingCmsController::class, 'storeAgenda'])->name('admin.cms.agenda.store');
 Route::delete('/admin/cms/agenda/{agenda}', [AdminLandingCmsController::class, 'destroyAgenda'])->name('admin.cms.agenda.destroy');
 
-// Admin SMBP / PPDB Management Routes
-Route::get('/admin/smbp', [SmbpController::class, 'adminIndex'])->name('admin.smbp.index');
-Route::put('/admin/smbp/{smbpPendaftaran}/status', [SmbpController::class, 'adminUpdateStatus'])->name('admin.smbp.status.update');
-Route::delete('/admin/smbp/{smbpPendaftaran}', [SmbpController::class, 'adminDestroy'])->name('admin.smbp.destroy');
+// Admin PPDB Management Routes
+Route::get('/admin/ppdb', [PpdbController::class, 'adminIndex'])->name('admin.ppdb.index');
+Route::put('/admin/ppdb/{ppdbPendaftaran}/status', [PpdbController::class, 'adminUpdateStatus'])->name('admin.ppdb.status.update');
+Route::delete('/admin/ppdb/{ppdbPendaftaran}', [PpdbController::class, 'adminDestroy'])->name('admin.ppdb.destroy');
     });
 });
 

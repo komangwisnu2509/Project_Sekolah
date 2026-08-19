@@ -921,7 +921,7 @@
                 <a href="{{ route('dashboard') }}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">Dashboard</a>
             @else
                 <a href="{{ route('login') }}" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">Login</a>
-                <a href="{{ route('register') }}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">PPDB 2026</a>
+                <a href="{{ route('ppdb.index') }}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">PPDB 2026</a>
             @endauth
         </div>
     </nav>

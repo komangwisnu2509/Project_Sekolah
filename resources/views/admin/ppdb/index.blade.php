@@ -6,13 +6,13 @@
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
             <h2 class="fw-bold text-dark mb-1">
-                <i class="bi bi-user-plus-fill text-primary me-2"></i>Portal SMBP / PPDB Siswa Baru
+                <i class="bi bi-user-plus-fill text-primary me-2"></i>Portal PPDB Siswa Baru Online
             </h2>
             <p class="text-muted mb-0">
-                Kelola pendaftaran calon siswa baru online, verifikasi berkas, dan konversi status penerimaan ke akun siswa resmi.
+                Kelola pendaftaran calon siswa baru online, verifikasi berkas PPDB, dan konversi status penerimaan ke akun siswa resmi.
             </p>
         </div>
-        <a href="{{ route('smbp.index') }}" class="btn btn-primary fw-bold shadow-sm" target="_blank">
+        <a href="{{ route('ppdb.index') }}" class="btn btn-primary fw-bold shadow-sm" target="_blank">
             <i class="bi bi-globe me-1"></i> Buka Form Pendaftaran Publik &rarr;
         </a>
     </div>
@@ -63,7 +63,7 @@
     <!-- Filter Bar Card -->
     <div class="card border-0 shadow-sm rounded-3 mb-4">
         <div class="card-body p-3">
-            <form action="{{ route('admin.smbp.index') }}" method="GET" class="row g-3 align-items-center">
+            <form action="{{ route('admin.ppdb.index') }}" method="GET" class="row g-3 align-items-center">
                 <div class="col-md-4">
                     <label class="form-label fw-bold small text-muted mb-1">Filter Status Pendaftaran</label>
                     <select name="status" class="form-select fw-bold" onchange="this.form.submit()">
@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 <div class="col-md-2 text-end pt-3">
-                    <a href="{{ route('admin.smbp.index') }}" class="btn btn-outline-secondary w-100 fw-bold">Reset Filter</a>
+                    <a href="{{ route('admin.ppdb.index') }}" class="btn btn-outline-secondary w-100 fw-bold">Reset Filter</a>
                 </div>
             </form>
         </div>
@@ -90,7 +90,7 @@
     <!-- Applicants Table Card -->
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
         <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-list-ul me-2 text-primary"></i>Daftar Calon Siswa Baru</h5>
+            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-list-ul me-2 text-primary"></i>Daftar Calon Siswa Baru PPDB</h5>
             <span class="badge bg-secondary px-3 py-1 fs-6">Total: {{ $pendaftarans->total() }} Data</span>
         </div>
         <div class="card-body p-0">
@@ -142,15 +142,15 @@
                                 <td class="pe-4 text-end">
                                     <div class="btn-group">
                                         <!-- Tombol Detail / Verifikasi -->
-                                        <button type="button" class="btn btn-sm btn-primary fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalSmbpDetail{{ $p->id }}">
+                                        <button type="button" class="btn btn-sm btn-primary fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalPpdbDetail{{ $p->id }}">
                                             <i class="bi bi-eye-fill me-1"></i> Detail
                                         </button>
                                         <!-- Cetak Bukti -->
-                                        <a href="{{ route('smbp.bukti', $p->no_pendaftaran) }}" class="btn btn-sm btn-outline-secondary" target="_blank" title="Cetak Bukti">
+                                        <a href="{{ route('ppdb.bukti', $p->no_pendaftaran) }}" class="btn btn-sm btn-outline-secondary" target="_blank" title="Cetak Bukti">
                                             <i class="bi bi-printer-fill"></i>
                                         </a>
                                         <!-- Hapus -->
-                                        <form action="{{ route('admin.smbp.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Hapus data pendaftaran ini?')" class="d-inline">
+                                        <form action="{{ route('admin.ppdb.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Hapus data pendaftaran ini?')" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
@@ -162,16 +162,16 @@
                             </tr>
 
                             <!-- Modal Detail & Verifikasi Status Admin -->
-                            <div class="modal fade" id="modalSmbpDetail{{ $p->id }}" tabindex="-1" aria-labelledby="labelSmbp{{ $p->id }}" aria-hidden="true">
+                            <div class="modal fade" id="modalPpdbDetail{{ $p->id }}" tabindex="-1" aria-labelledby="labelPpdb{{ $p->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered modal-lg">
                                     <div class="modal-content border-0 shadow-lg rounded-4">
                                         <div class="modal-header bg-dark text-white border-0 py-3">
-                                            <h5 class="modal-title fw-bold" id="labelSmbp{{ $p->id }}">
-                                                <i class="bi bi-person-badge-fill text-warning me-2"></i>Verifikasi Data Pendaftar: {{ $p->no_pendaftaran }}
+                                            <h5 class="modal-title fw-bold" id="labelPpdb{{ $p->id }}">
+                                                <i class="bi bi-person-badge-fill text-warning me-2"></i>Verifikasi Data Pendaftar PPDB: {{ $p->no_pendaftaran }}
                                             </h5>
                                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <form action="{{ route('admin.smbp.status.update', $p->id) }}" method="POST">
+                                        <form action="{{ route('admin.ppdb.status.update', $p->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
                                             <div class="modal-body p-4">
@@ -221,8 +221,8 @@
                                                             </div>
 
                                                             <div class="form-check form-switch mb-3 p-3 bg-white border rounded-3 ms-0">
-                                                                <input class="form-check-input ms-0 me-2" type="checkbox" name="buat_akun_siswa" id="buatAkun{{ $p->id }}" value="1">
-                                                                <label class="form-check-label fw-bold text-dark small" for="buatAkun{{ $p->id }}">
+                                                                <input class="form-check-input ms-0 me-2" type="checkbox" name="buat_akun_siswa" id="buatAkunPpdb{{ $p->id }}" value="1">
+                                                                <label class="form-check-label fw-bold text-dark small" for="buatAkunPpdb{{ $p->id }}">
                                                                     ✨ Buatkan Akun Siswa Resmi Otomatis (Jika Diterima)
                                                                 </label>
                                                                 <small class="text-muted d-block ms-4 fs-7">Otomatis generate NIS dan buat akun login siswa untuk masuk ke Portal Siswa SAT Project.</small>
@@ -248,7 +248,7 @@
                             <tr>
                                 <td colspan="7" class="text-center py-5 text-muted">
                                     <i class="bi bi-user-x fs-1 d-block mb-2 opacity-50"></i>
-                                    Belum ada data pendaftar SMBP/PPDB yang sesuai.
+                                    Belum ada data pendaftar PPDB Online yang sesuai.
                                 </td>
                             </tr>
                         @endforelse

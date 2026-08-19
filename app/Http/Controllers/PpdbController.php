@@ -5,26 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Jurusan;
 use App\Models\ProfilSekolah;
 use App\Models\Siswa;
-use App\Models\SmbpPendaftaran;
+use App\Models\PpdbPendaftaran;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class SmbpController extends Controller
+class PpdbController extends Controller
 {
     /**
-     * Display public SMBP registration page
+     * Display public PPDB registration page
      */
     public function publicIndex()
     {
         $profil = ProfilSekolah::first();
         $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        $totalPendaftar = SmbpPendaftaran::count();
-        $totalDiterima = SmbpPendaftaran::where('status', 'Diterima')->count();
+        $totalPendaftar = PpdbPendaftaran::count();
+        $totalDiterima = PpdbPendaftaran::where('status', 'Diterima')->count();
 
-        return view('smbp.public_index', compact('profil', 'jurusans', 'totalPendaftar', 'totalDiterima'));
+        return view('ppdb.public_index', compact('profil', 'jurusans', 'totalPendaftar', 'totalDiterima'));
     }
 
     /**
@@ -48,26 +48,26 @@ class SmbpController extends Controller
         ]);
 
         // Generate unique registration number
-        $uniqueNo = 'SMBP-' . date('Y') . '-' . strtoupper(Str::random(5));
-        while (SmbpPendaftaran::where('no_pendaftaran', $uniqueNo)->exists()) {
-            $uniqueNo = 'SMBP-' . date('Y') . '-' . strtoupper(Str::random(5));
+        $uniqueNo = 'PPDB-' . date('Y') . '-' . strtoupper(Str::random(5));
+        while (PpdbPendaftaran::where('no_pendaftaran', $uniqueNo)->exists()) {
+            $uniqueNo = 'PPDB-' . date('Y') . '-' . strtoupper(Str::random(5));
         }
 
         $validated['no_pendaftaran'] = $uniqueNo;
         $validated['status'] = 'Pending';
 
         if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('smbp/foto', 'public');
+            $validated['foto'] = $request->file('foto')->store('ppdb/foto', 'public');
         }
 
         if ($request->hasFile('berkas_ijazah')) {
-            $validated['berkas_ijazah'] = $request->file('berkas_ijazah')->store('smbp/ijazah', 'public');
+            $validated['berkas_ijazah'] = $request->file('berkas_ijazah')->store('ppdb/ijazah', 'public');
         }
 
-        $pendaftaran = SmbpPendaftaran::create($validated);
+        $pendaftaran = PpdbPendaftaran::create($validated);
 
-        return redirect()->route('smbp.bukti', $pendaftaran->no_pendaftaran)
-            ->with('success', 'Selamat! Pendaftaran Siswa Baru (SMBP) Anda berhasil dikirim.');
+        return redirect()->route('ppdb.bukti', $pendaftaran->no_pendaftaran)
+            ->with('success', 'Selamat! Pendaftaran Siswa Baru (PPDB Online) Anda berhasil dikirim.');
     }
 
     /**
@@ -75,21 +75,21 @@ class SmbpController extends Controller
      */
     public function bukti($no_pendaftaran)
     {
-        $pendaftaran = SmbpPendaftaran::where('no_pendaftaran', $no_pendaftaran)->firstOrFail();
+        $pendaftaran = PpdbPendaftaran::where('no_pendaftaran', $no_pendaftaran)->firstOrFail();
         $profil = ProfilSekolah::first();
 
-        return view('smbp.bukti', compact('pendaftaran', 'profil'));
+        return view('ppdb.bukti', compact('pendaftaran', 'profil'));
     }
 
     /**
-     * Admin Portal: List all SMBP registrations
+     * Admin Portal: List all PPDB registrations
      */
     public function adminIndex(Request $request)
     {
         $status = $request->query('status');
         $q = $request->query('q');
 
-        $query = SmbpPendaftaran::orderBy('created_at', 'desc');
+        $query = PpdbPendaftaran::orderBy('created_at', 'desc');
 
         if ($status) {
             $query->where('status', $status);
@@ -106,18 +106,18 @@ class SmbpController extends Controller
 
         $pendaftarans = $query->paginate(15);
         $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        $totalPendaftar = SmbpPendaftaran::count();
-        $totalPending = SmbpPendaftaran::where('status', 'Pending')->count();
-        $totalDiterima = SmbpPendaftaran::where('status', 'Diterima')->count();
-        $totalDitolak = SmbpPendaftaran::where('status', 'Ditolak')->count();
+        $totalPendaftar = PpdbPendaftaran::count();
+        $totalPending = PpdbPendaftaran::where('status', 'Pending')->count();
+        $totalDiterima = PpdbPendaftaran::where('status', 'Diterima')->count();
+        $totalDitolak = PpdbPendaftaran::where('status', 'Ditolak')->count();
 
-        return view('admin.smbp.index', compact('pendaftarans', 'jurusans', 'totalPendaftar', 'totalPending', 'totalDiterima', 'totalDitolak', 'status', 'q'));
+        return view('admin.ppdb.index', compact('pendaftarans', 'jurusans', 'totalPendaftar', 'totalPending', 'totalDiterima', 'totalDitolak', 'status', 'q'));
     }
 
     /**
      * Admin Portal: Update registration status (and optionally convert to official Siswa record)
      */
-    public function adminUpdateStatus(Request $request, SmbpPendaftaran $smbpPendaftaran)
+    public function adminUpdateStatus(Request $request, PpdbPendaftaran $ppdbPendaftaran)
     {
         $request->validate([
             'status' => 'required|in:Pending,Diterima,Ditolak',
@@ -125,9 +125,9 @@ class SmbpController extends Controller
             'kelas_tujuan' => 'nullable|string',
         ]);
 
-        $smbpPendaftaran->status = $request->status;
-        $smbpPendaftaran->catatan_admin = $request->catatan_admin;
-        $smbpPendaftaran->save();
+        $ppdbPendaftaran->status = $request->status;
+        $ppdbPendaftaran->catatan_admin = $request->catatan_admin;
+        $ppdbPendaftaran->save();
 
         // If status changed to Diterima and requested to convert to official student
         if ($request->status === 'Diterima' && $request->has('buat_akun_siswa')) {
@@ -135,48 +135,48 @@ class SmbpController extends Controller
             $lastNis = Siswa::max('nis');
             $nextNis = $lastNis ? ((int)$lastNis + 1) : 10001;
 
-            $kelasTarget = $request->kelas_tujuan ?: 'X ' . $smbpPendaftaran->pilihan_jurusan;
+            $kelasTarget = $request->kelas_tujuan ?: 'X ' . $ppdbPendaftaran->pilihan_jurusan;
 
             // Create Siswa record
             $siswa = Siswa::create([
                 'nis' => (string)$nextNis,
-                'nama' => $smbpPendaftaran->nama_lengkap,
+                'nama' => $ppdbPendaftaran->nama_lengkap,
                 'kelas' => $kelasTarget,
-                'jurusan' => $smbpPendaftaran->pilihan_jurusan,
+                'jurusan' => $ppdbPendaftaran->pilihan_jurusan,
                 'status' => 'Aktif',
-                'foto' => $smbpPendaftaran->foto,
+                'foto' => $ppdbPendaftaran->foto,
             ]);
 
             // Create User Login
-            $emailClean = strtolower(Str::slug($smbpPendaftaran->nama_lengkap)) . '.' . $siswa->nis . '@siswa.astikadharma.sch.id';
+            $emailClean = strtolower(Str::slug($ppdbPendaftaran->nama_lengkap)) . '.' . $siswa->nis . '@siswa.astikadharma.sch.id';
             User::create([
-                'name' => $smbpPendaftaran->nama_lengkap,
+                'name' => $ppdbPendaftaran->nama_lengkap,
                 'email' => $emailClean,
                 'password' => Hash::make('12345678'),
                 'role' => 'siswa',
                 'siswa_id' => $siswa->id,
-                'foto' => $smbpPendaftaran->foto,
+                'foto' => $ppdbPendaftaran->foto,
             ]);
         }
 
-        return redirect()->back()->with('success', 'Status pendaftaran ' . $smbpPendaftaran->no_pendaftaran . ' berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Status pendaftaran PPDB ' . $ppdbPendaftaran->no_pendaftaran . ' berhasil diperbarui.');
     }
 
     /**
      * Admin Portal: Delete registration
      */
-    public function adminDestroy(SmbpPendaftaran $smbpPendaftaran)
+    public function adminDestroy(PpdbPendaftaran $ppdbPendaftaran)
     {
-        if ($smbpPendaftaran->foto && Storage::disk('public')->exists($smbpPendaftaran->foto)) {
-            Storage::disk('public')->delete($smbpPendaftaran->foto);
+        if ($ppdbPendaftaran->foto && Storage::disk('public')->exists($ppdbPendaftaran->foto)) {
+            Storage::disk('public')->delete($ppdbPendaftaran->foto);
         }
 
-        if ($smbpPendaftaran->berkas_ijazah && Storage::disk('public')->exists($smbpPendaftaran->berkas_ijazah)) {
-            Storage::disk('public')->delete($smbpPendaftaran->berkas_ijazah);
+        if ($ppdbPendaftaran->berkas_ijazah && Storage::disk('public')->exists($ppdbPendaftaran->berkas_ijazah)) {
+            Storage::disk('public')->delete($ppdbPendaftaran->berkas_ijazah);
         }
 
-        $smbpPendaftaran->delete();
+        $ppdbPendaftaran->delete();
 
-        return redirect()->back()->with('success', 'Data pendaftar SMBP berhasil dihapus.');
+        return redirect()->back()->with('success', 'Data pendaftar PPDB berhasil dihapus.');
     }
 }

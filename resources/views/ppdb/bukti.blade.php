@@ -19,7 +19,7 @@
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div>
                         <h3 class="fw-bold mb-1 text-white">{{ $profil?->nama_sekolah ?? 'SEKOLAH ASTIKA DHARMA' }}</h3>
-                        <small class="text-white-50">BUKTI PENDAFTARAN SISWA BARU (SMBP / PPDB {{ date('Y') }})</small>
+                        <small class="text-white-50">BUKTI PENDAFTARAN SISWA BARU (PPDB ONLINE {{ date('Y') }})</small>
                     </div>
                     <span class="badge bg-warning text-dark font-monospace fs-5 px-3 py-2 fw-extrabold shadow-sm">
                         {{ $pendaftaran->no_pendaftaran }}
@@ -52,7 +52,7 @@
                     </div>
                 </div>
 
-                <h5 class="fw-bold text-dark mb-3">Rincian Data Pendaftaran</h5>
+                <h5 class="fw-bold text-dark mb-3">Rincian Data Pendaftaran PPDB</h5>
                 <div class="table-responsive mb-4">
                     <table class="table table-bordered align-middle">
                         <tbody>
@@ -94,15 +94,15 @@
 
                 @if($pendaftaran->catatan_admin)
                     <div class="alert alert-info border-0 shadow-sm rounded-3 mb-4">
-                        <strong class="d-block"><i data-lucide="info" class="me-1 d-inline"></i> Catatan Dari Panitia / Admin:</strong>
+                        <strong class="d-block"><i data-lucide="info" class="me-1 d-inline"></i> Catatan Dari Panitia / Admin PPDB:</strong>
                         <span>{{ $pendaftaran->catatan_admin }}</span>
                     </div>
                 @endif
             </div>
 
             <div class="card-footer bg-light p-3 d-flex justify-content-between align-items-center">
-                <a href="{{ route('smbp.index') }}" class="btn btn-outline-secondary fw-bold btn-sm">
-                    <i data-lucide="arrow-left" class="me-1 d-inline"></i> Kembali ke Form SMBP
+                <a href="{{ route('ppdb.index') }}" class="btn btn-outline-secondary fw-bold btn-sm">
+                    <i data-lucide="arrow-left" class="me-1 d-inline"></i> Kembali ke Form PPDB
                 </a>
                 <button type="button" onclick="window.print()" class="btn btn-primary fw-bold btn-sm px-4">
                     <i data-lucide="printer" class="me-1 d-inline"></i> Cetak Bukti Pendaftaran

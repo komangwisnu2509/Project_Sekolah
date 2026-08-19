@@ -6,7 +6,7 @@
         <!-- Header Banner -->
         <div class="text-center text-white mb-5" data-aos="fade-down">
             <span class="badge px-3 py-2 fs-6 mb-3" style="background: rgba(37, 99, 235, 0.2); border: 1px solid #2563EB; color: #60A5FA;">
-                ✨ PENERIMAAN SISWA BARU (PPDB / SMBP {{ date('Y') }})
+                ✨ PENERIMAAN PESERTA DIDIK BARU (PPDB ONLINE {{ date('Y') }})
             </span>
             <h1 class="fw-extrabold display-4 mb-3 text-white" style="font-family: var(--font-heading);">Formulir Pendaftaran Siswa Baru Online</h1>
             <p class="lead text-white-50 mx-auto" style="max-width: 700px;">
@@ -21,7 +21,7 @@
                     <div class="card-header text-white p-4 border-0" style="background: linear-gradient(90deg, #1E293B 0%, #2563EB 100%);">
                         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                             <div>
-                                <h4 class="fw-bold mb-0 text-white"><i data-lucide="user-plus" class="me-2 d-inline"></i> Formulir Data Calon Siswa</h4>
+                                <h4 class="fw-bold mb-0 text-white"><i data-lucide="user-plus" class="me-2 d-inline"></i> Formulir Data Calon Siswa PPDB</h4>
                                 <small style="color: rgba(255,255,255,0.8);">Proses pendaftaran cepat, aman, dan tanpa biaya registrasi awal</small>
                             </div>
                             <span class="badge bg-white text-dark font-monospace px-3 py-2 fs-6 shadow-sm">
@@ -42,7 +42,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('smbp.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('ppdb.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             <!-- Section 1: Data Calon Siswa -->
@@ -148,7 +148,7 @@
                             <!-- Submit Action Button -->
                             <div class="pt-3 border-top text-end">
                                 <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-3 shadow-lg" style="background: #2563EB; border: none;">
-                                    <i data-lucide="send" class="me-2 d-inline"></i> Kirim Pendaftaran Siswa Baru
+                                    <i data-lucide="send" class="me-2 d-inline"></i> Kirim Pendaftaran PPDB Online
                                 </button>
                             </div>
                         </form>
