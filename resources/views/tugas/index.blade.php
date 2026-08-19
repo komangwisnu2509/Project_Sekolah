@@ -717,4 +717,32 @@
         </div>
     @endif
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabBtns = document.querySelectorAll('#tugasTab .nav-link');
+        const tabPanes = document.querySelectorAll('#tugasTabContent .tab-pane');
+
+        tabBtns.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetSelector = this.getAttribute('data-bs-target');
+                if (!targetSelector) return;
+
+                tabBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                tabPanes.forEach(function(pane) {
+                    if ('#' + pane.id === targetSelector) {
+                        pane.classList.add('show', 'active');
+                        pane.style.setProperty('display', 'block', 'important');
+                    } else {
+                        pane.classList.remove('show', 'active');
+                        pane.style.setProperty('display', 'none', 'important');
+                    }
+                });
+            });
+        });
+    });
+</script>
 @endsection

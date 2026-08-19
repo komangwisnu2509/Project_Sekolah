@@ -38,12 +38,12 @@
 
     @php
         $completedTasks = $tugas->filter(function($t) use ($submissions) {
-            $sub = $submissions->get($t->id);
-            return $sub && ($sub->file_path || $sub->catatan);
+            $sub = $submissions->get($t->id) ?? $submissions->firstWhere('tugas_id', $t->id);
+            return $sub && ($sub->file_path !== null || $sub->catatan !== null);
         });
         $pendingTasks = $tugas->reject(function($t) use ($submissions) {
-            $sub = $submissions->get($t->id);
-            return $sub && ($sub->file_path || $sub->catatan);
+            $sub = $submissions->get($t->id) ?? $submissions->firstWhere('tugas_id', $t->id);
+            return $sub && ($sub->file_path !== null || $sub->catatan !== null);
         });
 
         $totalTugasSiswa = $tugas->count();
@@ -132,23 +132,23 @@
     <div class="col-12 mb-4">
         <ul class="nav nav-pills gap-2 bg-white p-2 rounded-3 shadow-sm flex-wrap" id="tugasTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active fw-bold px-4 rounded-3" id="all-tasks-tab" data-bs-toggle="pill" data-bs-target="#all-tasks" type="button" role="tab">
+                <button class="nav-link active fw-bold px-4 rounded-3" id="all-tasks-tab" data-bs-target="#all-tasks" type="button" role="tab">
                     <i class="bi bi-collection-fill me-1"></i> Semua Tugas ({{ $totalTugasSiswa }})
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link fw-bold px-4 rounded-3" id="pending-tasks-tab" data-bs-toggle="pill" data-bs-target="#pending-tasks" type="button" role="tab">
+                <button class="nav-link fw-bold px-4 rounded-3" id="pending-tasks-tab" data-bs-target="#pending-tasks" type="button" role="tab">
                     <i class="bi bi-clock-history me-1"></i> Belum Dikumpulkan ({{ $pendingCount }})
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link fw-bold px-4 rounded-3" id="completed-tasks-tab" data-bs-toggle="pill" data-bs-target="#completed-tasks" type="button" role="tab">
+                <button class="nav-link fw-bold px-4 rounded-3" id="completed-tasks-tab" data-bs-target="#completed-tasks" type="button" role="tab">
                     <i class="bi bi-check-circle-fill me-1"></i> Sudah Dikumpulkan ({{ $completedCount }})
                 </button>
             </li>
             @if(isset($tugasKelasLalu) && count($tugasKelasLalu) > 0)
             <li class="nav-item" role="presentation">
-                <button class="nav-link fw-bold px-4 rounded-3 text-secondary" id="past-tasks-tab" data-bs-toggle="pill" data-bs-target="#past-tasks" type="button" role="tab">
+                <button class="nav-link fw-bold px-4 rounded-3 text-secondary" id="past-tasks-tab" data-bs-target="#past-tasks" type="button" role="tab">
                     <i class="bi bi-journal-bookmark-fill me-1 text-primary"></i> Tugas Kelas Sebelumnya ({{ count($tugasKelasLalu) }})
                 </button>
             </li>
@@ -161,12 +161,12 @@
         <div class="tab-content" id="tugasTabContent">
             
             <!-- Tab 1: All Tasks -->
-            <div class="tab-pane fade show active" id="all-tasks" role="tabpanel">
+            <div class="tab-pane fade show active" id="all-tasks" role="tabpanel" style="display: block;">
                 <div class="row row-cols-1 row-cols-md-2 g-4">
                     @forelse($tugas as $item)
                         @php 
-                            $sub = $submissions->get($item->id);
-                            $hasSubmittedWork = $sub && ($sub->file_path || $sub->catatan);
+                            $sub = $submissions->get($item->id) ?? $submissions->firstWhere('tugas_id', $item->id);
+                            $hasSubmittedWork = $sub && ($sub->file_path !== null || $sub->catatan !== null);
                             $isPastDeadline = \Carbon\Carbon::parse($item->deadline)->isPast();
                             $lateStatus = $sub?->status_izin_terlambat;
                         @endphp
@@ -337,11 +337,11 @@
                 </div>
 
                 <!-- Tab 2: Pending Tasks Only -->
-                <div class="tab-pane fade" id="pending-tasks" role="tabpanel">
+                <div class="tab-pane fade" id="pending-tasks" role="tabpanel" style="display: none;">
                     <div class="row row-cols-1 row-cols-md-2 g-4">
                         @forelse($pendingTasks as $item)
                             @php 
-                                $sub = $submissions->get($item->id);
+                                $sub = $submissions->get($item->id) ?? $submissions->firstWhere('tugas_id', $item->id);
                                 $isPastDeadline = \Carbon\Carbon::parse($item->deadline)->isPast();
                                 $lateStatus = $sub?->status_izin_terlambat;
                             @endphp
@@ -442,10 +442,10 @@
                 </div>
 
                 <!-- Tab 3: Completed Tasks Only -->
-                <div class="tab-pane fade" id="completed-tasks" role="tabpanel">
+                <div class="tab-pane fade" id="completed-tasks" role="tabpanel" style="display: none;">
                     <div class="row row-cols-1 row-cols-md-2 g-4">
                         @forelse($completedTasks as $item)
-                            @php $sub = $submissions->get($item->id); @endphp
+                            @php $sub = $submissions->get($item->id) ?? $submissions->firstWhere('tugas_id', $item->id); @endphp
                             <div class="col">
                                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-success">
                                     <div class="card-body p-4">
@@ -461,15 +461,17 @@
                                         <div class="bg-light p-3 rounded mb-3 border">
                                             <small class="text-muted d-block fw-bold mb-1"><i class="bi bi-chat-left-text-fill me-1 text-success"></i>Jawaban Anda:</small>
                                             <p class="mb-2 text-dark small">{{ $sub->catatan ?? '-' }}</p>
-                                            @if($sub->file_path)
+                                            @if($sub && $sub->file_path)
                                                 <a href="{{ asset('storage/'.$sub->file_path) }}" class="btn btn-outline-primary btn-sm px-3 mb-2" target="_blank">
                                                     <i class="bi bi-download me-1"></i> Unduh Berkas Jawaban
                                                 </a>
                                             @endif
-                                            <div class="text-muted small mb-2">
-                                                Dikumpulkan pada: {{ \App\Helpers\WaktuHelper::format($sub->dikumpulkan_pada) }}
-                                            </div>
-                                            @if($sub->nilai !== null)
+                                            @if($sub)
+                                                <div class="text-muted small mb-2">
+                                                    Dikumpulkan pada: {{ \App\Helpers\WaktuHelper::format($sub->dikumpulkan_pada) }}
+                                                </div>
+                                            @endif
+                                            @if($sub && $sub->nilai !== null)
                                                 <div class="alert alert-success border border-success border-opacity-25 shadow-sm rounded-3 mt-2 p-3 mb-0">
                                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                                         <span class="fw-bold text-success"><i class="bi bi-star-fill me-1 text-warning"></i> Nilai Tugas Guru:</span>
@@ -504,10 +506,10 @@
 
                 <!-- Tab 4: Past Class Tasks (Riwayat Kelas Sebelumnya) -->
                 @if(isset($tugasKelasLalu) && count($tugasKelasLalu) > 0)
-                <div class="tab-pane fade" id="past-tasks" role="tabpanel">
+                <div class="tab-pane fade" id="past-tasks" role="tabpanel" style="display: none;">
                     <div class="row row-cols-1 row-cols-md-2 g-4">
                         @foreach($tugasKelasLalu as $item)
-                            @php $sub = $submissions->get($item->id); @endphp
+                            @php $sub = $submissions->get($item->id) ?? $submissions->firstWhere('tugas_id', $item->id); @endphp
                             <div class="col">
                                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-secondary">
                                     <div class="card-body p-4">
@@ -549,4 +551,37 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabBtns = document.querySelectorAll('#tugasTab .nav-link');
+        const tabPanes = document.querySelectorAll('#tugasTabContent .tab-pane');
+
+        tabBtns.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetSelector = this.getAttribute('data-bs-target');
+                if (!targetSelector) return;
+
+                // Remove active class from all buttons
+                tabBtns.forEach(b => {
+                    b.classList.remove('active');
+                });
+                // Set active to clicked button
+                this.classList.add('active');
+
+                // Hide all panes, show target pane
+                tabPanes.forEach(function(pane) {
+                    if ('#' + pane.id === targetSelector) {
+                        pane.classList.add('show', 'active');
+                        pane.style.setProperty('display', 'block', 'important');
+                    } else {
+                        pane.classList.remove('show', 'active');
+                        pane.style.setProperty('display', 'none', 'important');
+                    }
+                });
+            });
+        });
+    });
+</script>
 @endsection
