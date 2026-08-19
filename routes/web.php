@@ -46,8 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/siswa/ekskul', [EkstrakurikulerController::class, 'siswaIndex'])->name('siswa.ekskul');
     Route::post('/siswa/ekskul/register', [EkstrakurikulerController::class, 'register'])->name('siswa.ekskul.register');
 
-    // Student submitting assignment & photo memory & Alumni Tracer
+    // Student submitting assignment & late request & photo memory & Alumni Tracer
     Route::post('/siswa/tugas/{tugas}/submit', [TugasController::class, 'submit'])->name('siswa.tugas.submit');
+    Route::post('/siswa/tugas/{tugas}/minta-izin-terlambat', [TugasController::class, 'requestLatePermission'])->name('siswa.tugas.request-late');
     Route::post('/siswa/upload-foto-kenangan', [SiswaController::class, 'uploadFotoKenangan'])->name('siswa.upload-foto-kenangan');
     Route::post('/siswa/upload-media-kenangan', [SiswaController::class, 'uploadMediaKenangan'])->name('siswa.upload-media-kenangan');
     Route::delete('/siswa/media-kenangan/{id}', [SiswaController::class, 'deleteMediaKenangan'])->name('siswa.delete-media-kenangan');
@@ -78,6 +79,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/tugas/{tuga}/submissions', [TugasController::class, 'submissions'])->name('tugas.submissions');
         Route::get('/tugas/submissions/{submission}/review', [TugasController::class, 'review'])->name('tugas.review');
         Route::post('/tugas/submissions/{submission}/grade', [TugasController::class, 'grade'])->name('tugas.grade');
+        Route::post('/tugas/submissions/{submission}/approve-late', [TugasController::class, 'approveLatePermission'])->name('tugas.approve-late');
+        Route::post('/tugas/submissions/{submission}/reject-late', [TugasController::class, 'rejectLatePermission'])->name('tugas.reject-late');
 
         // Absensi Siswa Management (Input, Store, Rekap, Monitoring Harian & Export PDF)
         Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');

@@ -106,7 +106,15 @@
                                     </td>
                                     <td>
                                         @if($sub)
-                                            <span class="badge bg-success fs-6"><i class="bi bi-check-circle-fill me-1"></i>Sudah Mengumpulkan</span>
+                                            @if($sub->status_izin_terlambat === 'Pending')
+                                                <span class="badge bg-warning text-dark fs-6"><i class="bi bi-exclamation-triangle-fill me-1"></i>Minta Izin Terlambat</span>
+                                            @elseif($sub->status_izin_terlambat === 'Disetujui' && !$sub->file_path && !$sub->catatan)
+                                                <span class="badge bg-info text-dark fs-6"><i class="bi bi-check-circle-fill me-1"></i>Izin Disetujui (Menunggu Siswa)</span>
+                                            @elseif($sub->status_izin_terlambat === 'Ditolak')
+                                                <span class="badge bg-secondary fs-6"><i class="bi bi-x-circle-fill me-1"></i>Izin Terlambat Ditolak</span>
+                                            @else
+                                                <span class="badge bg-success fs-6"><i class="bi bi-check-circle-fill me-1"></i>Sudah Mengumpulkan</span>
+                                            @endif
                                         @else
                                             <span class="badge bg-danger fs-6"><i class="bi bi-x-circle-fill me-1"></i>Belum Mengumpulkan</span>
                                         @endif
@@ -120,6 +128,9 @@
                                     </td>
                                     <td>
                                         @if($sub)
+                                            @if($sub->status_izin_terlambat === 'Pending')
+                                                <small class="d-block text-warning fw-bold mb-1"><i class="bi bi-chat-left-dots-fill me-1"></i>Alasan: "{{ $sub->alasan_terlambat }}"</small>
+                                            @endif
                                             @if($sub->catatan)
                                                 <small class="d-block text-secondary mb-1 text-truncate" style="max-width: 200px;" title="{{ $sub->catatan }}"><i class="bi bi-chat-text me-1"></i>{{ $sub->catatan }}</small>
                                             @endif
@@ -127,7 +138,7 @@
                                                 <a href="{{ asset('storage/'.$sub->file_path) }}" class="btn btn-outline-primary btn-sm px-2 py-0" target="_blank">
                                                     <i class="bi bi-download me-1"></i> Unduh Berkas
                                                 </a>
-                                            @elseif(!$sub->catatan)
+                                            @elseif(!$sub->catatan && $sub->status_izin_terlambat !== 'Pending')
                                                 <span class="text-muted small">Tanpa berkas</span>
                                             @endif
                                         @else
@@ -156,9 +167,22 @@
                                     </td>
                                     <td class="pe-4 text-end">
                                         @if($sub)
-                                            <a href="{{ route('tugas.review', $sub->id) }}" class="btn btn-primary btn-sm fw-bold shadow-sm" title="Periksa Hasil Pekerjaan Siswa & Beri Nilai/Saran">
-                                                <i class="bi bi-journal-check me-1"></i> Periksa & Beri Nilai
-                                            </a>
+                                            @if($sub->status_izin_terlambat === 'Pending')
+                                                <div class="d-flex gap-1 justify-content-end mb-1">
+                                                    <form action="{{ route('tugas.approve-late', $sub->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-success btn-sm px-2 fw-bold" title="ACC & Izinkan Kumpul Terlambat"><i class="bi bi-check-circle-fill me-1"></i>ACC</button>
+                                                    </form>
+                                                    <form action="{{ route('tugas.reject-late', $sub->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm px-2 fw-bold" title="Tolak Permohonan"><i class="bi bi-x-circle-fill me-1"></i>Tolak</button>
+                                                    </form>
+                                                </div>
+                                            @else
+                                                <a href="{{ route('tugas.review', $sub->id) }}" class="btn btn-primary btn-sm fw-bold shadow-sm" title="Periksa Hasil Pekerjaan Siswa & Beri Nilai/Saran">
+                                                    <i class="bi bi-journal-check me-1"></i> Periksa & Beri Nilai
+                                                </a>
+                                            @endif
                                         @else
                                             <span class="text-muted small">-</span>
                                         @endif

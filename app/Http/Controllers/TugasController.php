@@ -24,6 +24,7 @@ class TugasController extends Controller
         $kelas = Kelas::orderBy('nama_kelas')->get();
         $jadwals = JadwalPelajaran::all();
         $submissions = collect();
+        $tugasKelasLalu = collect();
 
         if ($user->isGuru() && $user->guru) {
             $tugas = Tugas::with('guru')
@@ -43,6 +44,11 @@ class TugasController extends Controller
                 $submissions = TugasSubmission::where('siswa_id', $user->siswa->id)
                     ->get()
                     ->keyBy('tugas_id');
+
+                $tugasKelasLalu = Tugas::whereHas('submissions', fn($q) => $q->where('siswa_id', $user->siswa->id))
+                    ->where('kelas', '!=', $user->siswa->kelas)
+                    ->with('guru')
+                    ->get();
             } else {
                 $tugas = collect();
             }
@@ -59,7 +65,7 @@ class TugasController extends Controller
             str_starts_with($k->nama_kelas, 'XII ') || str_starts_with($k->nama_kelas, '12 ')
         );
 
-        return view('tugas.index', compact('kelas', 'jadwals', 'tugas', 'submissions', 'kelasX', 'kelasXII', 'kelasXI', 'kelasOther'));
+        return view('tugas.index', compact('kelas', 'jadwals', 'tugas', 'submissions', 'kelasX', 'kelasXII', 'kelasXI', 'kelasOther', 'tugasKelasLalu'));
     }
 
     // Create assignment
@@ -174,5 +180,43 @@ class TugasController extends Controller
         ]);
 
         return redirect()->route('tugas.submissions', $submission->tugas_id)->with('success', 'Nilai (' . $request->nilai . ') dan respon guru berhasil disimpan untuk ' . ($submission->siswa->nama ?? 'siswa') . '.');
+    }
+
+    // Student request permission to turn in assignment late (past deadline)
+    public function requestLatePermission(Request $request, Tugas $tugas)
+    {
+        $request->validate([
+            'alasan_terlambat' => 'required|string',
+        ]);
+
+        $siswa = auth()->user()->siswa;
+        if (!$siswa) {
+            return redirect()->back()->with('error', 'Data akun Anda belum terhubung dengan data siswa.');
+        }
+
+        TugasSubmission::updateOrCreate(
+            ['tugas_id' => $tugas->id, 'siswa_id' => $siswa->id],
+            [
+                'alasan_terlambat' => $request->alasan_terlambat,
+                'status_izin_terlambat' => 'Pending',
+                'dikumpulkan_pada' => now(),
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Permohonan izin kumpul terlambat berhasil dikirim ke guru pengajar. Harap tunggu persetujuan guru.');
+    }
+
+    // Teacher approve late submission request
+    public function approveLatePermission(TugasSubmission $submission)
+    {
+        $submission->update(['status_izin_terlambat' => 'Disetujui']);
+        return redirect()->back()->with('success', 'Izin kumpul terlambat disetujui untuk ' . ($submission->siswa->nama ?? 'Siswa') . '. Siswa kini dapat mengumpulkan tugasnya.');
+    }
+
+    // Teacher reject late submission request
+    public function rejectLatePermission(TugasSubmission $submission)
+    {
+        $submission->update(['status_izin_terlambat' => 'Ditolak']);
+        return redirect()->back()->with('success', 'Permohonan izin kumpul terlambat ditolak.');
     }
 }

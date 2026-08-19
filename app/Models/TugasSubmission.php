@@ -11,7 +11,7 @@ class TugasSubmission extends Model
 
     protected $table = 'tugas_submissions';
 
-    protected $fillable = ['tugas_id', 'siswa_id', 'catatan', 'file_path', 'dikumpulkan_pada', 'nilai', 'respon_guru'];
+    protected $guarded = [];
 
     public function tugas()
     {
