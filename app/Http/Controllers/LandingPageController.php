@@ -29,6 +29,7 @@ class LandingPageController extends Controller
         // Get single records
         $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
         $prestasiUtama = Schema::hasTable('prestasi_siswas') ? PrestasiSiswa::latest()->first() : null;
+        $prestasiList = Schema::hasTable('prestasi_siswas') ? PrestasiSiswa::orderBy('tahun', 'desc')->get() : collect();
 
         // Get multiple records
         $jurusans = Schema::hasTable('jurusans') ? Jurusan::all() : collect();
@@ -42,7 +43,7 @@ class LandingPageController extends Controller
 
         return view('landing page.landing_page', compact(
             'siswaCount', 'guruCount', 'alumniCount', 'tahunDedikasi',
-            'profil', 'prestasiUtama', 'jurusans', 'fasilitas',
+            'profil', 'prestasiUtama', 'prestasiList', 'jurusans', 'fasilitas',
             'ekstrakurikuler', 'beritaHighlight', 'beritaList',
             'galeri', 'testimoni', 'faqs'
         ));
