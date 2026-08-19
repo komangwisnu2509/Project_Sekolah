@@ -13,9 +13,17 @@ class EkstrakurikulerController extends Controller
     // Admin View All Extracurriculars & Student Registrations
     public function index(Request $request)
     {
-        $ekskuls = Ekstrakurikuler::withCount(['pendaftaran as total_pendaftar' => function($q) {
-            $q->where('status', 'Disetujui');
-        }])->orderBy('nama_ekskul')->get();
+        $ekskuls = Ekstrakurikuler::withCount([
+            'pendaftaran as total_pendaftar' => function($q) {
+                $q->where('status', 'Disetujui');
+            },
+            'pendaftaran as total_pending' => function($q) {
+                $q->where('status', 'Pending');
+            },
+            'pendaftaran as total_ditolak' => function($q) {
+                $q->where('status', 'Ditolak');
+            }
+        ])->with(['pendaftaran.siswa'])->orderBy('nama_ekskul')->get();
 
         $statusFilter = $request->input('status', '');
         $query = PendaftaranEkskul::with(['siswa', 'ekstrakurikuler']);
@@ -46,6 +54,7 @@ class EkstrakurikulerController extends Controller
             'jam_latihan' => 'nullable|string|max:100',
             'lokasi' => 'nullable|string|max:255',
             'deskripsi' => 'nullable|string|max:1000',
+            'status' => 'required|in:Aktif,Non-Aktif',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3072',
         ]);
 
@@ -62,6 +71,7 @@ class EkstrakurikulerController extends Controller
             'jam_latihan' => $request->jam_latihan,
             'lokasi' => $request->lokasi,
             'deskripsi' => $request->deskripsi,
+            'status' => $request->status ?? 'Aktif',
             'foto' => $fotoPath,
         ]);
 
@@ -79,6 +89,7 @@ class EkstrakurikulerController extends Controller
             'jam_latihan' => 'nullable|string|max:100',
             'lokasi' => 'nullable|string|max:255',
             'deskripsi' => 'nullable|string|max:1000',
+            'status' => 'required|in:Aktif,Non-Aktif',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3072',
         ]);
 
@@ -90,6 +101,7 @@ class EkstrakurikulerController extends Controller
             'jam_latihan' => $request->jam_latihan,
             'lokasi' => $request->lokasi,
             'deskripsi' => $request->deskripsi,
+            'status' => $request->status ?? 'Aktif',
         ];
 
         if ($request->hasFile('foto')) {
@@ -101,7 +113,18 @@ class EkstrakurikulerController extends Controller
 
         $ekskul->update($data);
 
-        return redirect()->back()->with('success', "Informasi ekstrakurikuler {$ekskul->nama_ekskul} (Pembina & Jadwal) berhasil diperbarui.");
+        return redirect()->back()->with('success', "Informasi ekstrakurikuler {$ekskul->nama_ekskul} (Pembina, Jadwal & Status) berhasil diperbarui.");
+    }
+
+    // Admin Detail Extracurricular View
+    public function show(Ekstrakurikuler $ekskul)
+    {
+        $ekskul->load(['pendaftaran.siswa']);
+        $approvedMembers = $ekskul->pendaftaran->where('status', 'Disetujui');
+        $pendingMembers = $ekskul->pendaftaran->where('status', 'Pending');
+        $rejectedMembers = $ekskul->pendaftaran->where('status', 'Ditolak');
+
+        return view('admin.ekskul.show', compact('ekskul', 'approvedMembers', 'pendingMembers', 'rejectedMembers'));
     }
 
     // Admin Delete Extracurricular

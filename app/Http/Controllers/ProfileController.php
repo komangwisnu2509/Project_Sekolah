@@ -18,9 +18,16 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    /**
+     * Display the user's profile form.
+     */
+    public function edit(Request $request): View|RedirectResponse
     {
         $user = $request->user();
+        if ($user->isSiswa()) {
+            return redirect()->route('siswa.profile')->with('error', 'Siswa tidak diizinkan mengubah data profil akun secara mandiri. Silakan hubungi Admin Sekolah untuk perubahan data profil.');
+        }
+
         $guru = $user->isGuru() ? $user->guru : null;
         $siswa = $user->isSiswa() ? $user->siswa : null;
 
@@ -33,6 +40,9 @@ class ProfileController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = $request->user();
+        if ($user->isSiswa()) {
+            return redirect()->route('siswa.profile')->with('error', 'Siswa tidak diizinkan mengubah data profil akun secara mandiri. Silakan hubungi Admin Sekolah untuk perubahan data profil.');
+        }
 
         // 1. Basic User Validation Rules
         $rules = [

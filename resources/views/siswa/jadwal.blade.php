@@ -30,6 +30,55 @@
         </div>
     </div>
 
+    <!-- Active Teacher Leave Notice -->
+    @if(isset($activeIzinGurus) && $activeIzinGurus->count() > 0)
+        <div class="card border-0 shadow-sm bg-warning bg-opacity-10 border-start border-5 border-warning mb-4 rounded-3">
+            <div class="card-body p-4">
+                <h5 class="fw-bold text-dark mb-3">
+                    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>Pemberitahuan Guru Tidak Hadir (Izin / Sakit)
+                </h5>
+                <div class="row g-3">
+                    @foreach($activeIzinGurus as $iz)
+                        <div class="col-md-6">
+                            <div class="p-3 bg-white border border-warning rounded-3 shadow-sm">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="badge bg-warning text-dark fw-bold"><i class="bi bi-person-x me-1"></i>Guru {{ $iz->jenis }}</span>
+                                    <small class="text-muted fw-semibold"><i class="bi bi-calendar-event me-1"></i>{{ \App\Helpers\WaktuHelper::formatShort($iz->tanggal_mulai) }} - {{ \App\Helpers\WaktuHelper::formatShort($iz->tanggal_selesai) }}</small>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1"><i class="bi bi-person-fill text-primary me-1"></i>{{ $iz->guru?->nama }}</h6>
+                                <p class="small text-muted mb-2">Mata Pelajaran: <strong>{{ $iz->guru?->mata_pelajaran ?? '-' }}</strong></p>
+                                
+                                @if($iz->guruPengganti)
+                                    <div class="alert alert-success py-2 px-3 mb-2 small fw-bold">
+                                        <i class="bi bi-person-check-fill me-1"></i>Guru Pengganti: {{ $iz->guruPengganti->nama }}
+                                    </div>
+                                @else
+                                    <div class="alert alert-secondary py-2 px-3 mb-2 small">
+                                        <i class="bi bi-info-circle me-1"></i>Guru pengganti belum ditunjuk.
+                                    </div>
+                                @endif
+
+                                @if($iz->tugas)
+                                    <div class="mt-2">
+                                        <small class="text-muted d-block mb-1">Tugas yang Wajib Dikerjakan:</small>
+                                        <a href="{{ route('siswa.tugas') }}" class="btn btn-sm btn-primary w-100 fw-bold">
+                                            <i class="bi bi-file-earmark-check me-1"></i>Kerjakan: {{ $iz->tugas->judul }}
+                                        </a>
+                                    </div>
+                                @elseif($iz->tugas_siswa)
+                                    <div class="mt-2 p-2 bg-light rounded small">
+                                        <strong><i class="bi bi-journal-text me-1 text-primary"></i>Instruksi Tugas:</strong>
+                                        <p class="mb-0 text-dark">{{ $iz->tugas_siswa }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Schedule Grid: 5 Days (Senin - Jumat) -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
         @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $day)

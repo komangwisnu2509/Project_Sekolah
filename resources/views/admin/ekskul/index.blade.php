@@ -57,6 +57,15 @@
                             </select>
                         </div>
 
+                        <!-- Status Kegiatan -->
+                        <div class="mb-3">
+                            <label for="status" class="form-label fw-bold small">Status Kegiatan Ekstra</label>
+                            <select name="status" id="status" class="form-select form-select-sm">
+                                <option value="Aktif">🟢 Aktif (Kegiatan Berjalan)</option>
+                                <option value="Non-Aktif">🔴 Non-Aktif (Kegiatan Tidak Berjalan / Libur)</option>
+                            </select>
+                        </div>
+
                         <!-- Pembina -->
                         <div class="mb-3">
                             <label for="pembina" class="form-label fw-bold small">Guru Pembina / Pelatih</label>
@@ -98,7 +107,7 @@
             </div>
         </div>
 
-        <!-- List Cards with Edit Modals (Right) -->
+        <!-- List Cards with Edit & Detail Modals (Right) -->
         <div class="col-lg-8">
             <div class="row g-3">
                 @forelse($ekskuls as $e)
@@ -112,9 +121,34 @@
                                 </div>
                             @endif
                             <div class="card-body p-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
                                     <span class="badge bg-primary bg-opacity-10 text-primary border border-primary small">{{ $e->kategori }}</span>
-                                    <div class="d-flex gap-2">
+                                    
+                                    @if(($e->status ?? 'Aktif') === 'Aktif')
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success small"><i class="bi bi-play-circle-fill me-1"></i>Berjalan (Aktif)</span>
+                                    @else
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger small"><i class="bi bi-pause-circle-fill me-1"></i>Tidak Berjalan</span>
+                                    @endif
+                                </div>
+
+                                <h5 class="fw-bold text-dark mb-1">{{ $e->nama_ekskul }}</h5>
+                                <p class="small text-muted mb-2"><i class="bi bi-person-badge text-primary me-1"></i>Pembina: <strong>{{ $e->pembina ?? '-' }}</strong></p>
+                                <div class="small text-secondary mb-1">
+                                    <i class="bi bi-clock me-1 text-warning"></i>{{ $e->hari_latihan ?? '-' }} ({{ $e->jam_latihan ?? '-' }})
+                                </div>
+                                <div class="small text-secondary mb-2">
+                                    <i class="bi bi-geo-alt me-1 text-danger"></i>{{ $e->lokasi ?? '-' }}
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success small">
+                                        <i class="bi bi-people-fill me-1"></i>{{ $e->total_pendaftar }} Siswa (ACC)
+                                    </span>
+                                    
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ route('admin.ekskul.show', $e->id) }}" class="btn btn-info text-white btn-sm px-2">
+                                            <i class="bi bi-eye-fill"></i> Detail
+                                        </a>
                                         <button type="button" class="btn btn-outline-primary btn-sm px-2" data-bs-toggle="modal" data-bs-target="#modalEditEkskul{{ $e->id }}">
                                             <i class="bi bi-pencil-square"></i> Edit
                                         </button>
@@ -127,17 +161,6 @@
                                         </form>
                                     </div>
                                 </div>
-                                <h5 class="fw-bold text-dark mb-1">{{ $e->nama_ekskul }}</h5>
-                                <p class="small text-muted mb-2"><i class="bi bi-person-badge text-primary me-1"></i>Pembina: <strong>{{ $e->pembina ?? '-' }}</strong></p>
-                                <div class="small text-secondary mb-1">
-                                    <i class="bi bi-clock me-1 text-warning"></i>{{ $e->hari_latihan ?? '-' }} ({{ $e->jam_latihan ?? '-' }})
-                                </div>
-                                <div class="small text-secondary mb-2">
-                                    <i class="bi bi-geo-alt me-1 text-danger"></i>{{ $e->lokasi ?? '-' }}
-                                </div>
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success small">
-                                    <i class="bi bi-people-fill me-1"></i>{{ $e->total_pendaftar }} Siswa Terdaftar (ACC)
-                                </span>
                             </div>
                         </div>
                     </div>
@@ -168,6 +191,13 @@
                                                 <option value="Sains & Teknologi" {{ $e->kategori === 'Sains & Teknologi' ? 'selected' : '' }}>Sains & Teknologi / IT</option>
                                                 <option value="Kepanduan" {{ $e->kategori === 'Kepanduan' ? 'selected' : '' }}>Kepanduan & Belanegara</option>
                                                 <option value="Keagamaan" {{ $e->kategori === 'Keagamaan' ? 'selected' : '' }}>Keagamaan & Kerohanian</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold small">Status Kegiatan Ekstra</label>
+                                            <select name="status" class="form-select border-primary fw-bold">
+                                                <option value="Aktif" {{ ($e->status ?? 'Aktif') === 'Aktif' ? 'selected' : '' }}>🟢 Aktif (Kegiatan Berjalan)</option>
+                                                <option value="Non-Aktif" {{ ($e->status ?? 'Aktif') === 'Non-Aktif' ? 'selected' : '' }}>🔴 Non-Aktif (Kegiatan Tidak Berjalan / Libur)</option>
                                             </select>
                                         </div>
                                         <div class="mb-3">

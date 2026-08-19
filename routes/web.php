@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/siswa/upload-media-kenangan', [SiswaController::class, 'uploadMediaKenangan'])->name('siswa.upload-media-kenangan');
     Route::delete('/siswa/media-kenangan/{id}', [SiswaController::class, 'deleteMediaKenangan'])->name('siswa.delete-media-kenangan');
     Route::post('/siswa/alumni-tracer', [AlumniTracerController::class, 'store'])->name('siswa.alumni.store');
+    Route::put('/siswa/alumni-tracer/{alumniTracer}', [AlumniTracerController::class, 'updateByStudent'])->name('siswa.alumni.update');
 
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -54,6 +55,9 @@ Route::middleware('auth')->group(function () {
 
     // Task List route - accessible by all auth users (Admin, Guru, Siswa)
     Route::get('/tugas', [TugasController::class, 'index'])->name('tugas.index');
+
+    // Prestasi Siswa view - accessible by all auth users (Admin, Guru, Siswa)
+    Route::get('/prestasi', [PrestasiSiswaController::class, 'index'])->name('prestasi.index');
 
     // Task Management (Store, Delete, Submissions, Grade) - accessible by Admin and Guru
     Route::middleware('guru')->group(function () {
@@ -84,8 +88,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/izin-guru/{izinGuru}/approve', [IzinGuruController::class, 'approve'])->name('admin.izin.approve');
         Route::post('/admin/izin-guru/{izinGuru}/reject', [IzinGuruController::class, 'reject'])->name('admin.izin.reject');
 
-        // Laporan Alumni Tracer (Kuliah & Bekerja)
+        // Laporan Alumni Tracer (Kuliah & Bekerja & Kesan Pesan)
         Route::get('/admin/alumni', [AlumniTracerController::class, 'adminIndex'])->name('admin.alumni.index');
+        Route::post('/admin/alumni', [AlumniTracerController::class, 'adminStore'])->name('admin.alumni.store');
+        Route::put('/admin/alumni/{alumniTracer}', [AlumniTracerController::class, 'update'])->name('admin.alumni.update');
+        Route::post('/admin/alumni/{alumniTracer}/approve', [AlumniTracerController::class, 'approve'])->name('admin.alumni.approve');
+        Route::post('/admin/alumni/{alumniTracer}/reject', [AlumniTracerController::class, 'reject'])->name('admin.alumni.reject');
         Route::delete('/admin/alumni/{alumniTracer}', [AlumniTracerController::class, 'destroy'])->name('admin.alumni.destroy');
 
         // Management Prestasi Siswa

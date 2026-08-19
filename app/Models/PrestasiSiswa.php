@@ -21,6 +21,7 @@ class PrestasiSiswa extends Model
         'peringkat',
         'tahun',
         'penyelenggara',
+        'deskripsi',
         'foto_bukti',
         'tampilkan_di_beranda',
     ];

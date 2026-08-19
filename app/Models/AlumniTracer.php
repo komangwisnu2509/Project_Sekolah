@@ -19,6 +19,10 @@ class AlumniTracer extends Model
         'tahun_masuk',
         'lokasi',
         'catatan',
+        'foto',
+        'kesan_pesan',
+        'status_acc',
+        'catatan_admin',
     ];
 
     public function siswa()

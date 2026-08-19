@@ -122,7 +122,7 @@
         <!-- ALUMNI TRACER (KULIAH / BEKERJA) SECTION FOR GRADUATED STUDENTS -->
         <div class="card border-0 shadow-sm mb-4 rounded-3">
             <div class="card-header bg-gradient bg-primary text-white py-3 border-0 d-flex justify-content-between align-items-center">
-                <h5 class="fw-bold mb-0"><i class="bi bi-mortarboard-fill me-2 text-warning"></i>Status Pasca Lulus (Lanjut Kuliah / Karir Bekerja)</h5>
+                <h5 class="fw-bold mb-0"><i class="bi bi-mortarboard-fill me-2 text-warning"></i>Status Pasca Lulus (Lanjut Kuliah / Karir Bekerja), Foto & Kesan Pesan</h5>
                 <span class="badge bg-warning text-dark font-monospace px-3 py-1 fs-6">Jejak Alumni</span>
             </div>
             <div class="card-body p-4">
@@ -130,7 +130,7 @@
                     <!-- Form Input Tracer (Left) -->
                     <div class="col-lg-5 border-end border-light">
                         <h6 class="fw-bold text-dark mb-3"><i class="bi bi-pencil-square me-1 text-primary"></i>Isi / Perbarui Status Studi atau Karir Anda</h6>
-                        <form action="{{ route('siswa.alumni.store') }}" method="POST">
+                        <form action="{{ route('siswa.alumni.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label fw-bold small">Pilih Status Utama <span class="text-danger">*</span></label>
@@ -161,38 +161,88 @@
                                 <input type="text" name="lokasi" id="lokasi" class="form-control" placeholder="Contoh: Yogyakarta / Jakarta Selatan">
                             </div>
                             <div class="mb-3">
-                                <label for="catatan" class="form-label fw-bold small">Pesan / Catatan Tambahan (Opsional)</label>
-                                <textarea name="catatan" id="catatan" class="form-control" rows="2" placeholder="Bagikan tips atau cerita singkat ke adek kelas..."></textarea>
+                                <label for="foto_alumni" class="form-label fw-bold small"><i class="bi bi-camera-fill me-1 text-primary"></i>Upload Foto Alumni Pasca Lulus (Opsional)</label>
+                                <input type="file" name="foto" id="foto_alumni" class="form-control" accept="image/*">
+                                <small class="text-muted">Format: JPG, PNG, WEBP (Maks 5MB)</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="kesan_pesan" class="form-label fw-bold small"><i class="bi bi-chat-quote-fill me-1 text-warning"></i>Kesan & Pesan Alumni</label>
+                                <textarea name="kesan_pesan" id="kesan_pesan" class="form-control" rows="3" placeholder="Tuliskan kesan pesan Anda selama bersekolah dan pesan untuk adik kelas..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="catatan" class="form-label fw-bold small">Catatan Tambahan (Opsional)</label>
+                                <textarea name="catatan" id="catatan" class="form-control" rows="2" placeholder="Bagikan tips karir atau cerita singkat..."></textarea>
+                            </div>
+                            <div class="alert alert-info border-0 shadow-sm small py-2">
+                                <i class="bi bi-info-circle-fill me-1"></i> Data tracer, foto, dan kesan pesan yang diunggah akan diverifikasi dan di-ACC oleh Admin terlebih dahulu.
                             </div>
                             <button type="submit" class="btn btn-warning text-dark fw-bold w-100 py-2">
-                                <i class="bi bi-send-fill me-1"></i> Simpan Data Alumni ke Admin
+                                <i class="bi bi-send-fill me-1"></i> Kirim Data & Foto Alumni ke Admin
                             </button>
                         </form>
                     </div>
 
                     <!-- History List Tracer (Right) -->
                     <div class="col-lg-7">
-                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-journal-check me-1 text-success"></i>Riwayat Status Studi & Karir Terdaftar</h6>
+                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-journal-check me-1 text-success"></i>Riwayat Status Studi, Foto & Kesan Pesan Alumni</h6>
                         @forelse($myAlumniTracers as $tracer)
                             <div class="card border border-primary border-opacity-25 shadow-sm p-3 mb-3 rounded-3 bg-light bg-opacity-50">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
                                     <span class="badge bg-primary px-3 py-1 fs-6">
                                         <i class="bi bi-check-circle-fill me-1"></i>{{ $tracer->status_alumni }}
                                     </span>
-                                    <small class="text-muted font-monospace">Tahun: {{ $tracer->tahun_masuk ?? '-' }}</small>
+                                    <div>
+                                        @if($tracer->status_acc === 'Pending')
+                                            <span class="badge bg-warning text-dark px-3 py-1 fs-6">
+                                                <i class="bi bi-clock-history me-1"></i>Menunggu ACC Admin
+                                            </span>
+                                        @elseif($tracer->status_acc === 'Disetujui')
+                                            <span class="badge bg-success px-3 py-1 fs-6">
+                                                <i class="bi bi-patch-check-fill me-1"></i>Disetujui Admin (ACC)
+                                            </span>
+                                        @elseif($tracer->status_acc === 'Ditolak')
+                                            <span class="badge bg-danger px-3 py-1 fs-6">
+                                                <i class="bi bi-x-circle-fill me-1"></i>Ditolak Admin
+                                            </span>
+                                        @endif
+                                        <small class="text-muted font-monospace ms-2">Tahun: {{ $tracer->tahun_masuk ?? '-' }}</small>
+                                    </div>
                                 </div>
-                                <h5 class="fw-bold text-primary mb-1">{{ $tracer->nama_instansi }}</h5>
-                                @if($tracer->jurusan_atau_jabatan)
-                                    <p class="mb-1 text-dark small"><strong>Jurusan / Posisi:</strong> {{ $tracer->jurusan_atau_jabatan }}</p>
-                                @endif
-                                @if($tracer->lokasi)
-                                    <p class="mb-1 text-muted small"><i class="bi bi-geo-alt me-1 text-danger"></i>Lokasi: {{ $tracer->lokasi }}</p>
-                                @endif
-                                @if($tracer->catatan)
-                                    <div class="small text-secondary fst-italic mt-2 p-2 bg-white rounded border">
-                                        "{{ $tracer->catatan }}"
+
+                                @if($tracer->status_acc === 'Ditolak' && $tracer->catatan_admin)
+                                    <div class="alert alert-danger border-0 py-2 small mb-2">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> <strong>Alasan Penolakan Admin:</strong> "{{ $tracer->catatan_admin }}"
                                     </div>
                                 @endif
+
+                                <div class="row align-items-start g-3 mt-1">
+                                    @if($tracer->foto)
+                                        <div class="col-sm-4 text-center">
+                                            <img src="{{ asset('storage/'.$tracer->foto) }}" alt="Foto Alumni" class="img-fluid rounded border shadow-sm" style="max-height: 140px; object-fit: cover;">
+                                        </div>
+                                    @endif
+                                    <div class="{{ $tracer->foto ? 'col-sm-8' : 'col-12' }}">
+                                        <h5 class="fw-bold text-primary mb-1">{{ $tracer->nama_instansi }}</h5>
+                                        @if($tracer->jurusan_atau_jabatan)
+                                            <p class="mb-1 text-dark small"><strong>Jurusan / Posisi:</strong> {{ $tracer->jurusan_atau_jabatan }}</p>
+                                        @endif
+                                        @if($tracer->lokasi)
+                                            <p class="mb-1 text-muted small"><i class="bi bi-geo-alt me-1 text-danger"></i>Lokasi: {{ $tracer->lokasi }}</p>
+                                        @endif
+                                        @if($tracer->kesan_pesan)
+                                            <div class="small text-dark mt-2 p-2 bg-white rounded border border-warning border-opacity-50">
+                                                <strong class="text-warning text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="bi bi-chat-quote-fill me-1"></i>Kesan & Pesan Alumni:</strong>
+                                                "{{ $tracer->kesan_pesan }}"
+                                            </div>
+                                        @endif
+                                        @if($tracer->catatan)
+                                            <div class="small text-secondary fst-italic mt-2 p-2 bg-white rounded border">
+                                                <strong class="d-block mb-1" style="font-size: 0.75rem;">Catatan:</strong>
+                                                "{{ $tracer->catatan }}"
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         @empty
                             <div class="p-4 text-center text-muted bg-light rounded border border-dashed">
@@ -234,7 +284,10 @@
                         </div>
                         <h4 class="fw-bold mb-1 text-dark">{{ $siswa->nama }}</h4>
                         <p class="text-muted mb-3">NIS: <strong>{{ $siswa->nis }}</strong></p>
-                        <span class="badge bg-success px-3 py-2 mb-4"><i class="bi bi-check-circle-fill me-1"></i>{{ $siswa->status }}</span>
+                        <div class="mb-4">
+                            <span class="badge bg-primary px-3 py-2 me-1" title="Urutan NIS Terkecil di Kelas"><i class="bi bi-list-ol me-1"></i>No. Absen #{{ $myNoAbsen }}</span>
+                            <span class="badge bg-success px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i>{{ $siswa->status }}</span>
+                        </div>
 
                         <div class="text-start border-top pt-3">
                             <div class="mb-3">
@@ -358,16 +411,22 @@
                             </div>
                         </div>
 
-                        <div class="row g-3">
-                            <div class="col-6">
-                                <div class="bg-white p-3 rounded-3 shadow-sm border text-center">
-                                    <small class="text-muted d-block mb-1">Rata-rata Nilai</small>
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <div class="bg-white p-2.5 rounded-3 shadow-sm border text-center">
+                                    <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">No. Absen</small>
+                                    <h4 class="fw-bold text-dark mb-0">#{{ $myNoAbsen }}</h4>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="bg-white p-2.5 rounded-3 shadow-sm border text-center">
+                                    <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">Total Nilai</small>
                                     <h4 class="fw-bold text-primary mb-0">{{ $myScore }}</h4>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="bg-white p-3 rounded-3 shadow-sm border text-center">
-                                    <small class="text-muted d-block mb-1">Persentase Kehadiran</small>
+                            <div class="col-4">
+                                <div class="bg-white p-2.5 rounded-3 shadow-sm border text-center">
+                                    <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">Kehadiran</small>
                                     <h4 class="fw-bold text-success mb-0">{{ $persenHadir }}%</h4>
                                 </div>
                             </div>

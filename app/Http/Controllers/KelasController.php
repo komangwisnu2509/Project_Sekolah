@@ -82,7 +82,7 @@ class KelasController extends Controller
         $alumniList = Siswa::where('status', 'Lulus')
             ->orderBy('tahun_lulus', 'desc')
             ->orderBy('kelas')
-            ->orderBy('nama')
+            ->orderByRaw('CAST(nis AS UNSIGNED) ASC')
             ->get();
 
         $groupedAlumni = [];
@@ -127,7 +127,7 @@ class KelasController extends Controller
         // Show ONLY active students in this class
         $siswaList = Siswa::where('kelas', $kelas->nama_kelas)
             ->where('status', '!=', 'Lulus')
-            ->orderBy('nama')
+            ->orderByRaw('CAST(nis AS UNSIGNED) ASC')
             ->get();
         $totalSiswa = $siswaList->count();
 

@@ -19,11 +19,17 @@ class Ekstrakurikuler extends Model
         'jam_latihan',
         'lokasi',
         'deskripsi',
+        'status',
         'foto',
     ];
 
     public function pendaftaran()
     {
         return $this->hasMany(PendaftaranEkskul::class, 'ekstrakurikuler_id');
+    }
+
+    public function anggota()
+    {
+        return $this->hasMany(PendaftaranEkskul::class, 'ekstrakurikuler_id')->where('status', 'Disetujui');
     }
 }

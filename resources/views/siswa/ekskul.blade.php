@@ -180,19 +180,27 @@
                     <!-- Card Body -->
                     <div class="card-body p-3.5 d-flex flex-column justify-content-between">
                         <div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
                                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary small px-3 py-1 rounded-pill fw-semibold">
                                     {{ $e->kategori }}
                                 </span>
-                                @if($existingReg)
-                                    @if($existingReg->status === 'Disetujui')
-                                        <span class="badge bg-success small px-2 py-1"><i class="bi bi-check-circle-fill me-1"></i>Diterima</span>
-                                    @elseif($existingReg->status === 'Pending')
-                                        <span class="badge bg-warning text-dark small px-2 py-1"><i class="bi bi-clock me-1"></i>Pending</span>
-                                    @elseif($existingReg->status === 'Ditolak')
-                                        <span class="badge bg-danger small px-2 py-1"><i class="bi bi-x-circle me-1"></i>Ditolak</span>
+                                <div>
+                                    @if(($e->status ?? 'Aktif') === 'Aktif')
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success small"><i class="bi bi-play-circle-fill me-1"></i>Berjalan</span>
+                                    @else
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger small"><i class="bi bi-pause-circle-fill me-1"></i>Tidak Berjalan</span>
                                     @endif
-                                @endif
+
+                                    @if($existingReg)
+                                        @if($existingReg->status === 'Disetujui')
+                                            <span class="badge bg-success small px-2 py-1 ms-1"><i class="bi bi-check-circle-fill me-1"></i>Diterima</span>
+                                        @elseif($existingReg->status === 'Pending')
+                                            <span class="badge bg-warning text-dark small px-2 py-1 ms-1"><i class="bi bi-clock me-1"></i>Pending</span>
+                                        @elseif($existingReg->status === 'Ditolak')
+                                            <span class="badge bg-danger small px-2 py-1 ms-1"><i class="bi bi-x-circle me-1"></i>Ditolak</span>
+                                        @endif
+                                    @endif
+                                </div>
                             </div>
 
                             <h4 class="fw-bold text-dark mb-2">{{ $e->nama_ekskul }}</h4>

@@ -33,6 +33,7 @@ class DashboardController extends Controller
         $siswaMedia = collect();
 
         $mySubstituteDuties = collect();
+        $activeIzinGurusSiswa = collect();
 
         if ($user && $user->isGuru() && $user->guru) {
             $guruId = $user->guru->id;
@@ -75,6 +76,14 @@ class DashboardController extends Controller
                 WHEN hari = 'Kamis' THEN 4
                 WHEN hari = 'Jumat' THEN 5
                 ELSE 6 END")->orderBy('jam_mulai', 'asc')->take(5)->get();
+
+            $today = date('Y-m-d');
+            $activeIzinGurusSiswa = \App\Models\IzinGuru::with(['guru', 'guruPengganti', 'tugas'])
+                ->where('status', 'Disetujui')
+                ->where('tanggal_mulai', '<=', $today)
+                ->where('tanggal_selesai', '>=', $today)
+                ->get()
+                ->keyBy('guru_id');
 
             if ($siswa->status === 'Lulus') {
                 $pelanggarans = $siswa->pelanggaran()->orderBy('tanggal', 'desc')->get();
@@ -140,6 +149,7 @@ class DashboardController extends Controller
             'todayBelumDiabsen',
             'totalSiswaAktif',
             'mySubstituteDuties',
+            'activeIzinGurusSiswa',
             'prestasiList',
             'ekskulList'
         ));

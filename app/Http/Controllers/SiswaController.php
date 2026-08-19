@@ -55,7 +55,7 @@ class SiswaController extends Controller
             });
         }
         
-        $siswa = $query->orderBy('kelas')->orderBy('nama')->get();
+        $siswa = $query->orderBy('kelas')->orderByRaw('CAST(nis AS UNSIGNED) ASC')->get();
         return view('siswa.index', compact('siswa', 'q', 'tab', 'kelas', 'jurusans', 'kelasX', 'kelasXI', 'kelasXII', 'kelasOther'));
     }
 
@@ -384,7 +384,12 @@ class SiswaController extends Controller
         $persenHadir = $totalRecordedAbsensi > 0 ? round(($totalHadir / $totalRecordedAbsensi) * 100) : 100;
         $absensiLog = $myAbsensi->whereIn('status', ['Izin', 'Sakit', 'Alpa']);
 
-        // 2. Calculate Class Ranking for Student
+        // 2. Calculate Attendance & Absen Number (Sorted by smallest NIS in class = Absen #1)
+        $sortedClassmatesByNis = Siswa::where('kelas', $siswa->kelas)->where('status', '!=', 'Lulus')->orderByRaw('CAST(nis AS UNSIGNED) ASC')->get();
+        $myAbsenIndex = $sortedClassmatesByNis->search(fn($c) => $c->id === $siswa->id);
+        $myNoAbsen = $myAbsenIndex !== false ? ($myAbsenIndex + 1) : 1;
+
+        // 3. Calculate Class Ranking for Student (Highest Total Score = Rangking #1)
         $classmates = Siswa::where('kelas', $siswa->kelas)->where('status', '!=', 'Lulus')->get();
         $rankedClassmates = $classmates->map(function($c) {
             $subAvg = \App\Models\TugasSubmission::where('siswa_id', $c->id)->whereNotNull('nilai')->avg('nilai');
@@ -440,7 +445,7 @@ class SiswaController extends Controller
         return view('siswa.profile', compact(
             'siswa', 'profilSekolah', 'pelanggarans', 'totalPoints', 'jadwals', 'tugas', 'submissions',
             'myAbsensi', 'totalHadir', 'totalIzin', 'totalSakit', 'totalAlpa', 'totalRecordedAbsensi',
-            'persenHadir', 'absensiLog', 'myRank', 'totalClassmates', 'myScore', 'myAlumniTracers', 'myApprovedEkskuls'
+            'persenHadir', 'absensiLog', 'myNoAbsen', 'myRank', 'totalClassmates', 'myScore', 'myAlumniTracers', 'myApprovedEkskuls'
         ));
     }
 
@@ -471,7 +476,7 @@ class SiswaController extends Controller
             ->groupBy('hari');
 
         $today = date('Y-m-d');
-        $activeIzinGurus = \App\Models\IzinGuru::with('guruPengganti')
+        $activeIzinGurus = \App\Models\IzinGuru::with(['guru', 'guruPengganti', 'tugas'])
             ->where('status', 'Disetujui')
             ->where('tanggal_mulai', '<=', $today)
             ->where('tanggal_selesai', '>=', $today)
