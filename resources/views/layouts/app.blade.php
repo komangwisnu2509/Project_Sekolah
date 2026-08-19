@@ -518,13 +518,6 @@
                                 </ul>
                             </div>
                         </li>
-
-                        <!-- 6. Prestasi Siswa -->
-                        <li class="{{ request()->routeIs('prestasi.*') ? 'active' : '' }}">
-                            <a href="{{ route('prestasi.index') }}" class="py-2">
-                                <span><i class="bi bi-trophy-fill me-2 text-warning"></i> Prestasi Siswa</span>
-                            </a>
-                        </li>
                     @else
                         @php
                             $siswaPointsNav = 0;
@@ -575,11 +568,6 @@
                             <li class="{{ request()->routeIs('siswa.ekskul') ? 'active' : '' }}">
                                 <a href="{{ route('siswa.ekskul') }}" class="py-2">
                                     <span><i class="bi bi-palette-fill me-2 text-primary"></i> Ekstrakurikuler</span>
-                                </a>
-                            </li>
-                            <li class="{{ request()->routeIs('prestasi.*') ? 'active' : '' }}">
-                                <a href="{{ route('prestasi.index') }}" class="py-2">
-                                    <span><i class="bi bi-trophy-fill me-2 text-warning"></i> Prestasi Siswa</span>
                                 </a>
                             </li>
                         @endif

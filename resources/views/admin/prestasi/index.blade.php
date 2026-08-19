@@ -236,7 +236,7 @@
                                                 <div class="modal-body p-4">
                                                     <div class="row g-3">
                                                         <div class="col-md-6">
-                                                            <label class="form-label fw-bold small">Pilih Siswa (Opsional)</label>
+                                                            <label class="form-label fw-bold small">Pilih Siswa</label>
                                                             <select name="siswa_id" class="form-select form-select-sm">
                                                                 <option value="">-- Pilih dari Data Siswa --</option>
                                                                 @foreach($siswas as $s)
@@ -244,12 +244,8 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                        <div class="col-md-6">
-                                                            <label class="form-label fw-bold small">Nama Siswa (Manual)</label>
-                                                            <input type="text" name="nama_siswa" class="form-control form-control-sm" value="{{ $p->nama_siswa }}">
-                                                        </div>
                                                         <div class="col-md-12">
-                                                            <label class="form-label fw-bold small">Judul / Nama Kejuaraan <span class="text-danger">*</span></label>
+                                                            <label class="form-label fw-bold small"> Nama Kejuaraan Yang Diikuti <span class="text-danger">*</span></label>
                                                             <input type="text" name="judul_prestasi" class="form-control form-control-sm" value="{{ $p->judul_prestasi }}" required>
                                                         </div>
                                                         <div class="col-md-6">
@@ -285,7 +281,7 @@
                                                             <textarea name="deskripsi" class="form-control form-control-sm" rows="3" placeholder="Tuliskan deskripsi singkat mengenai jalannya lomba, lokasi, atau tantangan kejuaraan...">{{ $p->deskripsi }}</textarea>
                                                         </div>
                                                         <div class="col-md-12">
-                                                            <label class="form-label fw-bold small">Ganti Foto Bukti / Piala (Opsional)</label>
+                                                            <label class="form-label fw-bold small">Ganti Foto Bukti / Piala</label>
                                                             <input type="file" name="foto_bukti" class="form-control form-control-sm" accept="image/*">
                                                         </div>
                                                         <div class="col-md-12">
@@ -338,7 +334,7 @@
                     <div class="modal-body p-4">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="siswa_id" class="form-label fw-bold small">Pilih Siswa (Opsional)</label>
+                                <label for="siswa_id" class="form-label fw-bold small">Pilih Siswa</label>
                                 <select name="siswa_id" id="siswa_id" class="form-select form-select-sm">
                                     <option value="">-- Pilih dari Data Siswa --</option>
                                     @foreach($siswas as $s)
@@ -346,12 +342,8 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label for="nama_siswa" class="form-label fw-bold small">Nama Siswa (Manual)</label>
-                                <input type="text" name="nama_siswa" id="nama_siswa" class="form-control form-control-sm" placeholder="Nama lengkap siswa berprestasi...">
-                            </div>
                             <div class="col-md-12">
-                                <label for="judul_prestasi" class="form-label fw-bold small">Judul / Nama Kejuaraan <span class="text-danger">*</span></label>
+                                <label for="judul_prestasi" class="form-label fw-bold small"> Nama Kejuaraan Yang Diikuti <span class="text-danger">*</span></label>
                                 <input type="text" name="judul_prestasi" id="judul_prestasi" class="form-control form-control-sm" placeholder="Contoh: Juara 1 Olimpiade Sains Nasional" required>
                             </div>
                             <div class="col-md-6">

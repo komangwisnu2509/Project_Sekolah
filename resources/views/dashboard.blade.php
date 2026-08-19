@@ -894,6 +894,78 @@
                                         <span><i class="bi bi-geo-alt me-1 text-danger"></i>Tingkat {{ $p->tingkat }}</span>
                                         <span class="font-monospace">Thn {{ $p->tahun }}</span>
                                     </div>
+
+                                    <!-- Tombol Mata (View Detail Modal on Dashboard) -->
+                                    <button type="button" class="btn btn-sm btn-outline-primary fw-bold w-100 mt-3" data-bs-toggle="modal" data-bs-target="#modalDashboardPrestasi{{ $p->id }}">
+                                        <i class="bi bi-eye-fill me-1"></i> lihat Detail & Deskripsi Lomba
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Detail Prestasi Dashboard -->
+                        <div class="modal fade" id="modalDashboardPrestasi{{ $p->id }}" tabindex="-1" aria-labelledby="labelDash{{ $p->id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                                    <div class="modal-header bg-dark text-white border-0 py-3">
+                                        <h5 class="modal-title fw-bold" id="labelDash{{ $p->id }}">
+                                            <i class="bi bi-trophy-fill text-warning me-2"></i>Detail Prestasi & Deskripsi Lomba
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body p-4">
+                                        <div class="row g-4 align-items-center">
+                                            <div class="col-md-5 text-center">
+                                                @if($p->foto_bukti)
+                                                    <img src="{{ asset('storage/'.$p->foto_bukti) }}" alt="{{ $p->judul_prestasi }}" class="img-fluid rounded-3 shadow border object-fit-cover w-100" style="max-height: 280px;">
+                                                @else
+                                                    <div class="bg-warning bg-opacity-10 text-dark rounded-3 p-5 border text-center">
+                                                        <i class="bi bi-trophy-fill text-warning display-1"></i>
+                                                        <p class="small text-muted mt-2 mb-0">Foto Dokumentasi Tidak Tersedia</p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="col-md-7">
+                                                <span class="badge bg-warning text-dark fw-bold px-3 py-1 mb-2">{{ $p->peringkat }} - Tingkat {{ $p->tingkat }}</span>
+                                                <h4 class="fw-extrabold text-primary mb-2">{{ $p->judul_prestasi }}</h4>
+                                                
+                                                <div class="p-3 bg-light rounded-3 mb-3 border">
+                                                    <div class="row g-2 small">
+                                                        <div class="col-6">
+                                                            <strong class="text-muted d-block"><i class="bi bi-person-fill text-primary me-1"></i>Nama Siswa:</strong>
+                                                            <span class="fw-bold text-dark fs-6">{{ $p->nama_siswa }}</span>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <strong class="text-muted d-block"><i class="bi bi-building me-1 text-primary"></i>Kelas:</strong>
+                                                            <span class="fw-bold text-dark fs-6">{{ $p->kelas ? 'Kelas '.$p->kelas : '-' }}</span>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <strong class="text-muted d-block"><i class="bi bi-tag-fill me-1 text-primary"></i>Kategori:</strong>
+                                                            <span class="fw-semibold text-dark">{{ $p->kategori }}</span>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <strong class="text-muted d-block"><i class="bi bi-calendar-event me-1 text-primary"></i>Tahun:</strong>
+                                                            <span class="fw-semibold text-dark">{{ $p->tahun }}</span>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <strong class="text-muted d-block"><i class="bi bi-diagram-3-fill me-1 text-primary"></i>Penyelenggara:</strong>
+                                                            <span class="fw-semibold text-dark">{{ $p->penyelenggara ?? 'Penyelenggara Resmi' }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-0">
+                                                    <h6 class="fw-bold text-dark mb-1"><i class="bi bi-card-text me-1 text-primary"></i>Deskripsi / Rincian Lomba:</h6>
+                                                    <div class="p-3 bg-white border rounded-3 text-secondary small" style="line-height: 1.6; max-height: 160px; overflow-y: auto;">
+                                                        {{ $p->deskripsi ?: 'Tidak ada deskripsi singkat tambahan untuk kejuaraan ini.' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer bg-light border-0 py-2">
+                                        <button type="button" class="btn btn-secondary btn-sm px-4" data-bs-dismiss="modal">Tutup</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
