@@ -127,7 +127,20 @@ class DashboardController extends Controller
 
         $ekskulList = \App\Models\Ekstrakurikuler::orderBy('nama_ekskul')->get();
         $beritaTerbaru = \App\Models\Berita::orderBy('tanggal_publikasi', 'desc')->take(4)->get();
-        $agendaMendatang = \App\Models\Agenda::where('tanggal', '>=', date('Y-m-d'))->orderBy('tanggal', 'asc')->take(4)->get();
+        // Fetch PPDB Record for logged-in user if available
+        $ppdbRecord = null;
+        if ($user) {
+            $userEmail = strtolower($user->email);
+            $siswaEmail = ($user->siswa && $user->siswa->email) ? strtolower($user->siswa->email) : null;
+            $ppdbRecord = \App\Models\PpdbPendaftaran::where('email', $userEmail)
+                ->orWhere(function($query) use ($siswaEmail) {
+                    if ($siswaEmail) {
+                        $query->where('email', $siswaEmail);
+                    }
+                })
+                ->latest()
+                ->first();
+        }
 
         return view('dashboard', compact(
             'totalKelas',
@@ -158,7 +171,8 @@ class DashboardController extends Controller
             'siswas',
             'ekskulList',
             'beritaTerbaru',
-            'agendaMendatang'
+            'agendaMendatang',
+            'ppdbRecord'
         ));
     }
 }

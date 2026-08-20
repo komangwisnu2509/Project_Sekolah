@@ -124,14 +124,48 @@ class KelasController extends Controller
     public function show($id)
     {
         $kelas = Kelas::findOrFail($id);
-        // Show ONLY active students in this class
+        
         $siswaList = Siswa::where('kelas', $kelas->nama_kelas)
             ->where('status', '!=', 'Lulus')
             ->orderByRaw('CAST(nis AS UNSIGNED) ASC')
             ->get();
         $totalSiswa = $siswaList->count();
 
-        return view('kelas.show', compact('kelas', 'siswaList', 'totalSiswa'));
+        // Calculate Class Ranking & Overall School Ranking for Admin
+        $allActiveStudents = Siswa::where('status', '!=', 'Lulus')->get();
+        $gradedSubmissionsAvg = \App\Models\TugasSubmission::whereNotNull('nilai')
+            ->selectRaw('siswa_id, avg(nilai) as sub_avg')
+            ->groupBy('siswa_id')
+            ->pluck('sub_avg', 'siswa_id');
+
+        $rankedAll = $allActiveStudents->map(function($c) use ($gradedSubmissionsAvg) {
+            $subAvg = $gradedSubmissionsAvg[$c->id] ?? null;
+            $baseScore = $c->total_nilai ?? 85.00;
+            $score = $subAvg !== null ? ($baseScore * 0.3) + ($subAvg * 0.7) : $baseScore;
+            return [
+                'id' => $c->id,
+                'nis' => $c->nis,
+                'nama' => $c->nama,
+                'kelas' => $c->kelas,
+                'foto' => $c->foto,
+                'sub_avg' => $subAvg !== null ? round($subAvg, 1) : '-',
+                'score' => round($score, 2),
+            ];
+        })->sortByDesc('score')->values();
+
+        $rankedAllWithRank = $rankedAll->map(function($item, $idx) {
+            $item['overall_rank'] = $idx + 1;
+            return $item;
+        });
+
+        $classRankedList = $rankedAllWithRank->where('kelas', $kelas->nama_kelas)->values()->map(function($item, $idx) {
+            $item['class_rank'] = $idx + 1;
+            return $item;
+        });
+
+        $overallTop10 = $rankedAllWithRank->take(10);
+
+        return view('kelas.show', compact('kelas', 'siswaList', 'totalSiswa', 'classRankedList', 'rankedAllWithRank', 'overallTop10'));
     }
 
     public function edit($id)

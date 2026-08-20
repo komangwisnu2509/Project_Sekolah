@@ -33,6 +33,7 @@ Route::get('/agenda', [LandingPageController::class, 'agenda'])->name('agenda');
 // Public PPDB Pendaftaran Siswa Baru Routes
 Route::get('/ppdb', [PpdbController::class, 'publicIndex'])->name('ppdb.index');
 Route::post('/ppdb/store', [PpdbController::class, 'storePublic'])->name('ppdb.store');
+Route::post('/ppdb/cek-status', [PpdbController::class, 'cekStatus'])->name('ppdb.cek-status');
 Route::get('/ppdb/bukti/{no_pendaftaran}', [PpdbController::class, 'bukti'])->name('ppdb.bukti');
 
 // Dashboard main route

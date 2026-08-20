@@ -283,9 +283,11 @@
                             @endif
                         </div>
                         <h4 class="fw-bold mb-1 text-dark">{{ $siswa->nama }}</h4>
-                        <p class="text-muted mb-3">NIS: <strong>{{ $siswa->nis }}</strong></p>
+                        <p class="text-muted mb-1">NIS: <strong>{{ $siswa->nis }}</strong></p>
+                        <p class="text-primary fw-bold mb-3 small">
+                            <i class="bi bi-person-lines-fill me-1"></i>No. Absen: <span class="badge bg-primary fs-6 px-3 py-1 shadow-sm">#{{ $myNoAbsen }}</span> <span class="text-muted fw-normal">(Berdasarkan NIS Terkecil di Kelas {{ $siswa->kelas }})</span>
+                        </p>
                         <div class="mb-4">
-                            <span class="badge bg-primary px-3 py-2 me-1" title="Urutan NIS Terkecil di Kelas"><i class="bi bi-list-ol me-1"></i>No. Absen #{{ $myNoAbsen }}</span>
                             <span class="badge bg-success px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i>{{ $siswa->status }}</span>
                         </div>
 
@@ -389,47 +391,70 @@
 
         <!-- CARDS FOR RANKING & ATTENDANCE SUMMARY -->
         <div class="row g-4 mb-4">
-            <!-- Card 1: Class Rank & Academic Score -->
+            <!-- Card 1: Class Rank & Academic Score & Overall School Rank -->
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm h-100 rounded-3">
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="mb-0 fw-bold text-dark">
-                            <i class="bi bi-trophy-fill text-warning me-2"></i>Peringkat Nilai Akademik Kelas
+                            <i class="bi bi-trophy-fill text-warning me-2"></i>Peringkat Akademik &amp; Juara Umum
                         </h5>
-                        <span class="badge bg-warning text-dark font-bold px-3 py-1">Peringkat Kelas</span>
+                        <span class="badge bg-warning text-dark font-bold px-3 py-1">Rangking Kelas &amp; Sekolah</span>
                     </div>
                     <div class="card-body p-4 bg-light bg-opacity-50">
-                        <div class="d-flex align-items-center gap-3 mb-3 bg-white p-3 rounded-3 shadow-sm border">
-                            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle fs-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                🏆
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <div class="bg-white p-3 rounded-3 shadow-sm border h-100 d-flex align-items-center gap-2">
+                                    <div class="bg-warning bg-opacity-10 text-warning p-2 rounded-circle fs-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                        🏆
+                                    </div>
+                                    <div>
+                                        <small class="text-muted fw-bold d-block" style="font-size: 0.75rem;">Peringkat Kelas {{ $siswa->kelas }}</small>
+                                        <h4 class="fw-bold text-dark mb-0">
+                                            #{{ $myRank }} <span class="fs-6 text-muted">/ {{ $totalClassmates }} Siswa</span>
+                                        </h4>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <small class="text-muted fw-bold d-block">Peringkat Nilai di Kelas {{ $siswa->kelas }}</small>
-                                <h3 class="fw-bold text-dark mb-0">
-                                    Rangking #{{ $myRank }} <span class="fs-6 text-muted">dari {{ $totalClassmates }} Siswa</span>
-                                </h3>
+                            <div class="col-6">
+                                <div class="bg-white p-3 rounded-3 shadow-sm border h-100 d-flex align-items-center gap-2">
+                                    <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-circle fs-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                        ⭐
+                                    </div>
+                                    <div>
+                                        <small class="text-muted fw-bold d-block" style="font-size: 0.75rem;">Peringkat Umum Sekolah</small>
+                                        <h4 class="fw-bold text-primary mb-0">
+                                            #{{ $myOverallRank }} <span class="fs-6 text-muted">/ {{ $totalSchoolStudents }} Siswa</span>
+                                        </h4>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="row g-2">
+                        <div class="row g-2 mb-3">
                             <div class="col-4">
                                 <div class="bg-white p-2.5 rounded-3 shadow-sm border text-center">
                                     <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">No. Absen</small>
-                                    <h4 class="fw-bold text-dark mb-0">#{{ $myNoAbsen }}</h4>
+                                    <h5 class="fw-bold text-dark mb-0">#{{ $myNoAbsen }}</h5>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="bg-white p-2.5 rounded-3 shadow-sm border text-center">
                                     <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">Total Nilai</small>
-                                    <h4 class="fw-bold text-primary mb-0">{{ $myScore }}</h4>
+                                    <h5 class="fw-bold text-primary mb-0">{{ $myScore }}</h5>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="bg-white p-2.5 rounded-3 shadow-sm border text-center">
                                     <small class="text-muted d-block mb-1" style="font-size: 0.75rem;">Kehadiran</small>
-                                    <h4 class="fw-bold text-success mb-0">{{ $persenHadir }}%</h4>
+                                    <h5 class="fw-bold text-success mb-0">{{ $persenHadir }}%</h5>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-warning text-dark fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#modalDetailRangking">
+                                <i class="bi bi-search me-1"></i> Lihat Detail Rangking &amp; Juara Umum
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -724,5 +749,147 @@
             </div>
         </div>
     @endif
+</div>
+
+<!-- Modal Detail Rangking & Juara Umum -->
+<div class="modal fade" id="modalDetailRangking" tabindex="-1" aria-labelledby="modalDetailRangkingLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-gradient bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="modalDetailRangkingLabel">
+                    <i class="bi bi-trophy-fill text-warning me-2"></i>Detail Rangking Kelas &amp; Juara Umum Sekolah
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                
+                <!-- Nav Tabs Modal -->
+                <ul class="nav nav-pills gap-2 mb-4 bg-light p-2 rounded-3 border" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active fw-bold px-4 rounded-3" id="modal-class-rank-tab" data-bs-toggle="pill" data-bs-target="#modal-class-rank" type="button" role="tab">
+                            🏆 Rangking Kelas {{ $siswa->kelas }} ({{ $totalClassmates }} Siswa)
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold px-4 rounded-3" id="modal-overall-rank-tab" data-bs-toggle="pill" data-bs-target="#modal-overall-rank" type="button" role="tab">
+                            ⭐ Top 10 Juara Umum Sekolah
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <!-- Tab 1: Class Ranking Table -->
+                    <div class="tab-pane fade show active" id="modal-class-rank" role="tabpanel">
+                        <div class="alert alert-info border-0 shadow-sm mb-3">
+                            <small class="fw-bold"><i class="bi bi-info-circle-fill me-1"></i> Penilaian Rangking Kelas dihitung berdasarkan akumulasi Nilai Tugas (70%) dan Total Nilai Base Siswa (30%).</small>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle border">
+                                <thead class="table-primary text-primary">
+                                    <tr>
+                                        <th class="text-center" style="width: 100px;">Rangking</th>
+                                        <th>NIS</th>
+                                        <th>Nama Siswa</th>
+                                        <th class="text-center">Rata-Rata Tugas</th>
+                                        <th class="text-center">Total Nilai Akhir</th>
+                                        <th class="text-center">Peringkat Umum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($classmatesRanked as $item)
+                                        <tr class="{{ $item['id'] === $siswa->id ? 'table-warning fw-bold border border-warning' : '' }}">
+                                            <td class="text-center">
+                                                @if($item['class_rank'] == 1)
+                                                    <span class="badge bg-warning text-dark px-3 py-1 fs-6"><i class="bi bi-trophy-fill me-1"></i> #1 (Juara 1)</span>
+                                                @elseif($item['class_rank'] == 2)
+                                                    <span class="badge bg-secondary text-white px-3 py-1 fs-6"><i class="bi bi-award-fill me-1"></i> #2 (Juara 2)</span>
+                                                @elseif($item['class_rank'] == 3)
+                                                    <span class="badge bg-danger text-white px-3 py-1 fs-6"><i class="bi bi-award me-1"></i> #3 (Juara 3)</span>
+                                                @else
+                                                    <span class="badge bg-light text-dark border px-3 py-1 fs-6">#{{ $item['class_rank'] }}</span>
+                                                @endif
+                                            </td>
+                                            <td class="small">{{ $item['nis'] }}</td>
+                                            <td>
+                                                <strong>{{ $item['nama'] }}</strong>
+                                                @if($item['id'] === $siswa->id)
+                                                    <span class="badge bg-primary ms-1">Saya</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center fw-bold text-primary">{{ $item['sub_avg'] }}</td>
+                                            <td class="text-center fw-bold text-success fs-6">{{ $item['score'] }}</td>
+                                            <td class="text-center">
+                                                <span class="badge bg-info text-dark">#{{ $item['overall_rank'] }} Umum</span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Top 10 Overall School Ranking -->
+                    <div class="tab-pane fade" id="modal-overall-rank" role="tabpanel">
+                        <div class="alert alert-warning border-0 shadow-sm mb-3">
+                            <small class="fw-bold text-dark"><i class="bi bi-star-fill me-1 text-warning"></i> 10 Siswa Berprestasi dengan Nilai Akhir Tertinggi dari Seluruh Kelas di Sekolah (Juara Umum).</small>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle border">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="text-center" style="width: 100px;">Peringkat</th>
+                                        <th>Nama Siswa</th>
+                                        <th>Kelas</th>
+                                        <th class="text-center">Nilai Akhir</th>
+                                        <th class="text-center">Gelar Juara</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($overallTop10 as $item)
+                                        <tr class="{{ $item['id'] === $siswa->id ? 'table-warning fw-bold border border-warning' : '' }}">
+                                            <td class="text-center">
+                                                @if($item['overall_rank'] == 1)
+                                                    <span class="badge bg-warning text-dark px-3 py-1 fs-6"><i class="bi bi-star-fill me-1"></i> #1 UMUM</span>
+                                                @elseif($item['overall_rank'] == 2)
+                                                    <span class="badge bg-light text-dark border px-3 py-1 fs-6">#2 UMUM</span>
+                                                @elseif($item['overall_rank'] == 3)
+                                                    <span class="badge bg-light text-dark border px-3 py-1 fs-6">#3 UMUM</span>
+                                                @else
+                                                    <span class="badge bg-light text-dark border px-2.5 py-1">#{{ $item['overall_rank'] }} UMUM</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <strong>{{ $item['nama'] }}</strong>
+                                                @if($item['id'] === $siswa->id)
+                                                    <span class="badge bg-primary ms-1">Saya</span>
+                                                @endif
+                                            </td>
+                                            <td><span class="badge bg-primary">{{ $item['kelas'] }}</span></td>
+                                            <td class="text-center fw-bold text-success fs-5">{{ $item['score'] }}</td>
+                                            <td class="text-center">
+                                                @if($item['overall_rank'] == 1)
+                                                    <span class="badge bg-success px-3 py-1 fs-6">🏆 Juara 1 Umum Sekolah</span>
+                                                @elseif($item['overall_rank'] == 2)
+                                                    <span class="badge bg-primary px-3 py-1 fs-6">🥇 Juara 2 Umum Sekolah</span>
+                                                @elseif($item['overall_rank'] == 3)
+                                                    <span class="badge bg-info text-dark px-3 py-1 fs-6">🥈 Juara 3 Umum Sekolah</span>
+                                                @else
+                                                    <span class="badge bg-light text-secondary">Top {{ $item['overall_rank'] }} Sekolah</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

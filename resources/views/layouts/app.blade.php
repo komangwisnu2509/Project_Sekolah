@@ -227,11 +227,13 @@
                             <i class="bi bi-globe text-info"></i> Beranda Utama Sekolah
                         </a>
                     </li>
-                    <li class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
-                        <a href="{{ route('profile.edit') }}">
-                            <i class="bi bi-person-gear"></i> Profil Saya
-                        </a>
-                    </li>
+                    @if(!Auth::user()->isSiswa())
+                        <li class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                            <a href="{{ route('profile.edit') }}">
+                                <i class="bi bi-person-gear"></i> Profil Saya
+                            </a>
+                        </li>
+                    @endif
                     @if(Auth::user()->isAdmin())
                         <!-- Group 1: Master Data -->
                         <li>
@@ -539,7 +541,7 @@
                         <a href="{{ route('landing_page') }}" class="btn btn-outline-info btn-sm px-2 px-sm-3 me-2" title="Buka Beranda Utama Website Sekolah" target="_blank">
                             <i class="bi bi-globe me-1"></i> <span class="d-none d-sm-inline">Beranda Utama</span>
                         </a>
-                        <a href="{{ route('profile.edit') }}" class="text-decoration-none d-flex align-items-center me-2 text-dark" title="Edit Profil Saya">
+                        <a href="{{ Auth::user()->isSiswa() ? route('siswa.profile') : route('profile.edit') }}" class="text-decoration-none d-flex align-items-center me-2 text-dark" title="Profil Saya">
                             @if(Auth::user()->foto)
                                 <img src="{{ asset('storage/'.Auth::user()->foto) }}" width="34" height="34" class="rounded-circle object-fit-cover me-2 border shadow-sm">
                             @elseif(Auth::user()->isGuru() && Auth::user()->guru && Auth::user()->guru->foto)

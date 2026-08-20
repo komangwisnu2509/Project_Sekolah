@@ -159,23 +159,75 @@
             </div>
 
             @if($prestasiUtama)
-            <div class="prestasi-box mb-5" data-aos="flip-up" data-aos-duration="1000">
-                <div class="prestasi-img">
-                    <img src="{{ $prestasiUtama->foto_bukti ? asset('storage/'.$prestasiUtama->foto_bukti) : asset('storage/prestasi/default.jpg') }}" alt="Prestasi Utama">
-                </div>
-                <div class="prestasi-content">
-                    <div class="prestasi-year">TAHUN {{ $prestasiUtama->tahun }} | {{ $prestasiUtama->peringkat }} - Tingkat {{ $prestasiUtama->tingkat }}</div>
-                    <h2>{{ $prestasiUtama->judul_prestasi }}</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 1.05rem;">
-                        {{ $prestasiUtama->deskripsi ?: 'Berhasil meraih Juara dan mengharumkan nama sekolah dalam ajang kompetisi tingkat ' . $prestasiUtama->tingkat . '.' }}
-                    </p>
-                    <div class="d-flex align-items-center gap-3 flex-wrap">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalLandingPrestasi{{ $prestasiUtama->id }}">
-                            👁️ Lihat Detail Prestasi Ini
-                        </button>
-                        <a href="#daftar-prestasi-grid" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
-                            🏆 Lihat Semua Daftar Prestasi ({{ count($prestasiList) }})
-                        </a>
+            <div class="prestasi-box mb-5 p-3 p-md-4" data-aos="fade-up" data-aos-duration="900">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-4 col-md-5">
+                        <div class="prestasi-img-card shadow-sm" style="height: 280px !important; border-radius: 16px; overflow: hidden;">
+                            <img src="{{ $prestasiUtama->foto_bukti ? asset('storage/'.$prestasiUtama->foto_bukti) : asset('storage/prestasi/default.jpg') }}" alt="{{ $prestasiUtama->judul_prestasi }}">
+                            <div class="prestasi-img-overlay"></div>
+                            <div class="position-absolute top-0 start-0 m-3 z-2">
+                                <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill shadow-sm d-inline-flex align-items-center gap-1" style="font-size: 0.8rem; letter-spacing: 0.5px;">
+                                    <i class="bi bi-star-fill"></i> PRESTASI UTAMA
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-7 ps-lg-3">
+                        <div class="prestasi-content-inner">
+                            <!-- Badges Row -->
+                            <div class="d-flex align-items-center gap-2 flex-wrap mb-3">
+                                <span class="badge bg-warning bg-opacity-20 text-dark border border-warning border-opacity-25 px-3 py-2 rounded-pill fw-bold" style="font-size: 0.85rem;">
+                                    <i class="bi bi-trophy-fill text-warning me-1"></i> {{ $prestasiUtama->peringkat }}
+                                </span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-20 px-3 py-2 rounded-pill fw-bold" style="font-size: 0.85rem;">
+                                    <i class="bi bi-geo-alt-fill me-1"></i> Tingkat {{ $prestasiUtama->tingkat }}
+                                </span>
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-20 px-3 py-2 rounded-pill fw-bold" style="font-size: 0.85rem;">
+                                    <i class="bi bi-calendar-event me-1"></i> Tahun {{ $prestasiUtama->tahun }}
+                                </span>
+                                @if(!empty($prestasiUtama->kategori))
+                                <span class="badge bg-info bg-opacity-10 text-dark border border-info border-opacity-20 px-3 py-2 rounded-pill fw-bold" style="font-size: 0.85rem;">
+                                    <i class="bi bi-tag-fill me-1 text-info"></i> {{ $prestasiUtama->kategori }}
+                                </span>
+                                @endif
+                            </div>
+
+                            <!-- Title -->
+                            <h2 class="text-capitalize">{{ $prestasiUtama->judul_prestasi }}</h2>
+
+                            <!-- Student Identity Card -->
+                            <div class="p-3 rounded-4 my-3 border d-flex align-items-center gap-3" style="background-color: #F8FAFC; border-color: #E2E8F0 !important;">
+                                <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
+                                    <i class="bi bi-person-fill fs-5"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <div class="text-muted fw-semibold text-uppercase" style="font-size: 0.725rem; letter-spacing: 0.5px;">Raihan Prestasi Oleh</div>
+                                    <div class="fw-bold text-dark fs-6 text-truncate">
+                                        {{ $prestasiUtama->nama_siswa }}
+                                        @if($prestasiUtama->kelas)
+                                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-20 ms-1 rounded-pill px-2 py-1 fw-semibold" style="font-size: 0.75rem;">
+                                                Kelas {{ $prestasiUtama->kelas }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-secondary mb-4" style="font-size: 0.975rem; line-height: 1.65; color: #475569;">
+                                {{ $prestasiUtama->deskripsi ?: 'Berhasil meraih Juara dan mengharumkan nama sekolah dalam ajang kompetisi tingkat ' . $prestasiUtama->tingkat . '.' }}
+                            </p>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex align-items-center gap-3 flex-wrap pt-3 border-top" style="border-color: #F1F5F9 !important;">
+                                <button type="button" class="btn btn-primary px-4 py-2.5 rounded-pill fw-bold shadow-sm hover-elevate d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalLandingPrestasi{{ $prestasiUtama->id }}" style="font-size: 0.95rem;">
+                                    <i class="bi bi-eye-fill"></i> Lihat Detail Prestasi
+                                </button>
+                                <a href="#daftar-prestasi-grid" class="btn btn-outline-primary px-4 py-2.5 rounded-pill fw-bold hover-elevate d-inline-flex align-items-center gap-2" style="font-size: 0.95rem;">
+                                    <i class="bi bi-trophy-fill"></i> Semua Daftar Prestasi ({{ count($prestasiList) }})
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -213,7 +265,7 @@
                                 </p>
                             </div>
                             <button type="button" class="btn btn-outline-primary w-100 fw-bold rounded-3" data-bs-toggle="modal" data-bs-target="#modalLandingPrestasi{{ $p->id }}" style="border-radius: 10px;">
-                                👁️ Detail & Deskripsi Singkat
+                                <i class="bi bi-eye-fill me-1"></i> Detail & Deskripsi Singkat
                             </button>
                         </div>
                     </div>
@@ -306,7 +358,7 @@
                                         </p>
                                     </div>
                                     <button type="button" class="btn btn-outline-primary w-100 fw-bold rounded-3" data-bs-toggle="modal" data-bs-target="#modalLandingPrestasi{{ $p->id }}" style="border-radius: 10px;">
-                                        👁️ Detail & Deskripsi Singkat
+                                        <i class="bi bi-eye-fill me-1"></i> Detail & Deskripsi Singkat
                                     </button>
                                 </div>
                             </div>

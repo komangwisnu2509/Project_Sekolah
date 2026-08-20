@@ -19,6 +19,43 @@
 
         <div class="row justify-content-center">
             <div class="col-lg-9">
+                <!-- Card Cek Status Pendaftaran Mandiri -->
+                <div class="card border-0 shadow-lg rounded-4 mb-4 overflow-hidden" style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);">
+                    <div class="card-body p-4 text-white">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-7">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle bg-warning bg-opacity-20 text-warning d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px;">
+                                        <i class="bi bi-search fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold text-white mb-1">Sudah Mendaftar? Cek Status Pendaftaran Anda</h5>
+                                        <p class="text-white-50 small mb-0">Masukkan Nomor Reg (PPDB-...), Email, atau NISN Anda untuk mengecek status verifikasi secara privat.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <form action="{{ route('ppdb.cek-status') }}" method="POST">
+                                    @csrf
+                                    <div class="input-group">
+                                        <input type="text" name="search_key" class="form-control form-control-lg fs-6 rounded-start-3 border-0" placeholder="No Reg / Email / NISN..." required value="{{ old('search_key') }}">
+                                        <button type="submit" class="btn btn-warning fw-bold px-4 rounded-end-3">
+                                            <i class="bi bi-arrow-right-circle me-1"></i> Cek Status
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if(session('error'))
+                    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 p-3 d-flex align-items-center gap-3">
+                        <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+                        <div class="fw-semibold text-danger">{{ session('error') }}</div>
+                    </div>
+                @endif
+
                 <!-- Registration Form Card -->
                 <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="background: #FFFFFF;" data-aos="fade-up">
                     <div class="card-header text-white p-4 border-0" style="background: linear-gradient(90deg, #0F172A 0%, #2563EB 100%);">
@@ -122,13 +159,18 @@
 
                             <div class="row g-3 mb-4">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold small text-dark">Nama Orang Tua / Wali <span class="text-danger">*</span></label>
-                                    <input type="text" name="nama_orang_tua" class="form-control form-control-lg fs-6 rounded-3 border-secondary-subtle" placeholder="Nama Ayah/Ibu/Wali..." value="{{ old('nama_orang_tua') }}" required>
+                                    <label class="form-label fw-bold small text-dark">Alamat Email Aktif (Siswa/Orang Tua) <span class="text-danger">*</span></label>
+                                    <input type="email" name="email" class="form-control form-control-lg fs-6 rounded-3 border-secondary-subtle" placeholder="Contoh: siswa@gmail.com..." value="{{ old('email') }}" required>
+                                    <small class="text-muted"><i class="bi bi-info-circle me-1 text-primary"></i>Email ini penting untuk registrasi & aktivasi akun siswa baru.</small>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold small text-dark">Nomor HP / WhatsApp Aktif <span class="text-danger">*</span></label>
                                     <input type="text" name="no_hp_wa" class="form-control form-control-lg fs-6 rounded-3 border-secondary-subtle" placeholder="Contoh: 081234567890..." value="{{ old('no_hp_wa') }}" required>
                                     <small class="text-muted">Notifikasi hasil seleksi akan dikirim via WhatsApp.</small>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold small text-dark">Nama Orang Tua / Wali <span class="text-danger">*</span></label>
+                                    <input type="text" name="nama_orang_tua" class="form-control form-control-lg fs-6 rounded-3 border-secondary-subtle" placeholder="Nama Ayah/Ibu/Wali..." value="{{ old('nama_orang_tua') }}" required>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-bold small text-dark">Alamat Lengkap Rumah <span class="text-danger">*</span></label>

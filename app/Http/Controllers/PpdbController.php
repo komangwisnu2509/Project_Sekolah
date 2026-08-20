@@ -34,6 +34,7 @@ class PpdbController extends Controller
     {
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
             'nisn' => 'nullable|string|max:20',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tempat_lahir' => 'required|string|max:100',
@@ -115,6 +116,71 @@ class PpdbController extends Controller
     }
 
     /**
+     * Handle personal status check lookup by No Pendaftaran or Email
+     */
+    public function cekStatus(Request $request)
+    {
+        $request->validate([
+            'search_key' => 'required|string',
+        ]);
+
+        $key = trim($request->search_key);
+
+        $pendaftaran = PpdbPendaftaran::where('no_pendaftaran', $key)
+            ->orWhere('email', strtolower($key))
+            ->orWhere('nisn', $key)
+            ->first();
+
+        if (!$pendaftaran) {
+            return redirect()->back()
+                ->with('error', 'Data pendaftaran dengan Nomor Reg / Email / NISN (' . $key . ') tidak ditemukan. Silakan periksa kembali kata kunci Anda.')
+                ->withInput();
+        }
+
+        return redirect()->route('ppdb.bukti', $pendaftaran->no_pendaftaran);
+    }
+
+    /**
+     * Resolve existing class name in database matching the selected jurusan code
+     */
+    public static function resolveKelasForJurusan($pilihanJurusan, $customKelasInput = null)
+    {
+        if ($customKelasInput && trim($customKelasInput) !== '') {
+            $existing = \App\Models\Kelas::where('nama_kelas', trim($customKelasInput))->first();
+            if ($existing) {
+                return $existing->nama_kelas;
+            }
+        }
+
+        $jurusanClean = trim($pilihanJurusan);
+
+        // 1. Search existing Grade X class in database matching the jurusan
+        $matched = \App\Models\Kelas::where(function($query) use ($jurusanClean) {
+            $query->where('nama_kelas', 'LIKE', 'X %' . $jurusanClean . '%')
+                  ->orWhere('nama_kelas', 'LIKE', 'X-%' . $jurusanClean . '%')
+                  ->orWhere('nama_kelas', 'LIKE', 'X ' . $jurusanClean)
+                  ->orWhere('nama_kelas', 'LIKE', '%' . $jurusanClean . '%');
+        })
+        ->where('nama_kelas', 'LIKE', 'X%')
+        ->first();
+
+        if ($matched) {
+            return $matched->nama_kelas;
+        }
+
+        // 2. Search any class containing jurusanClean
+        $matchedAny = \App\Models\Kelas::where('nama_kelas', 'LIKE', '%' . $jurusanClean . '%')->first();
+        if ($matchedAny) {
+            return $matchedAny->nama_kelas;
+        }
+
+        // 3. Fallback: create class if missing
+        $fallbackName = $customKelasInput ?: ('X ' . $jurusanClean);
+        $newKelas = \App\Models\Kelas::firstOrCreate(['nama_kelas' => $fallbackName]);
+        return $newKelas->nama_kelas;
+    }
+
+    /**
      * Admin Portal: Update registration status (and optionally convert to official Siswa record)
      */
     public function adminUpdateStatus(Request $request, PpdbPendaftaran $ppdbPendaftaran)
@@ -123,40 +189,84 @@ class PpdbController extends Controller
             'status' => 'required|in:Pending,Diterima,Ditolak',
             'catatan_admin' => 'nullable|string',
             'kelas_tujuan' => 'nullable|string',
+            'tgl_daftar_ulang' => 'nullable|string',
+            'waktu_daftar_ulang' => 'nullable|string',
+            'seragam_daftar_ulang' => 'nullable|string',
+            'lokasi_daftar_ulang' => 'nullable|string',
+            'alasan_ditolak' => 'nullable|string',
         ]);
 
         $ppdbPendaftaran->status = $request->status;
         $ppdbPendaftaran->catatan_admin = $request->catatan_admin;
+
+        if ($request->status === 'Diterima') {
+            $ppdbPendaftaran->tgl_daftar_ulang = $request->tgl_daftar_ulang ?: '25 Agustus 2026';
+            $ppdbPendaftaran->waktu_daftar_ulang = $request->waktu_daftar_ulang ?: '08:00 - 12:00 WITA';
+            $ppdbPendaftaran->seragam_daftar_ulang = $request->seragam_daftar_ulang ?: 'Seragam SMP Asal / Rapi & Sopan';
+            $ppdbPendaftaran->lokasi_daftar_ulang = $request->lokasi_daftar_ulang ?: 'Aula Utama Sekolah';
+        } else if ($request->status === 'Ditolak') {
+            $ppdbPendaftaran->alasan_ditolak = $request->alasan_ditolak ?: 'Mohon maaf, kualifikasi belum memenuhi syarat atau kuota pilihan jurusan telah penuh.';
+        } else {
+            $ppdbPendaftaran->tgl_daftar_ulang = $request->tgl_daftar_ulang;
+            $ppdbPendaftaran->waktu_daftar_ulang = $request->waktu_daftar_ulang;
+            $ppdbPendaftaran->seragam_daftar_ulang = $request->seragam_daftar_ulang;
+            $ppdbPendaftaran->lokasi_daftar_ulang = $request->lokasi_daftar_ulang;
+            $ppdbPendaftaran->alasan_ditolak = $request->alasan_ditolak;
+        }
+
         $ppdbPendaftaran->save();
 
-        // If status changed to Diterima and requested to convert to official student
-        if ($request->status === 'Diterima' && $request->has('buat_akun_siswa')) {
-            // Generate NIS based on count
-            $lastNis = Siswa::max('nis');
-            $nextNis = $lastNis ? ((int)$lastNis + 1) : 10001;
+        // Send automated notification email to applicant
+        if ($ppdbPendaftaran->email) {
+            try {
+                $profil = ProfilSekolah::first();
+                \Illuminate\Support\Facades\Mail::to($ppdbPendaftaran->email)
+                    ->send(new \App\Mail\PpdbStatusNotificationMail($ppdbPendaftaran, $profil));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Gagal mengirim email PPDB: ' . $e->getMessage());
+            }
+        }
 
-            $kelasTarget = $request->kelas_tujuan ?: 'X ' . $ppdbPendaftaran->pilihan_jurusan;
+        // If status changed to Diterima, automatically create/assign student to target class
+        if ($request->status === 'Diterima') {
+            $kelasTarget = self::resolveKelasForJurusan($ppdbPendaftaran->pilihan_jurusan, $request->kelas_tujuan);
 
-            // Create Siswa record
-            $siswa = Siswa::create([
-                'nis' => (string)$nextNis,
-                'nama' => $ppdbPendaftaran->nama_lengkap,
-                'kelas' => $kelasTarget,
-                'jurusan' => $ppdbPendaftaran->pilihan_jurusan,
-                'status' => 'Aktif',
-                'foto' => $ppdbPendaftaran->foto,
-            ]);
+            if ($request->has('buat_akun_siswa') || Siswa::where('email', $ppdbPendaftaran->email)->exists()) {
+                // Generate NIS based on count
+                $lastNis = Siswa::max('nis');
+                $nextNis = $lastNis ? ((int)$lastNis + 1) : 10001;
 
-            // Create User Login
-            $emailClean = strtolower(Str::slug($ppdbPendaftaran->nama_lengkap)) . '.' . $siswa->nis . '@siswa.astikadharma.sch.id';
-            User::create([
-                'name' => $ppdbPendaftaran->nama_lengkap,
-                'email' => $emailClean,
-                'password' => Hash::make('12345678'),
-                'role' => 'siswa',
-                'siswa_id' => $siswa->id,
-                'foto' => $ppdbPendaftaran->foto,
-            ]);
+                $siswa = Siswa::where('email', $ppdbPendaftaran->email)->first();
+                if (!$siswa) {
+                    $siswa = Siswa::create([
+                        'nis' => (string)$nextNis,
+                        'nama' => $ppdbPendaftaran->nama_lengkap,
+                        'email' => $ppdbPendaftaran->email,
+                        'kelas' => $kelasTarget,
+                        'jurusan' => $ppdbPendaftaran->pilihan_jurusan,
+                        'status' => 'Aktif',
+                        'foto' => $ppdbPendaftaran->foto,
+                    ]);
+                } else {
+                    $siswa->update([
+                        'kelas' => $kelasTarget,
+                        'jurusan' => $ppdbPendaftaran->pilihan_jurusan,
+                        'status' => 'Aktif',
+                    ]);
+                }
+
+                // Create User Login if not already existing
+                if ($ppdbPendaftaran->email && !User::where('email', $ppdbPendaftaran->email)->exists()) {
+                    User::create([
+                        'name' => $ppdbPendaftaran->nama_lengkap,
+                        'email' => $ppdbPendaftaran->email,
+                        'password' => Hash::make('12345678'),
+                        'role' => 'siswa',
+                        'siswa_id' => $siswa->id,
+                        'foto' => $ppdbPendaftaran->foto,
+                    ]);
+                }
+            }
         }
 
         return redirect()->back()->with('success', 'Status pendaftaran PPDB ' . $ppdbPendaftaran->no_pendaftaran . ' berhasil diperbarui.');

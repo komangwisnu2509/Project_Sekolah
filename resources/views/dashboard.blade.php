@@ -519,7 +519,90 @@
             </div>
 
         @elseif(Auth::user()->isSiswa())
-            @if(isset($activeIzinGurusSiswa) && count($activeIzinGurusSiswa) > 0)
+            @if(isset($ppdbRecord))
+                <!-- PPDB Status & Re-Registration Notice Widget -->
+                @if($ppdbRecord->status === 'Pending')
+                    <div class="card border-0 shadow-sm bg-warning bg-opacity-15 border-start border-5 border-warning mb-4 rounded-4">
+                        <div class="card-body p-4 text-dark">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle bg-warning text-dark p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-clock-history fs-4"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-1">⏳ Status Pendaftaran PPDB: MENUNGGU VERIFIKASI</h5>
+                                    <p class="mb-0 small text-dark">Pendaftaran PPDB Anda (<strong>{{ $ppdbRecord->no_pendaftaran }}</strong>) saat ini sedang diverifikasi panitia. Silakan tunggu konfirmasi dari pihak sekolah secara berkala.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @elseif($ppdbRecord->status === 'Diterima')
+                    <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden text-white" style="background: linear-gradient(135deg, #065F46 0%, #059669 100%);">
+                        <div class="card-body p-4 p-md-5">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="rounded-circle bg-white text-success p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 54px; height: 54px;">
+                                    <i class="bi bi-trophy-fill fs-3"></i>
+                                </div>
+                                <div>
+                                    <span class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill small text-uppercase mb-1">PPDB ONLINE DITERIMA</span>
+                                    <h3 class="fw-extrabold text-white mb-0">🎉 SELAMAT! ANDA NYATAKAN LOLOS SELEKSI PPDB!</h3>
+                                </div>
+                            </div>
+
+                            <p class="text-white-50 mb-3 fs-6">
+                                Anda dinyatakan diterima pada jurusan <strong>{{ $ppdbRecord->pilihan_jurusan }}</strong>. Silakan perhatikan jadwal & petunjuk daftar ulang resmi di bawah ini:
+                            </p>
+
+                            <div class="p-3 bg-white rounded-3 text-dark border">
+                                <h6 class="fw-bold text-success mb-3"><i class="bi bi-calendar2-check-fill me-2"></i>Jadwal & Ketentuan Daftar Ulang Anda:</h6>
+                                <div class="row g-3 small">
+                                    <div class="col-md-6">
+                                        <div class="p-2 bg-light rounded border">
+                                            <strong class="text-muted d-block small">📅 Tanggal Daftar Ulang:</strong>
+                                            <span class="fw-bold text-dark fs-6">{{ $ppdbRecord->tgl_daftar_ulang ?: '25 Agustus 2026' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-2 bg-light rounded border">
+                                            <strong class="text-muted d-block small">⏰ Waktu / Jam Datang:</strong>
+                                            <span class="fw-bold text-dark fs-6">{{ $ppdbRecord->waktu_daftar_ulang ?: '08:00 - 12:00 WITA' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-2 bg-light rounded border">
+                                            <strong class="text-muted d-block small">👔 Pakaian / Seragam:</strong>
+                                            <span class="fw-bold text-dark">{{ $ppdbRecord->seragam_daftar_ulang ?: 'Seragam SMP Asal / Rapi & Sopan' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-2 bg-light rounded border">
+                                            <strong class="text-muted d-block small">📍 Lokasi Tempat:</strong>
+                                            <span class="fw-bold text-dark">{{ $ppdbRecord->lokasi_daftar_ulang ?: 'Aula Utama Sekolah' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @elseif($ppdbRecord->status === 'Ditolak')
+                    <div class="card border-0 shadow-sm bg-danger bg-opacity-10 border-start border-5 border-danger mb-4 rounded-4">
+                        <div class="card-body p-4 text-dark">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <div class="rounded-circle bg-danger text-white p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                                    <i class="bi bi-x-circle-fill fs-4"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold text-danger mb-1">MOHON MAAF, SELEKSI PPDB BELUM LOLOS</h5>
+                                    <p class="mb-0 small text-dark">Pendaftaran PPDB (<strong>{{ $ppdbRecord->no_pendaftaran }}</strong>) belum dapat diterima pada periode seleksi ini.</p>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-white rounded-3 border border-danger border-opacity-25 mt-2 ms-md-5">
+                                <strong class="text-danger small d-block mb-1"><i class="bi bi-exclamation-circle me-1"></i>Alasan Penolakan:</strong>
+                                <span class="fw-semibold text-dark">{{ $ppdbRecord->alasan_ditolak ?: $ppdbRecord->catatan_admin ?: 'Kuota pendaftaran telah penuh.' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endif
                 <div class="card border-0 shadow-sm bg-warning bg-opacity-10 border-start border-5 border-warning mb-4 rounded-3">
                     <div class="card-body p-4">
                         <h5 class="fw-bold text-dark mb-3">

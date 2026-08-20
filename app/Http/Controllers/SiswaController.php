@@ -55,7 +55,7 @@ class SiswaController extends Controller
             });
         }
         
-        $siswa = $query->orderBy('kelas')->orderByRaw('CAST(nis AS UNSIGNED) ASC')->get();
+        $siswa = $query->orderByRaw('CAST(nis AS UNSIGNED) ASC')->get();
         return view('siswa.index', compact('siswa', 'q', 'tab', 'kelas', 'jurusans', 'kelasX', 'kelasXI', 'kelasXII', 'kelasOther'));
     }
 
@@ -389,23 +389,48 @@ class SiswaController extends Controller
         $myAbsenIndex = $sortedClassmatesByNis->search(fn($c) => $c->id === $siswa->id);
         $myNoAbsen = $myAbsenIndex !== false ? ($myAbsenIndex + 1) : 1;
 
-        // 3. Calculate Class Ranking for Student (Highest Total Score = Rangking #1)
-        $classmates = Siswa::where('kelas', $siswa->kelas)->where('status', '!=', 'Lulus')->get();
-        $rankedClassmates = $classmates->map(function($c) {
-            $subAvg = \App\Models\TugasSubmission::where('siswa_id', $c->id)->whereNotNull('nilai')->avg('nilai');
+        // 3. Calculate Class & Overall School Ranking
+        $allActiveStudents = Siswa::where('status', '!=', 'Lulus')->get();
+        $gradedSubmissionsAvg = \App\Models\TugasSubmission::whereNotNull('nilai')
+            ->selectRaw('siswa_id, avg(nilai) as sub_avg')
+            ->groupBy('siswa_id')
+            ->pluck('sub_avg', 'siswa_id');
+
+        $rankedAll = $allActiveStudents->map(function($c) use ($gradedSubmissionsAvg) {
+            $subAvg = $gradedSubmissionsAvg[$c->id] ?? null;
             $baseScore = $c->total_nilai ?? 85.00;
-            $score = $subAvg ? ($baseScore * 0.3) + ($subAvg * 0.7) : $baseScore;
+            $score = $subAvg !== null ? ($baseScore * 0.3) + ($subAvg * 0.7) : $baseScore;
             return [
                 'id' => $c->id,
+                'nis' => $c->nis,
                 'nama' => $c->nama,
+                'kelas' => $c->kelas,
+                'foto' => $c->foto,
+                'sub_avg' => $subAvg !== null ? round($subAvg, 1) : '-',
                 'score' => round($score, 2),
             ];
         })->sortByDesc('score')->values();
 
-        $myRankIndex = $rankedClassmates->search(fn($item) => $item['id'] === $siswa->id);
-        $myRank = $myRankIndex !== false ? ($myRankIndex + 1) : 1;
-        $totalClassmates = $rankedClassmates->count();
-        $myScore = $rankedClassmates->firstWhere('id', $siswa->id)['score'] ?? ($siswa->total_nilai ?? 85.00);
+        $rankedAllWithRank = $rankedAll->map(function($item, $idx) {
+            $item['overall_rank'] = $idx + 1;
+            return $item;
+        });
+
+        $classmatesRanked = $rankedAllWithRank->where('kelas', $siswa->kelas)->values()->map(function($item, $idx) {
+            $item['class_rank'] = $idx + 1;
+            return $item;
+        });
+
+        $myClassRankItem = $classmatesRanked->firstWhere('id', $siswa->id);
+        $myRank = $myClassRankItem['class_rank'] ?? 1;
+        $totalClassmates = $classmatesRanked->count();
+
+        $myOverallItem = $rankedAllWithRank->firstWhere('id', $siswa->id);
+        $myOverallRank = $myOverallItem['overall_rank'] ?? 1;
+        $totalSchoolStudents = $rankedAllWithRank->count();
+        $myScore = $myClassRankItem['score'] ?? ($siswa->total_nilai ?? 85.00);
+
+        $overallTop10 = $rankedAllWithRank->take(10);
 
         // Fetch Schedule for student's class with teacher info
         $jadwals = \App\Models\JadwalPelajaran::with('guru')
@@ -445,7 +470,8 @@ class SiswaController extends Controller
         return view('siswa.profile', compact(
             'siswa', 'profilSekolah', 'pelanggarans', 'totalPoints', 'jadwals', 'tugas', 'submissions',
             'myAbsensi', 'totalHadir', 'totalIzin', 'totalSakit', 'totalAlpa', 'totalRecordedAbsensi',
-            'persenHadir', 'absensiLog', 'myNoAbsen', 'myRank', 'totalClassmates', 'myScore', 'myAlumniTracers', 'myApprovedEkskuls'
+            'persenHadir', 'absensiLog', 'myNoAbsen', 'myRank', 'totalClassmates', 'myScore', 'myAlumniTracers', 'myApprovedEkskuls',
+            'classmatesRanked', 'myOverallRank', 'totalSchoolStudents', 'overallTop10'
         ));
     }
 

@@ -549,41 +549,69 @@
         
         .eksul-card h3 { color: var(--white); font-size: 1.25rem; margin:0;}
 
-        /* Achievements */
+        /* Achievements / Prestasi */
         .prestasi { padding: var(--section-padding); }
         .prestasi-box {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            display: flex;
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+            transition: all 0.3s ease;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        }
+        .prestasi-box:hover {
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
+            border-color: rgba(99, 102, 241, 0.25);
         }
 
-        .prestasi-img {
-            flex: 1;
+        .prestasi-img-card {
             position: relative;
+            height: 300px;
+            width: 100%;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #0f172a;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
-        .prestasi-img img {
+        .prestasi-img-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .prestasi-box:hover .prestasi-img-card img {
+            transform: scale(1.05);
+        }
+        .prestasi-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0) 40%, rgba(15, 23, 42, 0.4) 100%);
+            pointer-events: none;
         }
 
-        .prestasi-content {
-            flex: 1;
-            padding: 4rem;
+        .prestasi-content-inner {
             display: flex;
             flex-direction: column;
             justify-content: center;
+            padding: 0.5rem 0;
         }
 
-        .prestasi-content h2 { font-size: 2.5rem; margin-bottom: 1rem; }
-        .prestasi-year {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 1.5rem;
-            display: inline-block;
+        .prestasi-content-inner h2 { 
+            font-size: 1.85rem; 
+            font-weight: 800; 
+            color: #0f172a; 
+            letter-spacing: -0.02em; 
+            line-height: 1.25; 
+            margin-bottom: 0.75rem; 
+        }
+
+        .hover-elevate {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-elevate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.25) !important;
         }
 
         /* News / Portal */
@@ -848,6 +876,8 @@
             .stat-divider:nth-child(6) { display: none; }
             .programs-grid { grid-template-columns: 1fr 1fr; }
             .prestasi-box { flex-direction: column; }
+            .prestasi-img-card { height: 260px; }
+            .prestasi-content { padding: 2rem 1.5rem; }
             .footer-grid { grid-template-columns: 1fr 1fr; }
         }
 

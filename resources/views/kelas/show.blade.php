@@ -84,6 +84,77 @@
         </div>
     </div>
 
+    <!-- Class Ranking & Juara Umum Card -->
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-4 border-start border-4 border-warning">
+        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="bi bi-trophy-fill text-warning me-2"></i>Peringkat &amp; Rangking Nilai Akademik Kelas {{ $kelas->nama_kelas }}
+                </h5>
+                <small class="text-muted">Diurutkan berdasarkan Nilai Akhir (Akumulasi Tugas 70% + Base Nilai 30%). Siswa tertinggi dapet Rangking 1.</small>
+            </div>
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 fs-6">🏆 Juara Kelas {{ $kelas->nama_kelas }}</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 border-top">
+                    <thead class="table-warning text-dark">
+                        <tr>
+                            <th class="ps-4" style="width: 140px;">Peringkat Kelas</th>
+                            <th style="width: 120px;">NIS</th>
+                            <th>Nama Siswa</th>
+                            <th class="text-center">Rata-Rata Tugas</th>
+                            <th class="text-center">Total Nilai Akhir</th>
+                            <th class="text-center">Peringkat Umum Sekolah</th>
+                            <th class="pe-4 text-end">Gelar Juara</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($classRankedList as $item)
+                            <tr>
+                                <td class="ps-4">
+                                    @if($item['class_rank'] == 1)
+                                        <span class="badge bg-warning text-dark px-3 py-1.5 fs-6 shadow-sm"><i class="bi bi-trophy-fill me-1"></i> #1 (Juara 1)</span>
+                                    @elseif($item['class_rank'] == 2)
+                                        <span class="badge bg-secondary text-white px-3 py-1.5 fs-6 shadow-sm"><i class="bi bi-award-fill me-1"></i> #2 (Juara 2)</span>
+                                    @elseif($item['class_rank'] == 3)
+                                        <span class="badge bg-danger text-white px-3 py-1.5 fs-6 shadow-sm"><i class="bi bi-award me-1"></i> #3 (Juara 3)</span>
+                                    @else
+                                        <span class="badge bg-light text-dark border px-3 py-1.5 fs-6">#{{ $item['class_rank'] }}</span>
+                                    @endif
+                                </td>
+                                <td><span class="badge bg-light text-dark border font-monospace px-2 py-1">{{ $item['nis'] }}</span></td>
+                                <td><strong class="text-dark">{{ $item['nama'] }}</strong></td>
+                                <td class="text-center fw-bold text-primary">{{ $item['sub_avg'] }}</td>
+                                <td class="text-center fw-bold text-success fs-6">{{ $item['score'] }}</td>
+                                <td class="text-center">
+                                    <span class="badge bg-info text-dark">#{{ $item['overall_rank'] }} Umum</span>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    @if($item['overall_rank'] == 1)
+                                        <span class="badge bg-success px-3 py-1.5 fs-6 shadow-sm">👑 Juara 1 Umum Sekolah</span>
+                                    @elseif($item['overall_rank'] == 2)
+                                        <span class="badge bg-primary px-3 py-1.5 fs-6 shadow-sm">🥇 Juara 2 Umum Sekolah</span>
+                                    @elseif($item['overall_rank'] == 3)
+                                        <span class="badge bg-info text-dark px-3 py-1.5 fs-6 shadow-sm">🥈 Juara 3 Umum Sekolah</span>
+                                    @elseif($item['class_rank'] == 1)
+                                        <span class="badge bg-warning text-dark px-3 py-1.5 fs-6">🏆 Juara 1 Kelas</span>
+                                    @else
+                                        <span class="badge bg-light text-secondary border">Peringkat #{{ $item['class_rank'] }}</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">Belum ada data nilai rangking siswa di kelas ini.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <!-- Student List Table -->
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-4">
         <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">

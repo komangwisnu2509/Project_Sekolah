@@ -203,6 +203,7 @@
                                                                 <div class="col-6"><strong>Jurusan Minat:</strong> <br><span class="badge bg-primary">{{ $p->pilihan_jurusan }}</span></div>
                                                                 <div class="col-6 mt-2"><strong>Ortu / Wali:</strong> <br>{{ $p->nama_orang_tua }}</div>
                                                                 <div class="col-6 mt-2"><strong>Kontak WA:</strong> <br>{{ $p->no_hp_wa }}</div>
+                                                                <div class="col-12 mt-2"><strong>Email Siswa:</strong> <br><span class="text-primary fw-bold">{{ $p->email ?: '-' }}</span></div>
                                                                 <div class="col-12 mt-2"><strong>Alamat Lengkap:</strong> <br>{{ $p->alamat }}</div>
                                                             </div>
                                                         </div>
@@ -211,27 +212,62 @@
                                                         <div class="border-top pt-3">
                                                             <h6 class="fw-bold text-dark mb-2"><i class="bi bi-sliders me-1 text-warning"></i>Ubah Status & Verifikasi</h6>
                                                             
-                                                            <div class="mb-3">
-                                                                <label class="form-label fw-bold small">Status Penerimaan Siswa <span class="text-danger">*</span></label>
-                                                                <select name="status" class="form-select fw-bold">
-                                                                    <option value="Pending" {{ $p->status == 'Pending' ? 'selected' : '' }}>Pending (Menunggu Verifikasi)</option>
-                                                                    <option value="Diterima" {{ $p->status == 'Diterima' ? 'selected' : '' }}>Diterima (Lolos Seleksi)</option>
-                                                                    <option value="Ditolak" {{ $p->status == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-                                                                </select>
-                                                            </div>
+                                                             <div class="mb-3">
+                                                                 <label class="form-label fw-bold small">Status Penerimaan Siswa <span class="text-danger">*</span></label>
+                                                                 <select name="status" id="statusSelect{{ $p->id }}" class="form-select fw-bold" onchange="togglePpdbFields({{ $p->id }})">
+                                                                     <option value="Pending" {{ $p->status == 'Pending' ? 'selected' : '' }}>Pending (Menunggu Verifikasi)</option>
+                                                                     <option value="Diterima" {{ $p->status == 'Diterima' ? 'selected' : '' }}>Diterima (Lolos Seleksi)</option>
+                                                                     <option value="Ditolak" {{ $p->status == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                                                                 </select>
+                                                             </div>
 
-                                                            <div class="form-check form-switch mb-3 p-3 bg-white border rounded-3 ms-0">
-                                                                <input class="form-check-input ms-0 me-2" type="checkbox" name="buat_akun_siswa" id="buatAkunPpdb{{ $p->id }}" value="1">
-                                                                <label class="form-check-label fw-bold text-dark small" for="buatAkunPpdb{{ $p->id }}">
-                                                                    ✨ Buatkan Akun Siswa Resmi Otomatis (Jika Diterima)
-                                                                </label>
-                                                                <small class="text-muted d-block ms-4 fs-7">Otomatis generate NIS dan buat akun login siswa untuk masuk ke Portal Siswa SAT Project.</small>
-                                                            </div>
+                                                             <div id="sectionBuatAkun{{ $p->id }}" class="form-check form-switch mb-3 p-3 bg-white border rounded-3 ms-0 {{ $p->status == 'Diterima' ? '' : 'd-none' }}">
+                                                                 <input class="form-check-input ms-0 me-2" type="checkbox" name="buat_akun_siswa" id="buatAkunPpdb{{ $p->id }}" value="1">
+                                                                 <label class="form-check-label fw-bold text-dark small" for="buatAkunPpdb{{ $p->id }}">
+                                                                     ✨ Buatkan Akun Siswa Resmi Otomatis (Jika Diterima)
+                                                                 </label>
+                                                                 <small class="text-muted d-block ms-4 fs-7">Otomatis generate NIS dan buat akun login siswa untuk masuk ke Portal Siswa SAT Project.</small>
+                                                             </div>
 
-                                                            <div class="mb-3">
-                                                                <label class="form-label fw-bold small">Catatan Admin / Pesan Untuk Pendaftar</label>
-                                                                <textarea name="catatan_admin" class="form-control form-control-sm" rows="2" placeholder="Catatan perbaikan atau instruksi daftar ulang...">{{ $p->catatan_admin }}</textarea>
-                                                            </div>
+                                                             <!-- Detail Ketentuan Daftar Ulang (Hanya Tampil Jika Diterima) -->
+                                                             <div id="sectionDaftarUlang{{ $p->id }}" class="p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-3 mb-3 {{ $p->status == 'Diterima' ? '' : 'd-none' }}">
+                                                                 <h6 class="fw-bold text-success mb-2 small"><i class="bi bi-calendar-check me-1"></i> Ketentuan Daftar Ulang (Jika Diterima)</h6>
+                                                                 <div class="row g-2">
+                                                                     <div class="col-md-6">
+                                                                         <label class="form-label small fw-bold text-dark mb-1">Tanggal Daftar Ulang</label>
+                                                                         <input type="text" name="tgl_daftar_ulang" class="form-control form-control-sm" placeholder="Contoh: 25 Agustus 2026" value="{{ $p->tgl_daftar_ulang }}">
+                                                                     </div>
+                                                                     <div class="col-md-6">
+                                                                         <label class="form-label small fw-bold text-dark mb-1">Waktu / Jam</label>
+                                                                         <input type="text" name="waktu_daftar_ulang" class="form-control form-control-sm" placeholder="Contoh: 08:00 - 12:00 WITA" value="{{ $p->waktu_daftar_ulang }}">
+                                                                     </div>
+                                                                     <div class="col-md-6">
+                                                                         <label class="form-label small fw-bold text-dark mb-1">Ketentuan Seragam/Pakaian</label>
+                                                                         <input type="text" name="seragam_daftar_ulang" class="form-control form-control-sm" placeholder="Contoh: Seragam SMP Asal / Rapi" value="{{ $p->seragam_daftar_ulang }}">
+                                                                     </div>
+                                                                     <div class="col-md-6">
+                                                                         <label class="form-label small fw-bold text-dark mb-1">Lokasi / Tempat</label>
+                                                                         <input type="text" name="lokasi_daftar_ulang" class="form-control form-control-sm" placeholder="Contoh: Aula Utama Sekolah" value="{{ $p->lokasi_daftar_ulang }}">
+                                                                     </div>
+                                                                     <div class="col-12 border-top pt-2 mt-2">
+                                                                          <label class="form-label small fw-bold text-dark mb-1"><i class="bi bi-door-open-fill text-primary me-1"></i> Kelas Penempatan Siswa (Otomatis Sesuai Jurusan)</label>
+                                                                          @php $resolvedKelas = \App\Http\Controllers\PpdbController::resolveKelasForJurusan($p->pilihan_jurusan); @endphp
+                                                                          <input type="text" name="kelas_tujuan" class="form-control form-control-sm fw-bold text-primary" placeholder="Contoh: {{ $resolvedKelas }}" value="{{ $resolvedKelas }}">
+                                                                          <small class="text-muted fs-7">Siswa otomatis dimasukkan ke kelas resmi ini (<strong>{{ $resolvedKelas }}</strong>) saat ACC Diterima.</small>
+                                                                      </div>
+                                                                 </div>
+                                                             </div>
+
+                                                             <!-- Alasan Penolakan (Hanya Tampil Jika Ditolak) -->
+                                                             <div id="sectionDitolak{{ $p->id }}" class="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-3 mb-3 {{ $p->status == 'Ditolak' ? '' : 'd-none' }}">
+                                                                 <h6 class="fw-bold text-danger mb-2 small"><i class="bi bi-x-circle me-1"></i> Alasan Penolakan Spesifik (Jika Ditolak)</h6>
+                                                                 <textarea name="alasan_ditolak" class="form-control form-control-sm" rows="2" placeholder="Tuliskan alasan spesifik kenapa pendaftaran ditolak...">{{ $p->alasan_ditolak }}</textarea>
+                                                             </div>
+
+                                                             <div class="mb-3">
+                                                                 <label class="form-label fw-bold small">Catatan Tambahan Admin</label>
+                                                                 <textarea name="catatan_admin" class="form-control form-control-sm" rows="2" placeholder="Catatan perbaikan atau instruksi daftar ulang...">{{ $p->catatan_admin }}</textarea>
+                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -263,4 +299,31 @@
         @endif
     </div>
 </div>
+
+<script>
+function togglePpdbFields(id) {
+    const select = document.getElementById('statusSelect' + id);
+    const sectionDaftarUlang = document.getElementById('sectionDaftarUlang' + id);
+    const sectionDitolak = document.getElementById('sectionDitolak' + id);
+    const sectionBuatAkun = document.getElementById('sectionBuatAkun' + id);
+
+    if (!select) return;
+
+    const val = select.value;
+    if (val === 'Diterima') {
+        if (sectionDaftarUlang) sectionDaftarUlang.classList.remove('d-none');
+        if (sectionBuatAkun) sectionBuatAkun.classList.remove('d-none');
+        if (sectionDitolak) sectionDitolak.classList.add('d-none');
+    } else if (val === 'Ditolak') {
+        if (sectionDaftarUlang) sectionDaftarUlang.classList.add('d-none');
+        if (sectionBuatAkun) sectionBuatAkun.classList.add('d-none');
+        if (sectionDitolak) sectionDitolak.classList.remove('d-none');
+    } else {
+        // Pending
+        if (sectionDaftarUlang) sectionDaftarUlang.classList.add('d-none');
+        if (sectionBuatAkun) sectionBuatAkun.classList.add('d-none');
+        if (sectionDitolak) sectionDitolak.classList.add('d-none');
+    }
+}
+</script>
 @endsection
