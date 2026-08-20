@@ -127,6 +127,7 @@ class DashboardController extends Controller
 
         $ekskulList = \App\Models\Ekstrakurikuler::orderBy('nama_ekskul')->get();
         $beritaTerbaru = \App\Models\Berita::orderBy('tanggal_publikasi', 'desc')->take(4)->get();
+        $agendaMendatang = \App\Models\Agenda::orderBy('tanggal', 'asc')->take(4)->get();
         // Fetch PPDB Record for logged-in user if available
         $ppdbRecord = null;
         if ($user) {
