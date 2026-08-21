@@ -31,8 +31,10 @@ class AdminLandingCmsController extends Controller
         $agendas = Agenda::orderBy('tanggal', 'desc')->get();
         $ekstrakurikulers = Ekstrakurikuler::orderBy('nama_ekskul')->get();
         $prestasis = PrestasiSiswa::orderBy('tahun', 'desc')->get();
+        $gurus = \App\Models\Guru::orderBy('nama')->get();
+        $staffs = \App\Models\Staff::orderBy('nama')->get();
 
-        return view('admin.cms.index', compact('profil', 'fasilitas', 'galeris', 'testimonis', 'faqs', 'beritas', 'agendas', 'ekstrakurikulers', 'prestasis'));
+        return view('admin.cms.index', compact('profil', 'fasilitas', 'galeris', 'testimonis', 'faqs', 'beritas', 'agendas', 'ekstrakurikulers', 'prestasis', 'gurus', 'staffs'));
     }
 
     /**
@@ -305,5 +307,70 @@ class AdminLandingCmsController extends Controller
         }
         $ekstrakurikuler->delete();
         return redirect()->back()->with('success', 'Ekstrakurikuler berhasil dihapus.');
+    }
+
+    // --- TOGGLE VISIBILITY STATUS METHODS ---
+    public function toggleEkskul(Ekstrakurikuler $ekstrakurikuler)
+    {
+        $newStatus = $ekstrakurikuler->status === 'Aktif' ? 'Non-Aktif' : 'Aktif';
+        $ekstrakurikuler->update(['status' => $newStatus]);
+        $msg = $newStatus === 'Aktif' ? 'ditampilkan di Landing Page (Show)' : 'disembunyikan dari Landing Page (Hide)';
+        return redirect()->back()->with('success', "Ekstrakurikuler '{$ekstrakurikuler->nama_ekskul}' berhasil {$msg}.");
+    }
+
+    public function toggleBerita(Berita $berita)
+    {
+        $berita->update(['is_active' => !$berita->is_active]);
+        $msg = $berita->is_active ? 'ditampilkan di Landing Page (Show)' : 'disembunyikan dari Landing Page (Hide)';
+        return redirect()->back()->with('success', "Berita '{$berita->judul}' berhasil {$msg}.");
+    }
+
+    public function toggleAgenda(Agenda $agenda)
+    {
+        $agenda->update(['is_active' => !$agenda->is_active]);
+        $msg = $agenda->is_active ? 'ditampilkan di Landing Page (Show)' : 'disembunyikan dari Landing Page (Hide)';
+        return redirect()->back()->with('success', "Agenda '{$agenda->judul}' berhasil {$msg}.");
+    }
+
+    public function toggleFasilitas(Fasilitas $fasilitas)
+    {
+        $fasilitas->update(['is_active' => !$fasilitas->is_active]);
+        $msg = $fasilitas->is_active ? 'ditampilkan di Landing Page (Show)' : 'disembunyikan dari Landing Page (Hide)';
+        return redirect()->back()->with('success', "Fasilitas '{$fasilitas->nama_fasilitas}' berhasil {$msg}.");
+    }
+
+    public function toggleGaleri(Galeri $galeri)
+    {
+        $galeri->update(['is_active' => !$galeri->is_active]);
+        $msg = $galeri->is_active ? 'ditampilkan di Landing Page (Show)' : 'disembunyikan dari Landing Page (Hide)';
+        return redirect()->back()->with('success', "Foto Galeri berhasil {$msg}.");
+    }
+
+    public function toggleTestimoni(Testimoni $testimoni)
+    {
+        $testimoni->update(['is_active' => !$testimoni->is_active]);
+        $msg = $testimoni->is_active ? 'ditampilkan di Landing Page (Show)' : 'disembunyikan dari Landing Page (Hide)';
+        return redirect()->back()->with('success', "Testimoni dari '{$testimoni->nama}' berhasil {$msg}.");
+    }
+
+    public function toggleFaq(Faq $faq)
+    {
+        $faq->update(['is_active' => !$faq->is_active]);
+        $msg = $faq->is_active ? 'ditampilkan di Landing Page (Show)' : 'disembunyikan dari Landing Page (Hide)';
+        return redirect()->back()->with('success', "Pertanyaan FAQ berhasil {$msg}.");
+    }
+
+    public function toggleGuru(\App\Models\Guru $guru)
+    {
+        $guru->update(['is_active' => !$guru->is_active]);
+        $msg = $guru->is_active ? 'ditampilkan di Landing Page (Show)' : 'disembunyikan dari Landing Page (Hide)';
+        return redirect()->back()->with('success', "Data Guru '{$guru->nama}' berhasil {$msg}.");
+    }
+
+    public function toggleStaff(\App\Models\Staff $staff)
+    {
+        $staff->update(['is_active' => !$staff->is_active]);
+        $msg = $staff->is_active ? 'ditampilkan di Landing Page (Show)' : 'disembunyikan dari Landing Page (Hide)';
+        return redirect()->back()->with('success', "Data Staff '{$staff->nama}' berhasil {$msg}.");
     }
 }

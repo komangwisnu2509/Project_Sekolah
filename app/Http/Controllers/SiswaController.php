@@ -144,7 +144,8 @@ class SiswaController extends Controller
             'status' => 'nullable|string'
         ]);
 
-        $data = $request->only(['nis', 'nama', 'kelas', 'jurusan', 'total_nilai', 'tahun_lulus', 'status']);
+        $data = $request->only(['nama', 'kelas', 'jurusan', 'total_nilai', 'tahun_lulus', 'status']);
+        $data['nis'] = $siswa->nis; // NIS dikunci dan tidak dapat diubah
 
         if ($request->hasFile('foto')) {
             if ($siswa->foto && Storage::disk('public')->exists($siswa->foto)) {

@@ -23,9 +23,52 @@
         </div>
     @endif
 
+    <!-- Banner Apresiasi Purna Bhakti / Pensiun untuk Guru -->
+    @if($guru && in_array($guru->status, ['Pensiun', 'Pindah']))
+        <div class="card border-0 shadow-lg mb-4 rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border: 2px solid #f59e0b !important;">
+            <div class="card-body p-4 p-lg-5 text-white">
+                <div class="row align-items-center g-4">
+                    <div class="col-md-2 text-center">
+                        <div class="bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center shadow-lg" style="width: 90px; height: 90px; font-size: 3rem;">
+                            @if($guru->status === 'Pensiun')
+                                <i class="bi bi-trophy-fill"></i>
+                            @else
+                                <i class="bi bi-award-fill"></i>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        @if($guru->status === 'Pensiun')
+                            <span class="badge bg-warning text-dark fw-bold px-3 py-1.5 mb-2 fs-6 rounded-pill">
+                                🏆 PIAGAM APRESIASI PURNA BHAKTI &amp; PENSIUN GURU
+                            </span>
+                            <h2 class="fw-bold text-white mb-2">Terima Kasih Atas Segala Pengabdian &amp; Jasa Mulia Anda</h2>
+                            <p class="fs-6 text-white-50 mb-1">
+                                Sekolah memberikan penghargaan dan kebanggaan setinggi-tingginya kepada <strong>{{ $guru->nama }}</strong> atas pengabdian, ilmu, dan bimbingan yang telah diberikan kepada seluruh generasi penerus bangsa.
+                            </p>
+                            @if($guru->pesan_purna)
+                                <div class="bg-white bg-opacity-10 p-3 rounded-3 mt-3 border border-white border-opacity-25 fst-italic text-warning">
+                                    "{{ $guru->pesan_purna }}"
+                                </div>
+                            @endif
+                        @else
+                            <span class="badge bg-info text-dark fw-bold px-3 py-1.5 mb-2 fs-6 rounded-pill">
+                                🎖️ STATUS PURNA TUGAS (PINDAH SEKOAH / INSTANSI)
+                            </span>
+                            <h2 class="fw-bold text-white mb-2">Penghargaan Atas Masa Pengabdian &amp; Dedikasi</h2>
+                            <p class="fs-6 text-white-50 mb-0">
+                                Selamat bertugas di tempat pengabdian baru kepada <strong>{{ $guru->nama }}</strong>. Segala karya, semangat, dan ilmu yang telah dibagikan di sekolah ini akan selalu dikenang.
+                            </p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Profile Hero Card Header -->
     <div class="card border-0 shadow-sm bg-gradient bg-dark text-white rounded-3 mb-4 overflow-hidden border-start border-5 border-primary">
-        <div class="card-body p-4 p-lg-5">
+        <div class="card-body p-4 p-lg-5 d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div class="d-flex align-items-center flex-wrap gap-4">
                 <div class="position-relative">
                     @if($user->foto)
@@ -60,6 +103,14 @@
                         @endif
                     </p>
                 </div>
+            </div>
+            <div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2" title="Keluar dari Akun">
+                        <i class="bi bi-box-arrow-right fs-5"></i> Log Out Akun
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -129,11 +180,8 @@
                                         <small class="text-muted"><i class="bi bi-info-circle me-1"></i>NIP dikunci dan tidak dapat diubah.</small>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="mata_pelajaran" class="form-label fw-bold">
-                                            Mata Pelajaran <span class="badge bg-secondary ms-1"><i class="bi bi-lock-fill me-1"></i>Dikunci</span>
-                                        </label>
-                                        <input type="text" name="mata_pelajaran" id="mata_pelajaran" class="form-control bg-light" value="{{ old('mata_pelajaran', $guru->mata_pelajaran ?? '') }}" readonly required style="background-color: #e9ecef;">
-                                        <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Mata pelajaran dikunci dan tidak dapat diubah.</small>
+                                        <label for="mata_pelajaran" class="form-label fw-bold">Mata Pelajaran <span class="text-danger">*</span></label>
+                                        <input type="text" name="mata_pelajaran" id="mata_pelajaran" class="form-control" value="{{ old('mata_pelajaran', $guru->mata_pelajaran ?? '') }}" required placeholder="Contoh: Matematika">
                                     </div>
                                 </div>
 

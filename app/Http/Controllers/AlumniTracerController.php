@@ -153,6 +153,34 @@ class AlumniTracerController extends Controller
         $alumniSiswaList = $query->orderBy('tahun_lulus', 'desc')->orderBy('nama', 'asc')->get();
         $allGraduatedSiswa = Siswa::where('status', 'Lulus')->orderBy('tahun_lulus', 'desc')->orderBy('nama')->get();
 
+        // Query Purna/Pensiun Guru
+        $guruQuery = \App\Models\Guru::whereIn('status', ['Pensiun', 'Pindah']);
+        if ($q) {
+            $guruQuery->where(function($sub) use ($q) {
+                $sub->where('nama', 'like', "%{$q}%")
+                    ->orWhere('nip', 'like', "%{$q}%")
+                    ->orWhere('mata_pelajaran', 'like', "%{$q}%")
+                    ->orWhere('tahun_purna', 'like', "%{$q}%")
+                    ->orWhere('pesan_purna', 'like', "%{$q}%");
+            });
+        }
+        $alumniGuruList = $guruQuery->orderBy('tahun_purna', 'desc')->orderBy('nama', 'asc')->get();
+        $totalGuruPurna = \App\Models\Guru::whereIn('status', ['Pensiun', 'Pindah'])->count();
+
+        // Query Purna/Pensiun Staff
+        $staffQuery = \App\Models\Staff::whereIn('status', ['Pensiun', 'Pindah']);
+        if ($q) {
+            $staffQuery->where(function($sub) use ($q) {
+                $sub->where('nama', 'like', "%{$q}%")
+                    ->orWhere('nip_nik', 'like', "%{$q}%")
+                    ->orWhere('jabatan', 'like', "%{$q}%")
+                    ->orWhere('tahun_purna', 'like', "%{$q}%")
+                    ->orWhere('pesan_purna', 'like', "%{$q}%");
+            });
+        }
+        $alumniStaffList = $staffQuery->orderBy('tahun_purna', 'desc')->orderBy('nama', 'asc')->get();
+        $totalStaffPurna = \App\Models\Staff::whereIn('status', ['Pensiun', 'Pindah'])->count();
+
         // Statistics
         $totalAlumni = $allGraduatedSiswa->count();
         $totalSudahTracer = Siswa::where('status', 'Lulus')->whereHas('alumniTracer')->count();
@@ -171,9 +199,9 @@ class AlumniTracerController extends Controller
         $tahunOptions = Siswa::where('status', 'Lulus')->whereNotNull('tahun_lulus')->distinct()->pluck('tahun_lulus')->sortDesc()->values();
 
         return view('admin.alumni.index', compact(
-            'alumniSiswaList', 'allGraduatedSiswa', 'q', 'statusFilter', 'accFilter', 'tahunFilter', 'kelasFilter',
+            'alumniSiswaList', 'alumniGuruList', 'alumniStaffList', 'allGraduatedSiswa', 'q', 'statusFilter', 'accFilter', 'tahunFilter', 'kelasFilter',
             'kelasOptions', 'tahunOptions',
-            'totalAlumni', 'totalSudahTracer', 'totalBelumTracer', 'totalPending', 'totalDisetujui', 'totalDitolak',
+            'totalAlumni', 'totalGuruPurna', 'totalStaffPurna', 'totalSudahTracer', 'totalBelumTracer', 'totalPending', 'totalDisetujui', 'totalDitolak',
             'totalKuliah', 'totalBekerja', 'totalWirausaha'
         ));
     }

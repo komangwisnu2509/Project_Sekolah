@@ -93,7 +93,7 @@ class ProfileController extends Controller
             $guruData = [
                 'nama' => $validated['name'],
                 'mata_pelajaran' => $validated['mata_pelajaran'],
-                'nip' => $request->input('nip'),
+                'nip' => $user->guru->nip, // NIP dikunci dan tidak dapat diubah
                 'no_hp' => $request->input('no_hp'),
             ];
 

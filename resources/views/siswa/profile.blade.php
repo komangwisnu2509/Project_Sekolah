@@ -63,7 +63,7 @@
                     </div>
                     <div class="col-lg-4 text-center">
                         <div class="bg-white bg-opacity-10 p-4 rounded-3 border border-white border-opacity-25 shadow">
-                            <small class="text-warning fw-bold text-uppercase d-block mb-2"><i class="bi bi-star-fill me-1"></i> Rangkuman Nilai & Poin</small>
+                            <small class="text-warning fw-bold text-uppercase d-block mb-2"><i class="bi bi-star-fill me-1"></i> Rangkuman Nilai &amp; Poin</small>
                             <div class="d-flex justify-content-around text-center mt-2">
                                 <div>
                                     <small class="text-white-50 d-block">Total Nilai</small>
@@ -73,6 +73,28 @@
                                 <div>
                                     <small class="text-white-50 d-block">Total Poin Pelanggaran</small>
                                     <h3 class="fw-bold text-warning mb-0">{{ $totalPoints }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Piagam Sertifikat Penghargaan Kelulusan -->
+                    <div class="col-12 mt-4 pt-3 border-top border-warning border-opacity-50">
+                        <div class="p-4 rounded-4" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid #f59e0b; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-center mb-3 mb-md-0">
+                                    <div class="bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center shadow" style="width: 80px; height: 80px; font-size: 2.5rem;">
+                                        <i class="bi bi-award-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-10">
+                                    <span class="badge bg-warning text-dark fw-bold px-3 py-1 mb-2 text-uppercase" style="letter-spacing: 1px;">
+                                        <i class="bi bi-patch-check-fill me-1"></i> PIAGAM PENGHARGAAN KELULUSAN SISWA
+                                    </span>
+                                    <h4 class="fw-bold text-white mb-1">Penghargaan Atas Kelulusan &amp; Prestasimu</h4>
+                                    <p class="text-white-50 mb-0">
+                                        Sekolah memberikan penghargaan setinggi-tingginya kepada <strong>{{ $siswa->nama }}</strong> (NIS: {{ $siswa->nis }}) atas ketekunan, kedisiplinan, dan seluruh dedikasi belajar selama menuntut ilmu di sekolah. Semoga sukses selalu menyertai langkahmu di masa depan!
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -259,12 +281,20 @@
     <!-- SECTION 1: Profil Saya & Catatan Pelanggaran -->
     <div id="section-profile" class="mb-5">
         <div class="card border-0 shadow-sm bg-primary bg-gradient text-white mb-4 rounded-3">
-            <div class="card-body p-4 d-flex justify-content-between align-items-center">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <div>
                     <span class="badge bg-white text-primary fw-bold px-3 py-1 mb-2">PORTAL SISWA</span>
                     <h3 class="fw-bold mb-0 text-white"><i class="bi bi-person-circle me-2"></i>Profil Saya & Data Akademik</h3>
                 </div>
-                <span class="badge bg-light text-dark fw-bold fs-6"><i class="bi bi-building me-1"></i>Kelas {{ $siswa->kelas }}</span>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-light text-dark fw-bold fs-6"><i class="bi bi-building me-1"></i>Kelas {{ $siswa->kelas }}</span>
+                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-danger btn-sm fw-bold px-3 shadow-sm d-flex align-items-center gap-1" title="Keluar Akun Siswa">
+                            <i class="bi bi-box-arrow-right"></i> Log Out
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 

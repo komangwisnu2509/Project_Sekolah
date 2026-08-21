@@ -65,17 +65,97 @@
     <section class="programs" id="program">
         <div class="container text-center">
             <h2 class="section-title" data-aos="fade-up">Program Keahlian</h2>
-            <p class="section-subtitle mx-auto" data-aos="fade-up" data-aos-delay="100">Temukan bidang yang sesuai dengan minat dan masa depanmu. Kami menawarkan kurikulum unggul yang dirancang untuk kesuksesan industri.</p>
+            <p class="section-subtitle mx-auto" data-aos="fade-up" data-aos-delay="100">Temukan bidang yang sesuai dengan minat dan masa depanmu. Klik pada salah satu jurusan untuk melihat foto dan informasi selengkapnya.</p>
             
             <div class="programs-grid">
                 @foreach($jurusans as $index => $jurusan)
-                <div class="program-card" data-aos="fade-up" data-aos-delay="{{ 200 + ($index * 100) }}">
-                    <div class="program-icon">
-                        <i data-lucide="{{ ['monitor', 'briefcase', 'camera'][$index % 3] }}" size="28"></i>
+                @php
+                    $jurusanFoto = $jurusan->foto ? asset('storage/'.$jurusan->foto) : 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80';
+                    $iconName = $jurusan->icon ?: ['monitor', 'code', 'camera', 'briefcase', 'cpu', 'tools'][$index % 6];
+                @endphp
+                <div class="program-card cursor-pointer shadow-sm position-relative" data-aos="fade-up" data-aos-delay="{{ 200 + ($index * 100) }}" data-bs-toggle="modal" data-bs-target="#jurusanModal_{{ $jurusan->id }}" style="cursor: pointer; transition: all 0.3s ease;">
+                    @if($jurusan->foto)
+                        <div class="program-img-wrapper mb-3 overflow-hidden rounded-3" style="height: 160px;">
+                            <img src="{{ $jurusanFoto }}" alt="{{ $jurusan->nama_jurusan }}" class="w-100 h-100 object-fit-cover program-card-img" style="transition: transform 0.4s ease;">
+                        </div>
+                    @else
+                        <div class="program-icon mb-3">
+                            <i data-lucide="{{ $iconName }}" size="28"></i>
+                        </div>
+                    @endif
+                    <h3 class="fw-bold text-dark fs-5 mb-2">{{ $jurusan->nama_jurusan }}</h3>
+                    <p class="text-muted small mb-3 line-clamp-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; min-height: 42px;">
+                        {{ $jurusan->deskripsi ?? 'Pelajari skill unggulan dan kembangkan potensi diri untuk masa depan di industri terkait.' }}
+                    </p>
+                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 py-1 fw-semibold mt-auto d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-info-circle me-1"></i> Detail & Foto <i data-lucide="arrow-right" size="14"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Detail Program Keahlian -->
+                <div class="modal fade" id="jurusanModal_{{ $jurusan->id }}" tabindex="-1" aria-labelledby="jurusanModalLabel_{{ $jurusan->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg overflow-hidden rounded-4">
+                            <div class="modal-header border-0 bg-primary text-white p-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="badge bg-white text-primary p-2.5 rounded-circle shadow-sm">
+                                        <i class="bi bi-award-fill fs-5"></i>
+                                    </span>
+                                    <div class="text-start">
+                                        <span class="badge bg-light text-primary fw-bold text-uppercase px-2.5 py-1 mb-1">Program Keahlian</span>
+                                        <h4 class="modal-title fw-bold mb-0 text-white" id="jurusanModalLabel_{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</h4>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4 text-start">
+                                <!-- Banner Foto Jurusan -->
+                                <div class="jurusan-banner-img mb-4 rounded-3 overflow-hidden border shadow-sm" style="max-height: 320px;">
+                                    <img src="{{ $jurusanFoto }}" alt="{{ $jurusan->nama_jurusan }}" class="w-100 h-100 object-fit-cover" style="max-height: 320px; object-fit: cover; width: 100%;">
+                                </div>
+
+                                <!-- Ringkasan & Deskripsi -->
+                                <div class="mb-4">
+                                    <h5 class="fw-bold text-dark d-flex align-items-center gap-2 mb-2">
+                                        <i class="bi bi-card-text text-primary fs-5"></i> Ringkasan Program
+                                    </h5>
+                                    <p class="text-secondary leading-relaxed mb-0" style="font-size: 0.98rem; line-height: 1.7;">
+                                        {{ $jurusan->deskripsi ?? 'Program keahlian ini dirancang untuk membekali peserta didik dengan pengetahuan teori dan keterampilan praktis berbasis kurikulum industri unggulan.' }}
+                                    </p>
+                                </div>
+
+                                <!-- Detail Informasi & Prospek Kerja -->
+                                <div class="p-3 bg-light rounded-3 border">
+                                    <h5 class="fw-bold text-dark d-flex align-items-center gap-2 mb-2">
+                                        <i class="bi bi-stars text-warning fs-5"></i> Detail Kompetensi & Prospek Karir
+                                    </h5>
+                                    @if($jurusan->detail_informasi)
+                                        <div class="text-dark small leading-relaxed" style="white-space: pre-line; line-height: 1.7; font-size: 0.93rem;">
+                                            {{ $jurusan->detail_informasi }}
+                                        </div>
+                                    @else
+                                        <ul class="mb-0 ps-3 text-secondary small leading-relaxed" style="line-height: 1.7;">
+                                            <li>Kurikulum berbasis kebutuhan dunia usaha dan dunia industri (DUDI).</li>
+                                            <li>Fasilitas laboratorium praktikum standar industri.</li>
+                                            <li>Peluang karir yang luas serta bimbingan wirausaha mandiri.</li>
+                                            <li>Sertifikasi kompetensi keahlian nasional.</li>
+                                        </ul>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="modal-footer border-top-0 bg-light px-4 py-3 d-flex justify-content-between align-items-center">
+                                <span class="text-muted small"><i class="bi bi-building me-1"></i> SMK Astika Dharma</span>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Tutup</button>
+                                    @if(Route::has('ppdb.public'))
+                                        <a href="{{ route('ppdb.public') }}" class="btn btn-primary fw-bold px-3">
+                                            <i class="bi bi-person-plus-fill me-1"></i> Daftar PPDB Jurusan Ini
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h3>{{ $jurusan->nama_jurusan }}</h3>
-                    <p>{{ $jurusan->deskripsi ?? 'Pelajari skill unggulan dan kembangkan potensi diri untuk masa depan di industri terkait.' }}</p>
-                    <a href="#" class="link-arrow">Lihat Kurikulum <i data-lucide="arrow-right" size="16"></i></a>
                 </div>
                 @endforeach
             </div>
@@ -144,6 +224,49 @@
                 </div>
                 @empty
                 <div class="text-center py-4 text-muted w-100">Belum ada daftar ekstrakurikuler terdaftar.</div>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
+    <!-- Tenaga Pendidik & Staff Sekolah -->
+    <section class="guru-staff-section py-5 bg-light" id="guru-staff">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2" data-aos="fade-up">
+                <div>
+                    <span style="color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">👨‍🏫 Tim Pengajar & Staff</span>
+                    <h2 class="section-title text-start mt-1 mb-0">Tenaga Pendidik & Staff Sekolah</h2>
+                    <p class="text-muted mt-1 mb-0">Guru dan staff berdedikasi tinggi yang siap membimbing dan mengajar peserta didik.</p>
+                </div>
+                <a href="{{ route('guru_staff') }}" class="btn btn-outline-primary fw-bold rounded-pill px-4">
+                    Lihat Semua Guru & Staff &rarr;
+                </a>
+            </div>
+
+            <div class="row g-4" data-aos="fade-up" data-aos-delay="100">
+                @forelse($gurus->take(4) as $g)
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 text-center overflow-hidden">
+                        <div style="height: 220px; background-color: #f1f5f9;" class="position-relative overflow-hidden">
+                            @if($g->foto)
+                                <img src="{{ asset('storage/'.$g->foto) }}" alt="{{ $g->nama }}" class="w-100 h-100 object-fit-cover">
+                            @else
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fw-bold fs-1">
+                                    {{ strtoupper(substr($g->nama, 0, 1)) }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="card-body p-3">
+                            <h6 class="fw-bold text-dark mb-1">{{ $g->nama }}</h6>
+                            <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2.5 py-1 rounded-pill small">{{ $g->mata_pelajaran }}</span>
+                            @if($g->nip)
+                                <small class="text-muted d-block mt-2 font-monospace" style="font-size: 0.75rem;">NIP: {{ $g->nip }}</small>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="col-12 text-center py-4 text-muted">Belum ada data guru/staff terdaftar.</div>
                 @endforelse
             </div>
         </div>

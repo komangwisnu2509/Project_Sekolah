@@ -88,6 +88,28 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-20 col-sm-6" style="flex: 1;">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-dark h-100 border-start border-4 border-warning">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold d-block">GURU PURNA</small>
+                        <h3 class="fw-bold mb-0 text-warning text-darken-2">{{ $totalGuruPurna }}</h3>
+                    </div>
+                    <i class="bi bi-award fs-1 text-warning"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-20 col-sm-6" style="flex: 1;">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-dark h-100 border-start border-4 border-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold d-block">STAFF PURNA</small>
+                        <h3 class="fw-bold mb-0 text-success">{{ $totalStaffPurna }}</h3>
+                    </div>
+                    <i class="bi bi-person-badge fs-1 text-success"></i>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Filter & Search Form Card -->
@@ -156,16 +178,40 @@
         </div>
     </div>
 
-    <!-- Table List of All Graduated Students & Alumni Tracer -->
-    <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-4">
-        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0 text-dark">
-                <i class="bi bi-people-fill text-primary me-2"></i>Daftar Siswa Alumni Lulus ({{ count($alumniSiswaList) }} Siswa Ditemukan)
-            </h5>
-            @if($q)
-                <span class="badge bg-info text-dark">Pencarian: "{{ $q }}"</span>
-            @endif
-        </div>
+    <!-- CATEGORY SEPARATION NAV TABS -->
+    <ul class="nav nav-pills nav-fill bg-white p-2 rounded-3 shadow-sm mb-4 border" id="alumniCategoryTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold py-2.5 fs-6" id="siswa-tab" data-bs-toggle="pill" data-bs-target="#tab-siswa-alumni" type="button" role="tab" aria-controls="tab-siswa-alumni" aria-selected="true">
+                <i class="bi bi-mortarboard-fill me-2 text-primary"></i>1. Alumni Siswa Lulus 
+                <span class="badge bg-primary ms-2 rounded-pill">{{ count($alumniSiswaList) }}</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold py-2.5 fs-6" id="guru-tab" data-bs-toggle="pill" data-bs-target="#tab-guru-alumni" type="button" role="tab" aria-controls="tab-guru-alumni" aria-selected="false">
+                <i class="bi bi-person-workspace me-2 text-warning"></i>2. Alumni Guru (Purna Bhakti) 
+                <span class="badge bg-warning text-dark ms-2 rounded-pill">{{ count($alumniGuruList) }}</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold py-2.5 fs-6" id="staff-tab" data-bs-toggle="pill" data-bs-target="#tab-staff-alumni" type="button" role="tab" aria-controls="tab-staff-alumni" aria-selected="false">
+                <i class="bi bi-person-badge me-2 text-success"></i>3. Alumni Staff (Purna Bhakti) 
+                <span class="badge bg-success ms-2 rounded-pill">{{ count($alumniStaffList) }}</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="alumniCategoryTabContent">
+        <!-- TAB 1: ALUMNI SISWA LULUS -->
+        <div class="tab-pane fade show active" id="tab-siswa-alumni" role="tabpanel" aria-labelledby="siswa-tab">
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-4">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-people-fill text-primary me-2"></i>Daftar Siswa Alumni Lulus ({{ count($alumniSiswaList) }} Siswa Ditemukan)
+                    </h5>
+                    @if($q)
+                        <span class="badge bg-info text-dark">Pencarian: "{{ $q }}"</span>
+                    @endif
+                </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -498,11 +544,162 @@
                             </tr>
                         @endforelse
                     </tbody>
-                </table>
             </div>
         </div>
     </div>
+    <!-- END TAB 1: ALUMNI SISWA LULUS -->
+
+    <!-- TAB 2: ALUMNI GURU PURNA BHAKTI & PENSIUN -->
+    <div class="tab-pane fade" id="tab-guru-alumni" role="tabpanel" aria-labelledby="guru-tab">
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-4 border-top border-4 border-warning">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-award-fill text-warning me-2"></i>Daftar Alumni Guru Purna Bhakti &amp; Pensiun ({{ count($alumniGuruList) }} Guru Ditemukan)
+                </h5>
+                <a href="{{ route('guru.index') }}" class="btn btn-outline-warning btn-sm fw-bold">
+                    <i class="bi bi-gear-fill me-1"></i> Kelola Data Guru (Ubah Status Keaktifan) &rarr;
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="ps-4" style="width: 50px;">No</th>
+                                <th style="width: 70px;">Foto</th>
+                                <th>NIP &amp; Nama Guru</th>
+                                <th>Mata Pelajaran</th>
+                                <th>Status Purna</th>
+                                <th>Tahun Purna</th>
+                                <th>Pesan &amp; Kesan Pengabdian</th>
+                                <th class="pe-4 text-end" style="width: 130px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($alumniGuruList as $idx => $ag)
+                                <tr>
+                                    <td class="ps-4 fw-bold text-muted">{{ $idx + 1 }}</td>
+                                    <td>
+                                        @if($ag->foto)
+                                            <img src="{{ asset('storage/'.$ag->foto) }}" alt="{{ $ag->nama }}" class="rounded-circle object-fit-cover border shadow-sm" style="width: 45px; height: 45px;">
+                                        @else
+                                            <div class="bg-warning bg-opacity-20 text-dark rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 45px; height: 45px;">
+                                                {{ strtoupper(substr($ag->nama, 0, 1)) }}
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark fs-6">{{ $ag->nama }}</div>
+                                        <small class="text-muted font-monospace">NIP: {{ $ag->nip ?? '-' }}</small>
+                                    </td>
+                                    <td><span class="badge bg-info text-dark">{{ $ag->mata_pelajaran }}</span></td>
+                                    <td>
+                                        @if($ag->status === 'Pensiun')
+                                            <span class="badge bg-warning text-dark border border-warning px-2.5 py-1 fw-bold"><i class="bi bi-trophy-fill me-1"></i> Pensiun</span>
+                                        @else
+                                            <span class="badge bg-secondary text-white border px-2.5 py-1 fw-bold"><i class="bi bi-arrow-right-circle me-1"></i> Purna (Pindah)</span>
+                                        @endif
+                                    </td>
+                                    <td class="fw-bold text-dark">{{ $ag->tahun_purna ?? '-' }}</td>
+                                    <td class="small text-muted fst-italic">{{ $ag->pesan_purna ?? 'Terima kasih atas segala pengabdian dan ilmu yang diberikan.' }}</td>
+                                    <td class="pe-4 text-end">
+                                        <a href="{{ route('guru.edit', $ag->id) }}" class="btn btn-outline-warning btn-sm fw-bold">
+                                            <i class="bi bi-pencil-square me-1"></i> Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-5 text-muted">
+                                        <i class="bi bi-person-badge fs-1 d-block mb-2 text-warning opacity-50"></i>
+                                        Belum ada data guru berstatus Pensiun atau Purna (Pindah). Ubah status guru di menu <strong>Data Guru</strong>.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END TAB 2: ALUMNI GURU -->
+
+    <!-- TAB 3: ALUMNI STAFF PURNA BHAKTI & PENSIUN -->
+    <div class="tab-pane fade" id="tab-staff-alumni" role="tabpanel" aria-labelledby="staff-tab">
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-4 border-top border-4 border-success">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-shield-check text-success me-2"></i>Daftar Alumni Staff Purna Bhakti &amp; Pensiun ({{ count($alumniStaffList) }} Staff Ditemukan)
+                </h5>
+                <a href="{{ route('staff.index') }}" class="btn btn-outline-success btn-sm fw-bold">
+                    <i class="bi bi-gear-fill me-1"></i> Kelola Data Staff (Ubah Status Keaktifan) &rarr;
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="ps-4" style="width: 50px;">No</th>
+                                <th style="width: 70px;">Foto</th>
+                                <th>NIP/NIK &amp; Nama Staff</th>
+                                <th>Jabatan / Posisi</th>
+                                <th>Status Purna</th>
+                                <th>Tahun Purna</th>
+                                <th>Pesan &amp; Kesan Pengabdian</th>
+                                <th class="pe-4 text-end" style="width: 130px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($alumniStaffList as $idx => $as)
+                                <tr>
+                                    <td class="ps-4 fw-bold text-muted">{{ $idx + 1 }}</td>
+                                    <td>
+                                        @if($as->foto)
+                                            <img src="{{ asset('storage/'.$as->foto) }}" alt="{{ $as->nama }}" class="rounded-circle object-fit-cover border shadow-sm" style="width: 45px; height: 45px;">
+                                        @else
+                                            <div class="bg-success bg-opacity-20 text-success rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 45px; height: 45px;">
+                                                {{ strtoupper(substr($as->nama, 0, 1)) }}
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark fs-6">{{ $as->nama }}</div>
+                                        <small class="text-muted font-monospace">NIP/NIK: {{ $as->nip_nik ?? '-' }}</small>
+                                    </td>
+                                    <td><span class="badge bg-white text-dark border shadow-sm fw-bold">{{ $as->jabatan }}</span></td>
+                                    <td>
+                                        @if($as->status === 'Pensiun')
+                                            <span class="badge bg-warning text-dark border border-warning px-2.5 py-1 fw-bold"><i class="bi bi-trophy-fill me-1"></i> Pensiun</span>
+                                        @else
+                                            <span class="badge bg-secondary text-white border px-2.5 py-1 fw-bold"><i class="bi bi-arrow-right-circle me-1"></i> Purna (Pindah)</span>
+                                        @endif
+                                    </td>
+                                    <td class="fw-bold text-dark">{{ $as->tahun_purna ?? '-' }}</td>
+                                    <td class="small text-muted fst-italic">{{ $as->pesan_purna ?? 'Terima kasih atas segala pengabdian dan operasional yang diberikan.' }}</td>
+                                    <td class="pe-4 text-end">
+                                        <a href="{{ route('staff.index') }}" class="btn btn-outline-success btn-sm fw-bold">
+                                            <i class="bi bi-gear-fill me-1"></i> Kelola
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-5 text-muted">
+                                        <i class="bi bi-people fs-1 d-block mb-2 text-success opacity-50"></i>
+                                        Belum ada data staff berstatus Pensiun atau Purna (Pindah). Ubah status staff di menu <strong>Data Staff</strong>.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END TAB 3: ALUMNI STAFF -->
 </div>
+<!-- END TAB CONTENT CONTAINER -->
 
 <!-- MODAL TAMBAH DATA ALUMNI DIRECTLY BY ADMIN -->
 <div class="modal fade" id="modalTambahAlumni" tabindex="-1" aria-hidden="true">

@@ -199,6 +199,22 @@
                 padding-bottom: 0.65rem;
             }
         }
+
+        /* Notification Badge Pulse Animation */
+        .badge-pulse {
+            animation: badgePulse 1.8s infinite;
+        }
+        @keyframes badgePulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -222,11 +238,6 @@
                             <i class="bi bi-speedometer2"></i> Dashboard
                         </a>
                     </li>
-                    <li class="{{ request()->routeIs('landing_page') ? 'active' : '' }}">
-                        <a href="{{ route('landing_page') }}" target="_blank">
-                            <i class="bi bi-globe text-info"></i> Beranda Utama Sekolah
-                        </a>
-                    </li>
                     @if(!Auth::user()->isSiswa())
                         <li class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
                             <a href="{{ route('profile.edit') }}">
@@ -235,13 +246,32 @@
                         </li>
                     @endif
                     @if(Auth::user()->isAdmin())
+                        @php
+                            $adminPendingIzinNav = \App\Models\IzinGuru::where('status', 'Pending')->count();
+                            $pendingPpdbNav = \App\Models\PpdbPendaftaran::where('status', 'Pending')->count();
+                            $adminPendingAlumniNav = \App\Models\AlumniTracer::where('status_acc', 'Pending')->count();
+                            $adminPendingEkskulNav = \App\Models\PendaftaranEkskul::where('status', 'Pending')->count();
+                            $adminPendingTugasNav = \App\Models\TugasSubmission::whereNull('nilai')->count();
+                            
+                            $masterGroupNotifNav = $adminPendingAlumniNav;
+                            $jadwalGroupNotifNav = $adminPendingIzinNav;
+                            $akademikGroupNotifNav = $pendingPpdbNav + $adminPendingEkskulNav + $adminPendingTugasNav;
+
+                            $totalHeaderNotif = $pendingPpdbNav + $adminPendingIzinNav + $adminPendingAlumniNav + $adminPendingEkskulNav + $adminPendingTugasNav;
+                        @endphp
+
                         <!-- Group 1: Master Data -->
                         <li>
-                            <a href="#adminMasterSubmenu" data-bs-toggle="collapse" class="d-flex align-items-center justify-content-between {{ request()->routeIs('siswa.*') || request()->routeIs('guru.*') || request()->routeIs('kelas.*') || request()->routeIs('jurusan.*') ? 'text-white fw-bold' : '' }}">
+                            <a href="#adminMasterSubmenu" data-bs-toggle="collapse" class="d-flex align-items-center justify-content-between {{ request()->routeIs('siswa.*') || request()->routeIs('guru.*') || request()->routeIs('kelas.*') || request()->routeIs('jurusan.*') || request()->routeIs('admin.alumni.*') ? 'text-white fw-bold' : '' }}">
                                 <span><i class="bi bi-folder-fill me-2 text-primary"></i> Master Data Sekolah</span>
-                                <i class="bi bi-chevron-down ms-2"></i>
+                                <div class="d-flex align-items-center gap-1">
+                                    @if($masterGroupNotifNav > 0)
+                                        <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm badge-pulse">{{ $masterGroupNotifNav }}</span>
+                                    @endif
+                                    <i class="bi bi-chevron-down ms-1"></i>
+                                </div>
                             </a>
-                            <div class="collapse {{ request()->routeIs('siswa.*') || request()->routeIs('guru.*') || request()->routeIs('kelas.*') || request()->routeIs('jurusan.*') ? 'show' : '' }} ps-3 mt-1" id="adminMasterSubmenu">
+                            <div class="collapse {{ request()->routeIs('siswa.*') || request()->routeIs('guru.*') || request()->routeIs('kelas.*') || request()->routeIs('jurusan.*') || request()->routeIs('admin.alumni.*') ? 'show' : '' }} ps-3 mt-1" id="adminMasterSubmenu">
                                 <ul class="list-unstyled mb-0">
                                     <li class="{{ request()->routeIs('siswa.*') ? 'active' : '' }} my-1">
                                         <a href="{{ route('siswa.index') }}" class="py-2 d-flex align-items-center justify-content-between">
@@ -251,6 +281,11 @@
                                     <li class="{{ request()->routeIs('guru.*') ? 'active' : '' }} my-1">
                                         <a href="{{ route('guru.index') }}" class="py-2 d-flex align-items-center justify-content-between">
                                             <span><i class="bi bi-person-workspace me-2"></i> Data Guru</span>
+                                        </a>
+                                    </li>
+                                    <li class="{{ request()->routeIs('staff.*') ? 'active' : '' }} my-1">
+                                        <a href="{{ route('staff.index') }}" class="py-2 d-flex align-items-center justify-content-between">
+                                            <span><i class="bi bi-person-badge me-2 text-info"></i> Data Staff</span>
                                         </a>
                                     </li>
                                     <li class="{{ request()->routeIs('kelas.*') ? 'active' : '' }} my-1">
@@ -266,6 +301,9 @@
                                     <li class="{{ request()->routeIs('admin.alumni.*') ? 'active' : '' }} my-1">
                                         <a href="{{ route('admin.alumni.index') }}" class="py-2 d-flex align-items-center justify-content-between">
                                             <span><i class="bi bi-mortarboard-fill me-2 text-warning"></i> Tracer Alumni</span>
+                                            @if($adminPendingAlumniNav > 0)
+                                                <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm badge-pulse" title="{{ $adminPendingAlumniNav }} Alumni Menunggu Verifikasi">{{ $adminPendingAlumniNav }}</span>
+                                            @endif
                                         </a>
                                     </li>
                                 </ul>
@@ -274,15 +312,11 @@
 
                         <!-- Group 2: Jadwal & Piket -->
                         <li>
-                            @php
-                                $adminPendingIzinNav = \App\Models\IzinGuru::where('status', 'Pending')->count();
-                                $pendingPpdbNav = \App\Models\PpdbPendaftaran::where('status', 'Pending')->count();
-                            @endphp
                             <a href="#adminJadwalSubmenu" data-bs-toggle="collapse" class="d-flex align-items-center justify-content-between {{ request()->routeIs('piket.*') || request()->routeIs('jadwal.*') || request()->routeIs('absensi.*') || request()->routeIs('admin.izin.*') ? 'text-white fw-bold' : '' }}">
                                 <span><i class="bi bi-calendar-range-fill me-2 text-warning"></i> Jadwal, Piket & Absensi</span>
                                 <div class="d-flex align-items-center gap-1">
-                                    @if($adminPendingIzinNav > 0)
-                                        <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm">{{ $adminPendingIzinNav }}</span>
+                                    @if($jadwalGroupNotifNav > 0)
+                                        <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm badge-pulse">{{ $jadwalGroupNotifNav }}</span>
                                     @endif
                                     <i class="bi bi-chevron-down ms-1"></i>
                                 </div>
@@ -293,7 +327,7 @@
                                         <a href="{{ route('admin.izin.index') }}" class="py-2 d-flex align-items-center justify-content-between">
                                             <span><i class="bi bi-shield-lock-fill me-2 text-warning"></i> ACC Izin & Guru Pengganti</span>
                                             @if($adminPendingIzinNav > 0)
-                                                <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm" title="{{ $adminPendingIzinNav }} Menunggu ACC Admin">{{ $adminPendingIzinNav }}</span>
+                                                <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm badge-pulse" title="{{ $adminPendingIzinNav }} Menunggu ACC Admin">{{ $adminPendingIzinNav }}</span>
                                             @endif
                                         </a>
                                     </li>
@@ -323,16 +357,16 @@
 
                         <!-- Group 3: Tugas & Profil Sekolah -->
                         <li>
-                            <a href="#adminAkademikSubmenu" data-bs-toggle="collapse" class="d-flex align-items-center justify-content-between {{ request()->routeIs('tugas.*') || request()->routeIs('profil-sekolah.*') || request()->routeIs('admin.prestasi.*') || request()->routeIs('admin.ekskul.*') ? 'text-white fw-bold' : '' }}">
+                            <a href="#adminAkademikSubmenu" data-bs-toggle="collapse" class="d-flex align-items-center justify-content-between {{ request()->routeIs('tugas.*') || request()->routeIs('profil-sekolah.*') || request()->routeIs('admin.prestasi.*') || request()->routeIs('admin.ekskul.*') || request()->routeIs('admin.cms.*') || request()->routeIs('admin.ppdb.*') ? 'text-white fw-bold' : '' }}">
                                 <span><i class="bi bi-gear-wide-connected me-2 text-info"></i> Prestasi, Ekskul & CMS</span>
                                 <div class="d-flex align-items-center gap-1">
-                                    @if($pendingPpdbNav > 0)
-                                        <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm">{{ $pendingPpdbNav }}</span>
+                                    @if($akademikGroupNotifNav > 0)
+                                        <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm badge-pulse">{{ $akademikGroupNotifNav }}</span>
                                     @endif
                                     <i class="bi bi-chevron-down ms-1"></i>
                                 </div>
                             </a>
-                            <div class="collapse {{ request()->routeIs('tugas.*') || request()->routeIs('profil-sekolah.*') || request()->routeIs('admin.prestasi.*') || request()->routeIs('admin.ekskul.*') ? 'show' : '' }} ps-3 mt-1" id="adminAkademikSubmenu">
+                            <div class="collapse {{ request()->routeIs('tugas.*') || request()->routeIs('profil-sekolah.*') || request()->routeIs('admin.prestasi.*') || request()->routeIs('admin.ekskul.*') || request()->routeIs('admin.cms.*') || request()->routeIs('admin.ppdb.*') ? 'show' : '' }} ps-3 mt-1" id="adminAkademikSubmenu">
                                 <ul class="list-unstyled mb-0">
                                     <li class="{{ request()->routeIs('admin.prestasi.*') ? 'active' : '' }} my-1">
                                         <a href="{{ route('admin.prestasi.index') }}" class="py-2 d-flex align-items-center justify-content-between">
@@ -342,11 +376,17 @@
                                     <li class="{{ request()->routeIs('admin.ekskul.*') ? 'active' : '' }} my-1">
                                         <a href="{{ route('admin.ekskul.index') }}" class="py-2 d-flex align-items-center justify-content-between">
                                             <span><i class="bi bi-palette-fill me-2 text-primary"></i> Ekstrakurikuler</span>
+                                            @if($adminPendingEkskulNav > 0)
+                                                <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm badge-pulse" title="{{ $adminPendingEkskulNav }} Pendaftaran Ekskul Pending">{{ $adminPendingEkskulNav }}</span>
+                                            @endif
                                         </a>
                                     </li>
                                     <li class="{{ request()->routeIs('tugas.*') ? 'active' : '' }} my-1">
                                         <a href="{{ route('tugas.index') }}" class="py-2 d-flex align-items-center justify-content-between">
                                             <span><i class="bi bi-file-earmark-text-fill me-2"></i> Tugas Sekolah</span>
+                                            @if($adminPendingTugasNav > 0)
+                                                <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm badge-pulse" title="{{ $adminPendingTugasNav }} Tugas Siswa Belum Dinilai">{{ $adminPendingTugasNav }}</span>
+                                            @endif
                                         </a>
                                     </li>
                                      <li class="{{ request()->routeIs('admin.cms.*') ? 'active' : '' }} my-1">
@@ -354,11 +394,16 @@
                                               <span><i class="bi bi-globe me-2 text-success"></i> Web Sekolah (CMS)</span>
                                           </a>
                                      </li>
+                                     <li class="my-1">
+                                          <a href="{{ route('admin.cms.index') }}#tab-fasilitas" onclick="setTimeout(function(){ document.getElementById('tab-fasilitas-tab')?.click(); }, 150);" class="py-2 d-flex align-items-center justify-content-between">
+                                              <span><i class="bi bi-box-seam me-2 text-info"></i> Fasilitas Sekolah (CMS)</span>
+                                          </a>
+                                     </li>
                                      <li class="{{ request()->routeIs('admin.ppdb.*') ? 'active' : '' }} my-1">
                                          <a href="{{ route('admin.ppdb.index') }}" class="py-2 d-flex align-items-center justify-content-between">
                                              <span><i class="bi bi-user-plus-fill me-2 text-warning"></i> Pendaftaran PPDB Online</span>
                                              @if($pendingPpdbNav > 0)
-                                                 <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm" title="{{ $pendingPpdbNav }} Pendaftar PPDB Belum Diverifikasi">{{ $pendingPpdbNav }} Baru</span>
+                                                 <span class="badge bg-danger rounded-pill px-2 py-0.5 shadow-sm badge-pulse" title="{{ $pendingPpdbNav }} Pendaftar PPDB Belum Diverifikasi">{{ $pendingPpdbNav }}</span>
                                              @endif
                                          </a>
                                      </li>
@@ -394,6 +439,8 @@
                             $totalActiveSiswaNav = \App\Models\Siswa::where('status', '!=', 'Lulus')->count();
                             $todayAbNav = \App\Models\Absensi::where('tanggal', date('Y-m-d'))->count();
                             $guruTodayBelumNav = max(0, $totalActiveSiswaNav - $todayAbNav);
+
+                            $totalHeaderNotif = $pendingGradesNav + $guruPendingClassesTodayNav + $totalGuruIzinNotif;
                         @endphp
 
                         <!-- 1. Pengajuan Izin / Sakit Saya -->
@@ -401,7 +448,7 @@
                             <a href="{{ route('guru.izin.index') }}" class="d-flex align-items-center justify-content-between">
                                 <span><i class="bi bi-calendar-event-fill text-warning me-2"></i> Pengajuan Izin / Sakit Saya</span>
                                 @if($totalGuruIzinNotif > 0)
-                                    <span class="badge bg-warning text-dark rounded-pill px-2 py-1 shadow-sm" title="{{ $totalGuruIzinNotif }} Notifikasi Izin / Tugas Pengganti">{{ $totalGuruIzinNotif }}</span>
+                                    <span class="badge bg-warning text-dark rounded-pill px-2 py-1 shadow-sm badge-pulse" title="{{ $totalGuruIzinNotif }} Notifikasi Izin / Tugas Pengganti">{{ $totalGuruIzinNotif }}</span>
                                 @endif
                             </a>
                         </li>
@@ -421,7 +468,7 @@
                             <a href="{{ route('absensi.index') }}" class="d-flex align-items-center justify-content-between">
                                 <span><i class="bi bi-clipboard-check-fill text-success me-2"></i> Input Absensi Kelas</span>
                                 @if($guruPendingClassesTodayNav > 0)
-                                    <span class="badge bg-warning text-dark rounded-pill px-2 py-1 shadow-sm" title="{{ $guruPendingClassesTodayNav }} Kelas Belum Diabsen Hari Ini">{{ $guruPendingClassesTodayNav }}</span>
+                                    <span class="badge bg-warning text-dark rounded-pill px-2 py-1 shadow-sm badge-pulse" title="{{ $guruPendingClassesTodayNav }} Kelas Belum Diabsen Hari Ini">{{ $guruPendingClassesTodayNav }}</span>
                                 @endif
                             </a>
                         </li>
@@ -431,7 +478,7 @@
                             <a href="{{ route('tugas.index') }}" class="d-flex align-items-center justify-content-between">
                                 <span><i class="bi bi-file-earmark-plus-fill me-2 text-info"></i> Buat & Kelola Tugas</span>
                                 @if($pendingGradesNav > 0)
-                                    <span class="badge bg-danger rounded-pill px-2 py-1 shadow-sm" title="{{ $pendingGradesNav }} Tugas Siswa Belum Dinilai">{{ $pendingGradesNav }}</span>
+                                    <span class="badge bg-danger rounded-pill px-2 py-1 shadow-sm badge-pulse" title="{{ $pendingGradesNav }} Tugas Siswa Belum Dinilai">{{ $pendingGradesNav }}</span>
                                 @endif
                             </a>
                         </li>
@@ -462,6 +509,7 @@
                             $siswaPointsNav = 0;
                             $siswaTodayTeacherLeaveNav = 0;
                             $pendingCountNav = 0;
+                            $siswaPendingEkskulNav = 0;
 
                             if (Auth::user()->siswa) {
                                 $siswaKelas = Auth::user()->siswa->kelas;
@@ -476,7 +524,11 @@
                                 $allTugasIds = \App\Models\Tugas::where('kelas', $siswaKelas)->pluck('id');
                                 $submittedTugasIds = \App\Models\TugasSubmission::where('siswa_id', $siswaId)->pluck('tugas_id');
                                 $pendingCountNav = $allTugasIds->diff($submittedTugasIds)->count();
+
+                                $siswaPendingEkskulNav = \App\Models\PendaftaranEkskul::where('siswa_id', $siswaId)->where('status', 'Pending')->count();
                             }
+
+                            $totalHeaderNotif = $pendingCountNav + $siswaPendingEkskulNav + $siswaTodayTeacherLeaveNav;
                         @endphp
 
                         <li class="{{ request()->routeIs('siswa.profile') ? 'active' : '' }}">
@@ -500,24 +552,44 @@
                                 <a href="{{ route('siswa.tugas') }}" class="d-flex align-items-center justify-content-between">
                                     <span><i class="bi bi-file-earmark-text-fill me-2 text-info"></i> Tugas Sekolah</span>
                                     @if($pendingCountNav > 0)
-                                        <span class="badge bg-danger rounded-pill shadow-sm px-2 py-1" title="{{ $pendingCountNav }} Tugas Belum Dikumpulkan">{{ $pendingCountNav }}</span>
+                                        <span class="badge bg-danger rounded-pill shadow-sm px-2 py-1 badge-pulse" title="{{ $pendingCountNav }} Tugas Belum Dikumpulkan">{{ $pendingCountNav }}</span>
                                     @endif
                                 </a>
                             </li>
                             <li class="{{ request()->routeIs('siswa.ekskul') ? 'active' : '' }}">
                                 <a href="{{ route('siswa.ekskul') }}" class="d-flex align-items-center justify-content-between">
                                     <span><i class="bi bi-palette-fill me-2 text-primary"></i> Ekstrakurikuler</span>
+                                    @if($siswaPendingEkskulNav > 0)
+                                        <span class="badge bg-warning text-dark rounded-pill shadow-sm px-2 py-1 badge-pulse" title="{{ $siswaPendingEkskulNav }} Pendaftaran Ekskul Menunggu ACC">{{ $siswaPendingEkskulNav }}</span>
+                                    @endif
                                 </a>
                             </li>
                         @endif
                     @endif
+
+                    <!-- Link Beranda Utama Sekolah & Logout untuk Semua Akun -->
+                    <li class="mt-4 pt-3 border-top border-secondary border-opacity-25 {{ request()->routeIs('landing_page') ? 'active' : '' }}">
+                        <a href="{{ route('landing_page') }}" target="_blank" class="d-flex align-items-center justify-content-between">
+                            <span><i class="bi bi-globe text-info me-2"></i> Beranda Utama Sekolah</span>
+                            <i class="bi bi-box-arrow-up-right small text-muted"></i>
+                        </a>
+                    </li>
+                    <li class="mt-2">
+                        <form method="POST" action="{{ route('logout') }}" id="sidebar-logout-form" class="d-none">
+                            @csrf
+                        </form>
+                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();" class="text-danger fw-bold d-flex align-items-center justify-content-between py-2 px-3 rounded-2" style="background-color: rgba(220, 53, 69, 0.1);" title="Keluar Akun">
+                            <span><i class="bi bi-box-arrow-right me-2 text-danger fs-5"></i> Log Out Akun</span>
+                            <span class="badge bg-danger text-white small px-2 py-1">Keluar</span>
+                        </a>
+                    </li>
                 @endauth
             </ul>
         </nav>
 
         <!-- Page Content -->
         <div id="content-area">
-            <!-- Top Bar with Android Mobile Hamburger Button -->
+            <!-- Top Bar with Android Mobile Hamburger Button & Notification Bell -->
             <div class="top-navbar d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-2">
                     <button type="button" class="btn btn-light border p-2 d-lg-none rounded-3" id="sidebarCollapse" aria-label="Toggle Navigation">
@@ -538,31 +610,188 @@
                 
                 <div class="d-flex align-items-center gap-2">
                     @auth
-                        <a href="{{ route('landing_page') }}" class="btn btn-outline-info btn-sm px-2 px-sm-3 me-2" title="Buka Beranda Utama Website Sekolah" target="_blank">
-                            <i class="bi bi-globe me-1"></i> <span class="d-none d-sm-inline">Beranda Utama</span>
-                        </a>
+                        <!-- Header Bell Notification Dropdown -->
+                        @php
+                            $totalHeaderNotif = $totalHeaderNotif ?? 0;
+                        @endphp
+                        <div class="dropdown me-1">
+                            <button class="btn btn-light position-relative rounded-circle p-2 text-secondary border-0 shadow-sm" type="button" id="notifHeaderDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Notifikasi Baru">
+                                <i class="bi bi-bell-fill fs-5 text-dark"></i>
+                                @if($totalHeaderNotif > 0)
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm badge-pulse" style="font-size: 0.68rem; padding: 0.25em 0.55em;">
+                                        {{ $totalHeaderNotif }}
+                                    </span>
+                                @endif
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 p-2 mt-2" aria-labelledby="notifHeaderDropdown" style="width: 310px; max-height: 380px; overflow-y: auto;">
+                                <li class="dropdown-header text-uppercase fw-bold text-dark border-bottom pb-2 mb-2 d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-bell me-1 text-primary"></i> Notifikasi Terbaru</span>
+                                    @if($totalHeaderNotif > 0)
+                                        <span class="badge bg-danger rounded-pill">{{ $totalHeaderNotif }} Baru</span>
+                                    @else
+                                        <span class="badge bg-success rounded-pill">0</span>
+                                    @endif
+                                </li>
+
+                                @if(Auth::user()->isSiswa())
+                                    @if($pendingCountNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('siswa.tugas') }}">
+                                                <span class="badge bg-danger p-2 rounded-circle mt-1"><i class="bi bi-file-earmark-text text-white fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Tugas Belum Dikumpulkan</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Ada {{ $pendingCountNav }} tugas kelas belum Anda kerjakan.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($siswaPendingEkskulNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('siswa.ekskul') }}">
+                                                <span class="badge bg-warning p-2 rounded-circle mt-1"><i class="bi bi-palette text-dark fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Pendaftaran Ekskul Pending</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Pendaftaran ekskul Anda menunggu verifikasi admin.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($siswaTodayTeacherLeaveNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('siswa.jadwal') }}">
+                                                <span class="badge bg-info p-2 rounded-circle mt-1"><i class="bi bi-calendar-event text-white fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Informasi Guru Izin</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Ada {{ $siswaTodayTeacherLeaveNav }} guru izin / pengganti hari ini.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                @elseif(Auth::user()->isGuru())
+                                    @if($pendingGradesNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('tugas.index') }}">
+                                                <span class="badge bg-danger p-2 rounded-circle mt-1"><i class="bi bi-clipboard-check text-white fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Tugas Siswa Perlu Penilaian</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Ada {{ $pendingGradesNav }} jawaban siswa belum Anda beri nilai.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($guruPendingClassesTodayNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('absensi.index') }}">
+                                                <span class="badge bg-warning p-2 rounded-circle mt-1"><i class="bi bi-calendar-check text-dark fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Absensi Kelas Hari Ini</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Ada {{ $guruPendingClassesTodayNav }} kelas belum di-absensi.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($totalGuruIzinNotif > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('guru.izin.index') }}">
+                                                <span class="badge bg-info p-2 rounded-circle mt-1"><i class="bi bi-clock-history text-white fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Status Izin / Guru Pengganti</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Cek status pengajuan izin atau tugas mengajar pengganti.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                @elseif(Auth::user()->isAdmin())
+                                    @if($pendingPpdbNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('admin.ppdb.index') }}">
+                                                <span class="badge bg-warning p-2 rounded-circle mt-1"><i class="bi bi-person-plus text-dark fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Pendaftaran PPDB Baru</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Ada {{ $pendingPpdbNav }} calon siswa baru belum diverifikasi.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($adminPendingIzinNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('admin.izin.index') }}">
+                                                <span class="badge bg-danger p-2 rounded-circle mt-1"><i class="bi bi-shield-lock text-white fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">ACC Izin Guru Pending</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Ada {{ $adminPendingIzinNav }} permohonan izin guru belum di-ACC.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($adminPendingAlumniNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('admin.alumni.index') }}">
+                                                <span class="badge bg-info p-2 rounded-circle mt-1"><i class="bi bi-mortarboard text-white fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Tracer Alumni Baru</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Ada {{ $adminPendingAlumniNav }} data alumni menunggu verifikasi.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($adminPendingEkskulNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('admin.ekskul.index') }}">
+                                                <span class="badge bg-primary p-2 rounded-circle mt-1"><i class="bi bi-palette text-white fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Pendaftaran Ekskul Siswa</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Ada {{ $adminPendingEkskulNav }} pengajuan ekskul perlu persetujuan.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if($adminPendingTugasNav > 0)
+                                        <li>
+                                            <a class="dropdown-item rounded-2 p-2 mb-1 border-bottom d-flex align-items-start gap-2" href="{{ route('tugas.index') }}">
+                                                <span class="badge bg-secondary p-2 rounded-circle mt-1"><i class="bi bi-file-earmark-text text-white fs-6"></i></span>
+                                                <div>
+                                                    <div class="fw-bold small text-dark">Pengumpulan Tugas Siswa</div>
+                                                    <div class="text-muted small" style="font-size: 0.8rem;">Ada {{ $adminPendingTugasNav }} tugas siswa belum dinilai guru.</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endif
+                                @endif
+
+                                @if($totalHeaderNotif == 0)
+                                    <li class="py-3 text-center">
+                                        <i class="bi bi-check-circle-fill text-success fs-3 d-block mb-1"></i>
+                                        <span class="text-muted small fw-semibold">Tidak ada notifikasi baru.<br>Semua tugas &amp; aksi sudah selesai!</span>
+                                    </li>
+                                @endif
+                            </ul>
+                        </div>
+
+                        <!-- User Profile Link -->
                         <a href="{{ Auth::user()->isSiswa() ? route('siswa.profile') : route('profile.edit') }}" class="text-decoration-none d-flex align-items-center me-2 text-dark" title="Profil Saya">
                             @if(Auth::user()->foto)
-                                <img src="{{ asset('storage/'.Auth::user()->foto) }}" width="34" height="34" class="rounded-circle object-fit-cover me-2 border shadow-sm">
+                                <img src="{{ asset('storage/'.Auth::user()->foto) }}" width="34" height="34" class="rounded-circle object-fit-cover me-1 me-sm-2 border shadow-sm">
                             @elseif(Auth::user()->isGuru() && Auth::user()->guru && Auth::user()->guru->foto)
-                                <img src="{{ asset('storage/'.Auth::user()->guru->foto) }}" width="34" height="34" class="rounded-circle object-fit-cover me-2 border shadow-sm">
+                                <img src="{{ asset('storage/'.Auth::user()->guru->foto) }}" width="34" height="34" class="rounded-circle object-fit-cover me-1 me-sm-2 border shadow-sm">
                             @elseif(Auth::user()->isSiswa() && Auth::user()->siswa && Auth::user()->siswa->foto)
-                                <img src="{{ asset('storage/'.Auth::user()->siswa->foto) }}" width="34" height="34" class="rounded-circle object-fit-cover me-2 border shadow-sm">
+                                <img src="{{ asset('storage/'.Auth::user()->siswa->foto) }}" width="34" height="34" class="rounded-circle object-fit-cover me-1 me-sm-2 border shadow-sm">
                             @else
                                 <i class="bi bi-person-circle text-primary me-1 fs-4"></i>
                             @endif
                             <span class="fw-semibold small d-none d-sm-inline me-1">{{ Auth::user()->name }}</span>
-                            <i class="bi bi-pencil-square text-muted small ms-1" style="font-size: 0.8rem;"></i>
                         </a>
-                        <form method="POST" action="{{ route('logout') }}" id="logout-form" class="d-none">
+
+                        <!-- Logout Button in Top Navbar -->
+                        <form method="POST" action="{{ route('logout') }}" id="topbar-logout-form" class="d-none">
                             @csrf
                         </form>
-                        <a class="btn btn-outline-danger btn-sm px-2 px-sm-3" href="{{ route('logout') }}" 
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="bi bi-box-arrow-right me-1"></i> <span class="d-none d-sm-inline">Log Out</span>
+                        <a class="btn btn-danger btn-sm px-2 px-sm-3 d-flex align-items-center gap-1 shadow-sm fw-bold" href="{{ route('logout') }}" 
+                           onclick="event.preventDefault(); document.getElementById('topbar-logout-form').submit();" title="Keluar dari akun">
+                            <i class="bi bi-box-arrow-right"></i> <span class="d-none d-sm-inline">Log Out</span>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm px-3">Log In</a>
+                        <a href="{{ route('login') }}" class="btn btn-primary btn-sm px-3 fw-bold">Log In</a>
                     @endauth
                 </div>
             </div>

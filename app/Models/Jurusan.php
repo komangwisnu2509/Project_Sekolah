@@ -11,5 +11,9 @@ class Jurusan extends Model
 
     protected $table = 'jurusans';
 
-    protected $fillable = ['nama_jurusan'];
+    protected $fillable = ['nama_jurusan', 'deskripsi', 'detail_informasi', 'foto', 'icon', 'is_active'];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 }

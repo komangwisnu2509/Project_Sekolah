@@ -33,27 +33,29 @@ class LandingPageController extends Controller
         $prestasiList = Schema::hasTable('prestasi_siswas') ? PrestasiSiswa::orderBy('tahun', 'desc')->get() : collect();
 
         // Get multiple records
-        $jurusans = Schema::hasTable('jurusans') ? Jurusan::all() : collect();
-        $fasilitas = Schema::hasTable('fasilitas') ? Fasilitas::all() : collect();
-        $ekstrakurikuler = Schema::hasTable('ekstrakurikulers') ? Ekstrakurikuler::all() : collect();
+        $jurusans = Schema::hasTable('jurusans') ? Jurusan::where('is_active', true)->get() : collect();
+        $fasilitas = Schema::hasTable('fasilitas') ? Fasilitas::where('is_active', true)->get() : collect();
+        $ekstrakurikuler = Schema::hasTable('ekstrakurikulers') ? Ekstrakurikuler::where('status', 'Aktif')->get() : collect();
         
         // Berita queries
-        $beritasAll = Schema::hasTable('beritas') ? Berita::orderBy('tanggal_publikasi', 'desc')->orderBy('created_at', 'desc')->get() : collect();
+        $beritasAll = Schema::hasTable('beritas') ? Berita::where('is_active', true)->orderBy('tanggal_publikasi', 'desc')->orderBy('created_at', 'desc')->get() : collect();
         $beritaHighlight = $beritasAll->where('is_highlight', true)->first() ?: $beritasAll->first();
         $beritaList = $beritaHighlight ? $beritasAll->where('id', '!=', $beritaHighlight->id)->take(3) : collect();
 
         // Agenda & Event queries
-        $agendas = Schema::hasTable('agendas') ? Agenda::orderBy('tanggal', 'asc')->get() : collect();
+        $agendas = Schema::hasTable('agendas') ? Agenda::where('is_active', true)->orderBy('tanggal', 'asc')->get() : collect();
 
-        $galeri = Schema::hasTable('galeris') ? Galeri::all() : collect();
-        $testimoni = Schema::hasTable('testimonis') ? Testimoni::all() : collect();
-        $faqs = Schema::hasTable('faqs') ? Faq::all() : collect();
+        $galeri = Schema::hasTable('galeris') ? Galeri::where('is_active', true)->get() : collect();
+        $testimoni = Schema::hasTable('testimonis') ? Testimoni::where('is_active', true)->get() : collect();
+        $faqs = Schema::hasTable('faqs') ? Faq::where('is_active', true)->orderBy('urutan')->get() : collect();
+        $gurus = Schema::hasTable('gurus') ? Guru::where('is_active', true)->orderBy('nama')->get() : collect();
+        $staffs = Schema::hasTable('staffs') ? \App\Models\Staff::where('is_active', true)->orderBy('nama')->get() : collect();
 
         return view('landing page.landing_page', compact(
             'siswaCount', 'guruCount', 'alumniCount', 'tahunDedikasi',
             'profil', 'prestasiUtama', 'prestasiList', 'jurusans', 'fasilitas',
             'ekstrakurikuler', 'beritaHighlight', 'beritaList', 'agendas',
-            'galeri', 'testimoni', 'faqs'
+            'galeri', 'testimoni', 'faqs', 'gurus', 'staffs'
         ));
     }
 
@@ -74,8 +76,9 @@ class LandingPageController extends Controller
 
     public function guruStaff() {
         $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
-        $gurus = Schema::hasTable('gurus') ? Guru::all() : collect();
-        return view('landing page.pages.guru_staff', compact('profil', 'gurus'));
+        $gurus = Schema::hasTable('gurus') ? Guru::where('is_active', true)->orderBy('nama')->get() : collect();
+        $staffs = Schema::hasTable('staffs') ? \App\Models\Staff::where('is_active', true)->orderBy('nama')->get() : collect();
+        return view('landing page.pages.guru_staff', compact('profil', 'gurus', 'staffs'));
     }
 
     public function kurikulum() {
@@ -85,13 +88,13 @@ class LandingPageController extends Controller
 
     public function pengumuman() {
         $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
-        $beritas = Schema::hasTable('beritas') ? Berita::latest()->get() : collect();
+        $beritas = Schema::hasTable('beritas') ? Berita::where('is_active', true)->latest()->get() : collect();
         return view('landing page.pages.pengumuman', compact('profil', 'beritas'));
     }
 
     public function agenda() {
         $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
-        $agendas = Schema::hasTable('agendas') ? Agenda::orderBy('tanggal', 'desc')->get() : collect();
+        $agendas = Schema::hasTable('agendas') ? Agenda::where('is_active', true)->orderBy('tanggal', 'desc')->get() : collect();
         return view('landing page.pages.agenda', compact('profil', 'agendas'));
     }
 }

@@ -955,6 +955,12 @@
         <div class="nav-actions">
             @auth
                 <a href="{{ route('dashboard') }}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">Dashboard</a>
+                <form method="POST" action="{{ route('logout') }}" id="landing-logout-form" style="display: none;">
+                    @csrf
+                </form>
+                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('landing-logout-form').submit();" class="btn btn-outline" style="padding: 0.6rem 1.2rem; font-size: 0.875rem; border-color: rgba(239, 68, 68, 0.6); color: #f87171;" title="Keluar dari Akun">
+                    <i data-lucide="log-out" size="16"></i> Log Out
+                </a>
             @else
                 <a href="{{ route('login') }}" class="btn btn-outline" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">Login</a>
                 <a href="{{ route('ppdb.index') }}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">PPDB {{ date('Y') }}</a>

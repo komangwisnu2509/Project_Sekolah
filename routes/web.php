@@ -130,6 +130,9 @@ Route::middleware('auth')->group(function () {
         // CRUD Guru
         Route::resource('guru', GuruController::class);
 
+        // CRUD Staff & Tenaga Kependidikan
+        Route::resource('staff', \App\Http\Controllers\StaffController::class);
+
         // CRUD Piket Guru (Store & Delete)
         Route::post('/piket', [PiketGuruController::class, 'store'])->name('piket.store');
         Route::delete('/piket/{piket}', [PiketGuruController::class, 'destroy'])->name('piket.destroy');
@@ -138,6 +141,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('kelas', KelasController::class)->except(['create']);
 
         // CRUD Jurusan (Majors)
+        Route::patch('/jurusan/{jurusan}/toggle-status', [JurusanController::class, 'toggleStatus'])->name('jurusan.toggle-status');
         Route::resource('jurusan', JurusanController::class)->except(['create', 'show']);
 
         // Promotion (Naik Kelas) & Graduation (Luluskan) Management
@@ -176,6 +180,17 @@ Route::post('/admin/cms/agenda', [AdminLandingCmsController::class, 'storeAgenda
 Route::delete('/admin/cms/agenda/{agenda}', [AdminLandingCmsController::class, 'destroyAgenda'])->name('admin.cms.agenda.destroy');
 Route::post('/admin/cms/ekskul', [AdminLandingCmsController::class, 'storeEkskul'])->name('admin.cms.ekskul.store');
 Route::delete('/admin/cms/ekskul/{ekstrakurikuler}', [AdminLandingCmsController::class, 'destroyEkskul'])->name('admin.cms.ekskul.destroy');
+
+// CMS Toggle Visibility Status Routes
+Route::patch('/admin/cms/ekskul/{ekstrakurikuler}/toggle', [AdminLandingCmsController::class, 'toggleEkskul'])->name('admin.cms.ekskul.toggle');
+Route::patch('/admin/cms/berita/{berita}/toggle', [AdminLandingCmsController::class, 'toggleBerita'])->name('admin.cms.berita.toggle');
+Route::patch('/admin/cms/agenda/{agenda}/toggle', [AdminLandingCmsController::class, 'toggleAgenda'])->name('admin.cms.agenda.toggle');
+Route::patch('/admin/cms/fasilitas/{fasilitas}/toggle', [AdminLandingCmsController::class, 'toggleFasilitas'])->name('admin.cms.fasilitas.toggle');
+Route::patch('/admin/cms/galeri/{galeri}/toggle', [AdminLandingCmsController::class, 'toggleGaleri'])->name('admin.cms.galeri.toggle');
+Route::patch('/admin/cms/testimoni/{testimoni}/toggle', [AdminLandingCmsController::class, 'toggleTestimoni'])->name('admin.cms.testimoni.toggle');
+Route::patch('/admin/cms/faq/{faq}/toggle', [AdminLandingCmsController::class, 'toggleFaq'])->name('admin.cms.faq.toggle');
+Route::patch('/admin/cms/guru/{guru}/toggle', [AdminLandingCmsController::class, 'toggleGuru'])->name('admin.cms.guru.toggle');
+Route::patch('/admin/cms/staff/{staff}/toggle', [AdminLandingCmsController::class, 'toggleStaff'])->name('admin.cms.staff.toggle');
 
 // Admin PPDB Management Routes
 Route::get('/admin/ppdb', [PpdbController::class, 'adminIndex'])->name('admin.ppdb.index');

@@ -26,7 +26,8 @@ class GuruController extends Controller
         }
 
         $gurus = $query->orderBy('nama')->get();
-        return view('guru.index', compact('gurus', 'q'));
+        $staffs = \App\Models\Staff::orderBy('nama')->get();
+        return view('guru.index', compact('gurus', 'q', 'staffs'));
     }
 
     public function create()
@@ -76,6 +77,9 @@ class GuruController extends Controller
                 'nip' => $nip,
                 'nama' => $request->nama,
                 'mata_pelajaran' => $request->mata_pelajaran,
+                'status' => $request->input('status', 'Aktif'),
+                'tahun_purna' => $request->input('tahun_purna'),
+                'pesan_purna' => $request->input('pesan_purna'),
                 'no_hp' => $noHp,
                 'foto' => $fotoPath,
                 'user_id' => $user->id,
@@ -111,13 +115,15 @@ class GuruController extends Controller
             'mata_pelajaran.required' => 'Mata pelajaran wajib diisi.',
         ]);
 
-        $nip = $request->filled('nip') ? trim($request->nip) : null;
         $noHp = $request->filled('no_hp') ? trim($request->no_hp) : null;
 
         $data = [
-            'nip' => $nip,
+            'nip' => $guru->nip, // NIP dikunci dan tidak dapat diubah
             'nama' => $request->nama,
             'mata_pelajaran' => $request->mata_pelajaran,
+            'status' => $request->input('status', $guru->status ?? 'Aktif'),
+            'tahun_purna' => $request->input('tahun_purna', $guru->tahun_purna),
+            'pesan_purna' => $request->input('pesan_purna', $guru->pesan_purna),
             'no_hp' => $noHp,
         ];
 

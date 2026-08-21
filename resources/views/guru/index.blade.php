@@ -2,14 +2,28 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
         <div>
-            <h2 class="fw-bold text-dark mb-1"><i class="bi bi-person-workspace text-primary me-2"></i>Kelola Data Guru</h2>
-            <p class="text-muted mb-0">Manajemen data pengajar, mata pelajaran, serta akun login guru.</p>
+            <h2 class="fw-bold text-dark mb-1"><i class="bi bi-person-workspace text-primary me-2"></i>Kelola Data Guru & Staff</h2>
+            <p class="text-muted mb-0">Manajemen data pengajar, mata pelajaran, akun login guru, serta tampilan di Landing Page sekolah.</p>
         </div>
-        <button type="button" class="btn btn-primary fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#tambahGuruModal">
-            <i class="bi bi-person-plus-fill me-1"></i> Tambah Data Guru Baru
-        </button>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('guru_staff') }}" target="_blank" class="btn btn-outline-info fw-bold shadow-sm" title="Pratinjau Tampilan Direktori Guru & Staff di Landing Page">
+                <i class="bi bi-globe me-1"></i> Tampil di Landing Page &rarr;
+            </a>
+            <button type="button" class="btn btn-primary fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#tambahGuruModal">
+                <i class="bi bi-person-plus-fill me-1"></i> Tambah Data Guru Baru
+            </button>
+        </div>
+    </div>
+
+    <!-- Info Sync Banner -->
+    <div class="alert alert-info border-start border-4 border-info shadow-sm mb-4 rounded-3 d-flex align-items-center justify-content-between">
+        <div>
+            <i class="bi bi-info-circle-fill me-2 fs-5 text-info"></i>
+            <strong>Integrasi Landing Page:</strong> Setiap data Guru &amp; Staff yang Anda tambahkan atau edit di bawah ini akan secara otomatis tampil dan diperbarui pada <strong>Direktori Guru &amp; Staff Website Sekolah</strong>.
+        </div>
+        <a href="{{ route('guru_staff') }}" target="_blank" class="btn btn-sm btn-info text-white fw-bold ms-3">Lihat Tampilan &rarr;</a>
     </div>
 
     @if(session('success'))
