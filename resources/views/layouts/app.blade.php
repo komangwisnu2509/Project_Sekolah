@@ -394,11 +394,6 @@
                                               <span><i class="bi bi-globe me-2 text-success"></i> Web Sekolah (CMS)</span>
                                           </a>
                                      </li>
-                                     <li class="my-1">
-                                          <a href="{{ route('admin.cms.index') }}#tab-fasilitas" onclick="setTimeout(function(){ document.getElementById('tab-fasilitas-tab')?.click(); }, 150);" class="py-2 d-flex align-items-center justify-content-between">
-                                              <span><i class="bi bi-box-seam me-2 text-info"></i> Fasilitas Sekolah (CMS)</span>
-                                          </a>
-                                     </li>
                                      <li class="{{ request()->routeIs('admin.ppdb.*') ? 'active' : '' }} my-1">
                                          <a href="{{ route('admin.ppdb.index') }}" class="py-2 d-flex align-items-center justify-content-between">
                                              <span><i class="bi bi-user-plus-fill me-2 text-warning"></i> Pendaftaran PPDB Online</span>

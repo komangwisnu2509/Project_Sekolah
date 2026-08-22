@@ -22,6 +22,9 @@ use App\Http\Controllers\PpdbController;
 
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landing_page');
+Route::get('/tentang-sekolah', [LandingPageController::class, 'tentangSekolah'])->name('tentang_sekolah');
+Route::get('/fasilitas-sekolah', [LandingPageController::class, 'fasilitasSekolah'])->name('fasilitas_sekolah');
+Route::get('/ekstrakurikuler-sekolah', [LandingPageController::class, 'ekstrakurikulerSekolah'])->name('ekstrakurikuler_sekolah');
 Route::get('/sambutan-kepala-sekolah', [LandingPageController::class, 'sambutan'])->name('sambutan');
 Route::get('/sejarah', [LandingPageController::class, 'sejarah'])->name('sejarah');
 Route::get('/visi-misi', [LandingPageController::class, 'visiMisi'])->name('visi_misi');
@@ -29,6 +32,8 @@ Route::get('/guru-staff', [LandingPageController::class, 'guruStaff'])->name('gu
 Route::get('/kurikulum', [LandingPageController::class, 'kurikulum'])->name('kurikulum');
 Route::get('/pengumuman', [LandingPageController::class, 'pengumuman'])->name('pengumuman');
 Route::get('/agenda', [LandingPageController::class, 'agenda'])->name('agenda');
+Route::get('/berita', [LandingPageController::class, 'berita'])->name('berita');
+Route::get('/berita/{id}', [LandingPageController::class, 'beritaDetail'])->name('berita.detail');
 
 // Public PPDB Pendaftaran Siswa Baru Routes
 Route::get('/ppdb', [PpdbController::class, 'publicIndex'])->name('ppdb.index');
@@ -138,6 +143,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/piket/{piket}', [PiketGuruController::class, 'destroy'])->name('piket.destroy');
 
         // CRUD Kelas (Classes) - Admin only
+        Route::patch('/kelas/{kela}/toggle-status', [KelasController::class, 'toggleStatus'])->name('kelas.toggle-status');
         Route::resource('kelas', KelasController::class)->except(['create']);
 
         // CRUD Jurusan (Majors)
@@ -171,7 +177,9 @@ Route::post('/admin/cms/galeri', [AdminLandingCmsController::class, 'storeGaleri
 Route::delete('/admin/cms/galeri/{galeri}', [AdminLandingCmsController::class, 'destroyGaleri'])->name('admin.cms.galeri.destroy');
 Route::post('/admin/cms/testimoni', [AdminLandingCmsController::class, 'storeTestimoni'])->name('admin.cms.testimoni.store');
 Route::delete('/admin/cms/testimoni/{testimoni}', [AdminLandingCmsController::class, 'destroyTestimoni'])->name('admin.cms.testimoni.destroy');
+Route::post('/faq/tanya', [LandingPageController::class, 'storeFaqQuestion'])->name('faq.tanya');
 Route::post('/admin/cms/faq', [AdminLandingCmsController::class, 'storeFaq'])->name('admin.cms.faq.store');
+Route::put('/admin/cms/faq/{faq}', [AdminLandingCmsController::class, 'updateFaq'])->name('admin.cms.faq.update');
 Route::delete('/admin/cms/faq/{faq}', [AdminLandingCmsController::class, 'destroyFaq'])->name('admin.cms.faq.destroy');
 Route::post('/admin/cms/berita', [AdminLandingCmsController::class, 'storeBerita'])->name('admin.cms.berita.store');
 Route::put('/admin/cms/berita/{berita}', [AdminLandingCmsController::class, 'updateBerita'])->name('admin.cms.berita.update');

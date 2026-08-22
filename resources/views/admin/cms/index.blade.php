@@ -64,35 +64,45 @@
     @endif
 
     <!-- CMS Tabbed Navigation -->
-    <ul class="nav nav-pills nav-fill mb-4 bg-white p-2 rounded-3 shadow-sm border" id="cmsTabs" role="tablist">
+    <div class="mb-3 p-2 bg-light border rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <span class="fw-bold small text-primary ms-2"><i class="bi bi-info-circle-fill me-1"></i> Isian Menu Navigasi "Informasi":</span>
+        <div class="d-flex align-items-center gap-1 flex-wrap">
+            <span class="badge bg-primary px-2.5 py-1.5"><i class="bi bi-newspaper me-1"></i>1. Berita</span>
+            <span class="badge bg-danger px-2.5 py-1.5"><i class="bi bi-megaphone me-1"></i>2. Pengumuman</span>
+            <span class="badge bg-success px-2.5 py-1.5"><i class="bi bi-calendar-event me-1"></i>3. Agenda</span>
+            <span class="badge bg-warning text-dark px-2.5 py-1.5"><i class="bi bi-images me-1"></i>4. Galeri</span>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills nav-fill mb-4 bg-white p-2 rounded-3 shadow-sm border gap-1" id="cmsTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active fw-bold py-2.5" id="tab-profil-tab" data-bs-toggle="tab" data-bs-target="#tab-profil" type="button" role="tab">
-                <i class="bi bi-building me-1.5"></i> Profil Sekolah
+                <i class="bi bi-building me-1.5"></i> Profil & Kontak
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold py-2.5" id="tab-berita-tab" data-bs-toggle="tab" data-bs-target="#tab-berita" type="button" role="tab">
+                <i class="bi bi-newspaper me-1.5 text-primary"></i> Berita & Pengumuman
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold py-2.5" id="tab-agenda-tab" data-bs-toggle="tab" data-bs-target="#tab-agenda" type="button" role="tab">
+                <i class="bi bi-calendar-event me-1.5 text-success"></i> Agenda Sekolah
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold py-2.5" id="tab-galeri-tab" data-bs-toggle="tab" data-bs-target="#tab-galeri" type="button" role="tab">
+                <i class="bi bi-images me-1.5 text-warning"></i> Galeri Foto
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold py-2.5" id="tab-fasilitas-tab" data-bs-toggle="tab" data-bs-target="#tab-fasilitas" type="button" role="tab">
+                <i class="bi bi-box-seam me-1.5 text-info"></i> Fasilitas
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link fw-bold py-2.5" id="tab-ekskul-tab" data-bs-toggle="tab" data-bs-target="#tab-ekskul" type="button" role="tab">
                 <i class="bi bi-palette me-1.5"></i> Ekstrakurikuler
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold py-2.5" id="tab-berita-tab" data-bs-toggle="tab" data-bs-target="#tab-berita" type="button" role="tab">
-                <i class="bi bi-newspaper me-1.5"></i> Berita Sekolah
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold py-2.5" id="tab-agenda-tab" data-bs-toggle="tab" data-bs-target="#tab-agenda" type="button" role="tab">
-                <i class="bi bi-calendar-event me-1.5"></i> Event / Agenda
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold py-2.5" id="tab-fasilitas-tab" data-bs-toggle="tab" data-bs-target="#tab-fasilitas" type="button" role="tab">
-                <i class="bi bi-box-seam me-1.5"></i> Fasilitas
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold py-2.5" id="tab-galeri-tab" data-bs-toggle="tab" data-bs-target="#tab-galeri" type="button" role="tab">
-                <i class="bi bi-images me-1.5"></i> Galeri Foto
             </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -103,6 +113,11 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link fw-bold py-2.5" id="tab-guru-tab" data-bs-toggle="tab" data-bs-target="#tab-guru" type="button" role="tab">
                 <i class="bi bi-person-workspace me-1.5"></i> Guru & Staff
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold py-2.5" id="tab-kelas-tab" data-bs-toggle="tab" data-bs-target="#tab-kelas" type="button" role="tab">
+                <i class="bi bi-door-open me-1.5 text-primary"></i> Status Kelas (Show/Hide)
             </button>
         </li>
     </ul>
@@ -136,49 +151,77 @@
                                 <label class="form-label fw-bold small text-dark">Foto Kepala Sekolah</label>
                                 <input type="file" name="foto_kepala_sekolah" class="form-control" accept="image/*">
                             </div>
-                            <div class="col-12">
-                                <label class="form-label fw-bold small text-dark">Sambutan Kepala Sekolah</label>
-                                <textarea name="sambutan_kepala_sekolah" class="form-control" rows="4">{{ old('sambutan_kepala_sekolah', $profil->sambutan_kepala_sekolah) }}</textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold small text-dark">Visi Sekolah</label>
-                                <textarea name="visi" class="form-control" rows="3">{{ old('visi', $profil->visi) }}</textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold small text-dark">Misi Sekolah</label>
-                                <textarea name="misi" class="form-control" rows="3">{{ old('misi', $profil->misi) }}</textarea>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-bold small text-dark">Sejarah Singkat Sekolah</label>
-                                <textarea name="sejarah" class="form-control" rows="3">{{ old('sejarah', $profil->sejarah) }}</textarea>
-                            </div>
+                             <div class="col-12">
+                                 <label class="form-label fw-bold small text-dark">Sambutan Kepala Sekolah</label>
+                                 <textarea name="sambutan_kepala_sekolah" class="form-control" rows="4">{{ old('sambutan_kepala_sekolah', $profil->sambutan_kepala_sekolah) }}</textarea>
+                             </div>
+
+                             <div class="col-12 border-top pt-3 mt-2">
+                                 <h6 class="fw-bold text-primary mb-2"><i class="bi bi-info-square me-1"></i> Pengaturan Section & Halaman "Mengenal Lebih Dekat"</h6>
+                             </div>
+                             <div class="col-md-6">
+                                 <label class="form-label fw-bold small text-dark">Ringkasan "Mengenal Lebih Dekat" (Tampil di Landing Page)</label>
+                                 <textarea name="deskripsi_tentang" class="form-control" rows="3" placeholder="Deskripsi singkat yang muncul pada beranda landing page...">{{ old('deskripsi_tentang', $profil->deskripsi_tentang) }}</textarea>
+                             </div>
+                             <div class="col-md-6">
+                                 <label class="form-label fw-bold small text-dark">Foto Section / Halaman "Mengenal Lebih Dekat"</label>
+                                 <input type="file" name="foto_tentang" class="form-control" accept="image/*">
+                                 @if($profil->foto_tentang)
+                                     <small class="text-muted">Foto saat ini: <a href="{{ str_starts_with($profil->foto_tentang, 'http') ? $profil->foto_tentang : asset('storage/'.$profil->foto_tentang) }}" target="_blank" class="text-primary fw-bold">Lihat Foto</a></small>
+                                 @endif
+                             </div>
+                             <div class="col-12">
+                                 <label class="form-label fw-bold small text-dark">Detail Lengkap "Mengenal Lebih Dekat" (Tampil di Halaman Khusus /tentang-sekolah)</label>
+                                 <textarea name="tentang_lengkap" class="form-control" rows="5" placeholder="Tuliskan cerita lengkap tentang profil sekolah, fasilitas unggulan, nilai-nilai, atau keunggulan sekolah...">{{ old('tentang_lengkap', $profil->tentang_lengkap) }}</textarea>
+                             </div>
+
+                             <div class="col-md-6">
+                                 <label class="form-label fw-bold small text-dark">Visi Sekolah</label>
+                                 <textarea name="visi" class="form-control" rows="3">{{ old('visi', $profil->visi) }}</textarea>
+                             </div>
+                             <div class="col-md-6">
+                                 <label class="form-label fw-bold small text-dark">Misi Sekolah</label>
+                                 <textarea name="misi" class="form-control" rows="3">{{ old('misi', $profil->misi) }}</textarea>
+                             </div>
+                             <div class="col-12">
+                                 <label class="form-label fw-bold small text-dark">Sejarah Singkat Sekolah</label>
+                                 <textarea name="sejarah" class="form-control" rows="3">{{ old('sejarah', $profil->sejarah) }}</textarea>
+                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small text-dark">Alamat Lengkap</label>
-                                <input type="text" name="alamat" class="form-control" value="{{ old('alamat', $profil->alamat) }}">
+                                <input type="text" name="alamat" class="form-control" value="{{ old('alamat', $profil->alamat) }}" placeholder="Jl. Raya Desa Pempatan...">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label fw-bold small text-dark">Telepon</label>
-                                <input type="text" name="telepon" class="form-control" value="{{ old('telepon', $profil->telepon) }}">
+                                <label class="form-label fw-bold small text-dark">Telepon Resmi</label>
+                                <input type="text" name="telepon" class="form-control" value="{{ old('telepon', $profil->telepon) }}" placeholder="081234567890">
                             </div>
                             <div class="col-md-3">
+                                <label class="form-label fw-bold small text-dark">Nomor WhatsApp Resmi</label>
+                                <input type="text" name="whatsapp" class="form-control" value="{{ old('whatsapp', $profil->whatsapp ?? $profil->telepon) }}" placeholder="6281234567890 / 081234567890">
+                            </div>
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold small text-dark">Email Resmi</label>
-                                <input type="email" name="email" class="form-control" value="{{ old('email', $profil->email) }}">
+                                <input type="email" name="email" class="form-control" value="{{ old('email', $profil->email) }}" placeholder="info@astikadharma.sch.id">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-dark">Instagram</label>
-                                <input type="text" name="instagram" class="form-control" value="{{ old('instagram', $profil->instagram) }}">
+                                <label class="form-label fw-bold small text-dark">Instagram Link / Username</label>
+                                <input type="text" name="instagram" class="form-control" value="{{ old('instagram', $profil->instagram) }}" placeholder="https://instagram.com/astikadharma">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-dark">YouTube Channel</label>
-                                <input type="text" name="youtube" class="form-control" value="{{ old('youtube', $profil->youtube) }}">
+                                <label class="form-label fw-bold small text-dark">TikTok Channel Link / Username</label>
+                                <input type="text" name="tiktok" class="form-control" value="{{ old('tiktok', $profil->tiktok) }}" placeholder="https://tiktok.com/@asdhatv">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold small text-dark">Facebook</label>
-                                <input type="text" name="facebook" class="form-control" value="{{ old('facebook', $profil->facebook) }}">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-dark">YouTube Channel Link / ASDHA TV</label>
+                                <input type="text" name="youtube" class="form-control" value="{{ old('youtube', $profil->youtube) }}" placeholder="https://youtube.com/@asdhatv">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-dark">Facebook Link</label>
+                                <input type="text" name="facebook" class="form-control" value="{{ old('facebook', $profil->facebook) }}" placeholder="https://facebook.com/astikadharma">
                             </div>
                             <div class="col-12 text-end pt-3">
                                 <button type="submit" class="btn btn-primary fw-bold px-4 py-2 rounded-3">
-                                    <i class="bi bi-save me-1"></i> Simpan Perubahan Profil
+                                    <i class="bi bi-save me-1"></i> Simpan Perubahan Profil & Kontak
                                 </button>
                             </div>
                         </div>
@@ -543,22 +586,40 @@
                 <!-- FAQ Column -->
                 <div class="col-lg-6">
                     <div class="card border-0 shadow-sm rounded-3 mb-4 overflow-hidden">
-                        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-question-circle me-2 text-primary"></i>FAQ (Pertanyaan Umum)</h5>
+                        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-question-circle me-2 text-primary"></i>FAQ & Pertanyaan Masuk</h5>
+                                <small class="text-muted">Kelola FAQ & jawab pertanyaan dari pengunjung landing page</small>
+                            </div>
                             <button type="button" class="btn btn-primary btn-sm fw-bold rounded-3" data-bs-toggle="modal" data-bs-target="#modalTambahFaq">
-                                <i class="bi bi-plus-circle me-1"></i> Tambah FAQ
+                                <i class="bi bi-plus-circle me-1"></i> Tambah FAQ Baru
                             </button>
                         </div>
                         <div class="card-body p-3 bg-light">
                             @forelse($faqs as $fq)
-                                <div class="bg-white p-3 rounded-3 shadow-sm mb-2.5 border hover-card {{ !$fq->is_active ? 'bg-secondary bg-opacity-10' : '' }}">
-                                    <div class="d-flex justify-content-between align-items-start mb-1.5">
-                                        <h6 class="fw-bold text-dark mb-0 fs-6">{{ $fq->pertanyaan }}</h6>
-                                        <div class="d-flex align-items-center gap-1.5">
+                                <div class="bg-white p-3 rounded-3 shadow-sm mb-3 border hover-card {{ !$fq->is_active ? 'bg-secondary bg-opacity-10 border-warning' : '' }}">
+                                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                                        <div>
+                                            <h6 class="fw-bold text-dark mb-1 fs-6">{{ $fq->pertanyaan }}</h6>
+                                            @if($fq->nama_penanya)
+                                                <span class="badge bg-info bg-opacity-10 text-dark border border-info border-opacity-20 rounded-pill px-2.5 py-1 small mb-1">
+                                                    <i class="bi bi-person-fill text-primary me-1"></i> Dari: <strong>{{ $fq->nama_penanya }}</strong> ({{ $fq->email_penanya ?: 'Tanpa Kontak' }})
+                                                </span>
+                                            @endif
+                                            @if(!$fq->jawaban)
+                                                <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1 small mb-1 fw-bold">
+                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Belum Dijawab (Perlu Jawaban Admin)
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="d-flex align-items-center gap-1.5 ms-auto">
+                                            <button type="button" class="btn btn-sm btn-outline-primary py-1 px-2.5 rounded-pill fw-bold" style="font-size: 0.78rem;" data-bs-toggle="modal" data-bs-target="#modalEditFaq_{{ $fq->id }}">
+                                                <i class="bi bi-pencil-square me-1"></i> Jawab / Edit
+                                            </button>
                                             <form action="{{ route('admin.cms.faq.toggle', $fq->id) }}#tab-testimoni" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="btn btn-sm {{ $fq->is_active ? 'badge-show' : 'badge-hide' }} px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.75rem;">
+                                                <button type="submit" class="btn btn-sm {{ $fq->is_active ? 'badge-show' : 'badge-hide' }} px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.75rem;" title="Klik untuk {{ $fq->is_active ? 'Sembunyikan' : 'Tampilkan' }}">
                                                     <i class="bi {{ $fq->is_active ? 'bi-eye-fill me-1' : 'bi-eye-slash-fill me-1' }}"></i> {{ $fq->is_active ? 'Show' : 'Hide' }}
                                                 </button>
                                             </form>
@@ -569,10 +630,18 @@
                                             </form>
                                         </div>
                                     </div>
-                                    <small class="text-muted d-block" style="line-height: 1.5;">{{ $fq->jawaban }}</small>
+                                    <div class="p-2.5 bg-light rounded-3 border-start border-3 border-primary">
+                                        <small class="text-dark d-block fw-medium" style="line-height: 1.5;">
+                                            @if($fq->jawaban)
+                                                <strong>Jawaban:</strong> {{ $fq->jawaban }}
+                                            @else
+                                                <em class="text-danger"><i class="bi bi-info-circle me-1"></i>Klik tombol "Jawab / Edit" di atas untuk memasukkan jawaban dan menampilkan di website.</em>
+                                            @endif
+                                        </small>
+                                    </div>
                                 </div>
                             @empty
-                                <div class="text-center py-3 text-muted">Belum ada data FAQ.</div>
+                                <div class="text-center py-3 text-muted">Belum ada data FAQ atau pertanyaan masuk.</div>
                             @endforelse
                         </div>
                     </div>
@@ -679,6 +748,69 @@
                 </div>
             </div>
         </div>
+
+        <!-- TAB KELAS: PENGATURAN STATUS TAMPIL KELAS -->
+        <div class="tab-pane fade" id="tab-kelas" role="tabpanel">
+            <div class="card border-0 shadow-sm rounded-3 mb-4 overflow-hidden">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-door-open me-2 text-primary"></i>Pengaturan Status Tampilkan / Sembunyikan Kelas (Show / Hide)</h5>
+                    <a href="{{ route('kelas.index') }}" class="btn btn-outline-primary btn-sm fw-bold rounded-3">
+                        <i class="bi bi-gear-fill me-1"></i> Kelola Struktur Kelas &rarr;
+                    </a>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-4">
+                        Aktifkan atau sembunyikan kelas dari pilihan pendaftaran PPDB, filter jadwal, dan daftar publikasi. Kelas yang disembunyikan (Hide) tidak akan muncul pada form pendaftaran siswa baru maupun daftar kelas aktif.
+                    </p>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Nama Kelas</th>
+                                    <th>Total Siswa Aktif</th>
+                                    <th style="width: 180px;">Status Tampil (Show/Hide)</th>
+                                    <th class="pe-4 text-end" style="width: 140px;">Aksi Toggle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($kelases as $k)
+                                    <tr class="{{ !$k->is_active ? 'table-secondary bg-opacity-25' : '' }}">
+                                        <td class="ps-4">
+                                            <div class="fw-bold text-dark fs-6"><i class="bi bi-door-closed me-2 text-primary"></i>{{ $k->nama_kelas }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1.5 rounded-pill fw-bold">
+                                                {{ $k->total_siswa ?? 0 }} Siswa
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if($k->is_active)
+                                                <span class="badge bg-success text-white px-3 py-1.5 rounded-pill fw-bold"><i class="bi bi-eye-fill me-1"></i> Ditampilkan (Show)</span>
+                                            @else
+                                                <span class="badge bg-secondary text-white px-3 py-1.5 rounded-pill fw-bold"><i class="bi bi-eye-slash-fill me-1"></i> Disembunyikan (Hide)</span>
+                                            @endif
+                                        </td>
+                                        <td class="pe-4 text-end">
+                                            <form action="{{ route('kelas.toggle-status', $k->id) }}#tab-kelas" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-sm {{ $k->is_active ? 'btn-warning text-dark' : 'btn-success text-white' }} px-3 py-1.5 rounded-pill fw-bold shadow-sm" title="Klik untuk {{ $k->is_active ? 'Sembunyikan' : 'Tampilkan' }} Kelas">
+                                                    <i class="bi {{ $k->is_active ? 'bi-eye-slash-fill me-1' : 'bi-eye-fill me-1' }}"></i>
+                                                    {{ $k->is_active ? 'Hide (Sembunyi)' : 'Show (Tampil)' }}
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="4" class="text-center py-4 text-muted">Belum ada data kelas terdaftar.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -761,8 +893,13 @@
                             <input type="text" name="judul" class="form-control" required placeholder="Judul berita sekolah...">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-dark">Kategori</label>
-                            <input type="text" name="kategori" class="form-control" placeholder="Pengumuman / Prestasi / Akademik...">
+                            <label class="form-label fw-bold small text-dark">Kategori Isian <span class="text-danger">*</span></label>
+                            <select name="kategori" class="form-select fw-bold text-dark">
+                                <option value="Berita">📰 Berita Sekolah</option>
+                                <option value="Pengumuman">📢 Pengumuman Resmi</option>
+                                <option value="Prestasi">🏆 Prestasi & Penghargaan</option>
+                                <option value="Akademik">📚 Informasi Akademik</option>
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-dark">Tanggal Publikasi <span class="text-danger">*</span></label>
@@ -771,6 +908,11 @@
                         <div class="col-12">
                             <label class="form-label fw-bold small text-dark">Ringkasan Berita Singkat</label>
                             <input type="text" name="ringkasan" class="form-control" placeholder="Ringkasan 1-2 kalimat...">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-dark"><i class="bi bi-hash text-primary me-1"></i>Hashtags / Tags Berita (Pisahkan dengan tanda titik koma ';')</label>
+                            <input type="text" name="tags" class="form-control" placeholder="Contoh: AstikaDharma; ASDHATV; JurnalismeSekolah; PrestasiBali; PendidikanHindu">
+                            <small class="text-muted" style="font-size: 0.78rem;">Gunakan tanda titik koma ( <strong>;</strong> ) untuk memisahkan setiap tag/hashtag.</small>
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold small text-dark">Isi Konten Berita Lengkap <span class="text-danger">*</span></label>
@@ -997,6 +1139,59 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Edit / Jawab FAQ -->
+@foreach($faqs as $fq)
+<div class="modal fade" id="modalEditFaq_{{ $fq->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-dark text-white border-0 py-3">
+                <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2 text-warning"></i>Jawab & Edit Pertanyaan FAQ</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('admin.cms.faq.update', $fq->id) }}#tab-testimoni" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body p-4">
+                    @if($fq->nama_penanya)
+                        <div class="alert alert-info border-0 rounded-3 shadow-sm mb-3">
+                            <h6 class="fw-bold text-dark mb-1"><i class="bi bi-person-fill text-primary me-1"></i> Pertanyaan Dari Pengunjung Website:</h6>
+                            <p class="mb-1 text-dark"><strong>Nama:</strong> {{ $fq->nama_penanya }}</p>
+                            <p class="mb-0 text-dark"><strong>Kontak/Email:</strong> {{ $fq->email_penanya ?: 'Tidak dicantumkan' }}</p>
+                        </div>
+                    @endif
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-dark">Pertanyaan <span class="text-danger">*</span></label>
+                            <textarea name="pertanyaan" class="form-control" rows="2" required>{{ old('pertanyaan', $fq->pertanyaan) }}</textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-dark">Jawaban Pihak Sekolah / Admin <span class="text-danger">*</span></label>
+                            <textarea name="jawaban" class="form-control" rows="4" required placeholder="Tuliskan jawaban resmi dari pihak sekolah...">{{ old('jawaban', $fq->jawaban) }}</textarea>
+                            <small class="text-muted" style="font-size: 0.78rem;">Jawaban ini akan ditampilkan saat pengguna membuka FAQ di website.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-dark">Urutan Tampil</label>
+                            <input type="number" name="urutan" class="form-control" value="{{ old('urutan', $fq->urutan) }}">
+                        </div>
+                        <div class="col-md-6 pt-4">
+                            <div class="form-check form-switch pt-2">
+                                <input class="form-check-input" type="checkbox" name="is_active" id="faqActive_{{ $fq->id }}" value="1" {{ $fq->is_active ? 'checked' : '' }}>
+                                <label class="form-check-label fw-bold small text-dark" for="faqActive_{{ $fq->id }}">Tampilkan di Landing Page (Show)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary btn-sm rounded-3" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary fw-bold btn-sm px-4 rounded-3">Simpan & Tampilkan Jawaban</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
 
 <!-- Tab Persistence & Smart Hash Switching Script -->
 <script>

@@ -154,11 +154,49 @@
         }
 
         .navbar.scrolled {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
             color: var(--primary);
-            padding: 1rem 5%;
+            padding: 0.85rem 5%;
+        }
+
+        .navbar.transparent .brand-title {
+            color: #ffffff !important;
+        }
+
+        .navbar.scrolled .brand-title,
+        .navbar:not(.transparent) .brand-title {
+            color: #0f172a !important;
+        }
+
+        .navbar.transparent .brand-subtitle {
+            color: #fbbf24 !important;
+        }
+
+        .navbar.scrolled .brand-subtitle,
+        .navbar:not(.transparent) .brand-subtitle {
+            color: #d97706 !important;
+        }
+
+        .navbar.transparent .mobile-nav-toggle {
+            color: #ffffff !important;
+        }
+
+        .navbar.scrolled .mobile-nav-toggle,
+        .navbar:not(.transparent) .mobile-nav-toggle {
+            color: #0f172a !important;
+        }
+
+        .navbar.scrolled .nav-link,
+        .navbar:not(.transparent) .nav-link {
+            color: #1e293b !important;
+        }
+
+        .navbar.scrolled .btn-outline,
+        .navbar:not(.transparent) .btn-outline {
+            color: #2563eb !important;
+            border-color: #2563eb !important;
         }
 
         .nav-brand {
@@ -868,38 +906,241 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .stat-divider:nth-child(2) { display: none; }
-            .stat-divider:nth-child(4) { display: none; }
-            .stat-divider:nth-child(6) { display: none; }
-            .programs-grid { grid-template-columns: 1fr 1fr; }
-            .prestasi-box { flex-direction: column; }
-            .prestasi-img-card { height: 260px; }
-            .prestasi-content { padding: 2rem 1.5rem; }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
+        /* Mobile & Tablet Ultra-Polished Media Queries (Android, iOS & Tablet) */
+        @media (max-width: 991.98px) {
+            :root {
+                --section-padding: 3.5rem 1.25rem;
+            }
+
+            /* Navbar Mobile Styling */
+            .navbar {
+                padding: 0.85rem 1.25rem;
+            }
+            .nav-brand {
+                font-size: 1.05rem;
+                max-width: 240px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 65px;
+                left: 0;
+                right: 0;
+                width: 100vw;
+                background: #0f172a !important;
+                padding: 1.25rem 1rem 2rem !important;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+                z-index: 1050;
+                max-height: calc(100vh - 65px);
+                overflow-y: auto;
+                border-bottom: 3px solid #2563eb;
+            }
+
+            .nav-links.active {
+                display: block !important;
+                animation: fadeInUp 0.25s ease-out;
+            }
+
+            .nav-links .nav-item {
+                width: 100% !important;
+                margin-bottom: 0.65rem !important;
+            }
+
+            .nav-links .nav-link {
+                color: #ffffff !important;
+                font-size: 1.05rem !important;
+                font-weight: 700 !important;
+                padding: 0.75rem 1rem !important;
+                background: rgba(255, 255, 255, 0.08) !important;
+                border-radius: 10px !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            }
+
+            .nav-links .nav-link:hover,
+            .nav-links .nav-link:focus {
+                background: rgba(37, 99, 235, 0.25) !important;
+                color: #ffffff !important;
+            }
+
+            /* Sub-Menu Items inside Mobile Drawer - 100% Bright White & Visible */
+            .nav-links .dropdown-menu {
+                position: static !important;
+                transform: none !important;
+                float: none !important;
+                display: block !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                background: rgba(255, 255, 255, 0.04) !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                box-shadow: none !important;
+                margin: 0.4rem 0 0.5rem 0.5rem !important;
+                padding: 0.5rem !important;
+                border-radius: 10px !important;
+            }
+
+            .nav-links .dropdown-item {
+                color: #ffffff !important;
+                background: transparent !important;
+                padding: 0.6rem 0.85rem !important;
+                font-size: 0.92rem !important;
+                font-weight: 600 !important;
+                border-radius: 8px !important;
+                display: block !important;
+                white-space: normal !important;
+                transition: all 0.2s ease !important;
+                border-bottom: 1px dashed rgba(255, 255, 255, 0.08) !important;
+            }
+            .nav-links .dropdown-item:last-child {
+                border-bottom: none !important;
+            }
+
+            .nav-links .dropdown-item:hover,
+            .nav-links .dropdown-item:focus,
+            .nav-links .dropdown-item:active {
+                color: #ffffff !important;
+                background: #2563eb !important;
+                padding-left: 1.1rem !important;
+            }
+
+            .mobile-action-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                margin-top: 1.25rem;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(255,255,255,0.15);
+            }
+
+            /* Hero Section Mobile */
+            .hero {
+                min-height: 82vh;
+                padding: 110px 1.25rem 50px;
+            }
+            .hero h1 {
+                font-size: clamp(1.8rem, 5.5vw, 2.8rem) !important;
+                line-height: 1.2 !important;
+                margin-bottom: 1rem !important;
+            }
+            .hero p {
+                font-size: 1rem !important;
+                line-height: 1.6 !important;
+                margin-bottom: 1.75rem !important;
+            }
+            .hero-btns {
+                flex-direction: column;
+                width: 100%;
+                max-width: 320px;
+                margin: 0 auto;
+                gap: 0.75rem;
+            }
+            .hero-btns .btn {
+                width: 100%;
+                padding: 0.85rem 1.5rem;
+                text-align: center;
+                font-size: 0.95rem;
+            }
+
+            /* Stats Mobile */
+            .stats {
+                margin-top: -35px;
+                padding: 1.5rem 1rem;
+                border-radius: 18px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.25rem 0.75rem;
+            }
+            .stat-divider { display: none; }
+            .stat-item h3 { font-size: 1.8rem; }
+            .stat-item p { font-size: 0.8rem; }
+
+            /* Grids Mobile */
+            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+            
+            /* Mobile Touch Horizontal Slider for Program Keahlian & Fasilitas */
+            .programs-grid {
+                display: flex !important;
+                gap: 1.25rem !important;
+                overflow-x: auto !important;
+                padding-bottom: 1.5rem !important;
+                padding-left: 0.25rem !important;
+                padding-right: 0.25rem !important;
+                scroll-snap-type: x mandatory !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                margin-top: 0.5rem !important;
+            }
+            .programs-grid::-webkit-scrollbar { display: none !important; }
+            
+            .program-card {
+                flex: 0 0 84% !important;
+                max-width: 320px !important;
+                min-width: 260px !important;
+                scroll-snap-align: center !important;
+                margin-bottom: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                border-radius: 20px !important;
+                background: #ffffff !important;
+                border: 1px solid rgba(226, 232, 240, 0.8) !important;
+            }
+
+            .fac-grid {
+                display: flex !important;
+                flex-direction: row !important;
+                gap: 1.25rem !important;
+                overflow-x: auto !important;
+                padding-bottom: 1.5rem !important;
+                padding-left: 0.25rem !important;
+                padding-right: 0.25rem !important;
+                scroll-snap-type: x mandatory !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                height: auto !important;
+                margin-top: 0.5rem !important;
+            }
+            .fac-grid::-webkit-scrollbar { display: none !important; }
+
+            .fac-item {
+                flex: 0 0 84% !important;
+                max-width: 320px !important;
+                min-width: 260px !important;
+                height: 270px !important;
+                scroll-snap-align: center !important;
+                border-radius: 20px !important;
+            }
+            .fac-item.large {
+                height: 270px !important;
+            }
+            
+            .prestasi-box { flex-direction: column; border-radius: 18px; }
+            .prestasi-img-card { height: 220px; }
+            .prestasi-content { padding: 1.5rem 1.25rem; }
+
+            .news-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .gallery-grid { column-count: 2; column-gap: 1rem; }
+            
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+            .cta-box { padding: 3rem 1.25rem; border-radius: 20px; }
+            .cta-box h2 { font-size: 1.75rem; }
         }
 
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .nav-links { display: none; }
-            .about-grid { grid-template-columns: 1fr; }
-            .fac-grid { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; }
-            .fac-item.large { grid-row: auto; height: 300px; }
-            .fac-item { height: 250px; }
-            .programs-grid { grid-template-columns: 1fr; }
-            .news-grid { grid-template-columns: 1fr; }
-            .gallery-grid { column-count: 2; }
-            .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
-            .cta-box { padding: 3rem 1.5rem; }
-            .cta-box h2 { font-size: 2rem; }
-        }
-        
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
+        @media (max-width: 576px) {
+            .brand-emblem-badge { width: 36px !important; height: 36px !important; border-radius: 10px !important; }
+            .brand-emblem-badge i { font-size: 1.15rem !important; }
+            .brand-title { font-size: 0.88rem !important; }
+            .brand-subtitle { font-size: 0.62rem !important; letter-spacing: 1px !important; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem 0.5rem; }
             .gallery-grid { column-count: 1; }
+            .testi-content { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -910,10 +1151,50 @@
 
     <!-- Navbar -->
     <nav class="navbar transparent" id="navbar">
-        <a href="{{ route('landing_page') }}" class="nav-brand fw-bold">
-            <i data-lucide="graduation-cap" stroke-width="2.5" size="28"></i>
-            {{ $profilGlobal?->nama_sekolah ?? 'Sekolah Astika Dharma' }}
+        @php
+            $rawName = $profilGlobal?->nama_sekolah ?? 'Utama Widyalaya Astika Dharma';
+            if (str_contains($rawName, 'Utama Widyalaya')) {
+                $mainBrand = 'Utama Widyalaya';
+                $subBrand = str_replace('Utama Widyalaya', '', $rawName);
+                $subBrand = trim($subBrand) ?: 'Astika Dharma';
+            } else {
+                $words = explode(' ', $rawName);
+                if (count($words) > 1) {
+                    $mainBrand = implode(' ', array_slice($words, 0, count($words)-1));
+                    $subBrand = end($words);
+                } else {
+                    $mainBrand = $rawName;
+                    $subBrand = 'Astika Dharma';
+                }
+            }
+        @endphp
+        <a href="{{ route('landing_page') }}" class="nav-brand text-decoration-none d-flex align-items-center me-2">
+            <div class="brand-emblem-badge shadow-sm d-flex align-items-center justify-content-center me-2.5 position-relative" style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); border: 1.5px solid rgba(255, 255, 255, 0.3); flex-shrink: 0; transition: transform 0.3s ease;">
+                <i class="bi bi-mortarboard-fill text-white fs-4"></i>
+            </div>
+            <div class="brand-text d-flex flex-column text-start" style="line-height: 1.15;">
+                <span class="brand-title fw-extrabold text-uppercase" style="font-size: 1.05rem; font-weight: 800; letter-spacing: 0.5px; font-family: var(--font-heading);">
+                    {{ strtoupper($mainBrand) }}
+                </span>
+                <span class="brand-subtitle fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 1.4px;">
+                    {{ strtoupper($subBrand) }}
+                </span>
+            </div>
         </a>
+
+        <!-- Right Header Action & Mobile Hamburger Button -->
+        <div class="d-flex align-items-center gap-2 ms-auto">
+            @auth
+                <a href="{{ route('dashboard') }}" class="btn btn-primary btn-sm d-none d-sm-inline-flex px-3 rounded-pill">Dashboard</a>
+            @else
+                <a href="{{ route('login') }}" class="btn btn-outline btn-sm d-none d-sm-inline-flex px-3 rounded-pill">Login</a>
+                <a href="{{ route('ppdb.index') }}" class="btn btn-primary btn-sm d-none d-sm-inline-flex px-3 rounded-pill">PPDB</a>
+            @endauth
+
+            <button class="mobile-nav-toggle border-0 bg-transparent fs-1 p-1 d-lg-none shadow-none ms-1" type="button" id="btnMobileNavToggle" aria-label="Toggle Navigation">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
         
         <ul class="nav-links">
             <li class="nav-item">
@@ -922,11 +1203,12 @@
             <li class="nav-item">
                 <a href="{{ route('landing_page') }}#profil" class="nav-link">Profil <i data-lucide="chevron-down" size="16"></i></a>
                 <div class="dropdown-menu">
+                    <a href="{{ route('tentang_sekolah') }}" class="dropdown-item">Mengenal Lebih Dekat</a>
                     <a href="{{ route('sambutan') }}" class="dropdown-item">Sambutan Kepala Sekolah</a>
                     <a href="{{ route('sejarah') }}" class="dropdown-item">Sejarah</a>
                     <a href="{{ route('visi_misi') }}" class="dropdown-item">Visi & Misi</a>
                     <a href="{{ route('guru_staff') }}" class="dropdown-item">Guru & Staff</a>
-                    <a href="{{ route('landing_page') }}#fasilitas" class="dropdown-item">Fasilitas</a>
+                    <a href="{{ route('fasilitas_sekolah') }}" class="dropdown-item">Fasilitas Sekolah</a>
                 </div>
             </li>
             <li class="nav-item">
@@ -934,25 +1216,39 @@
                 <div class="dropdown-menu">
                     <a href="{{ route('landing_page') }}#program" class="dropdown-item">Program Keahlian</a>
                     <a href="{{ route('kurikulum') }}" class="dropdown-item">Kurikulum</a>
-                    <a href="{{ route('landing_page') }}#ekstrakurikuler" class="dropdown-item">Ekstrakurikuler</a>
+                    <a href="{{ route('ekstrakurikuler_sekolah') }}" class="dropdown-item">Ekstrakurikuler</a>
                     <a href="{{ route('landing_page') }}#prestasi" class="dropdown-item">Prestasi</a>
                 </div>
             </li>
             <li class="nav-item">
                 <a href="{{ route('landing_page') }}#informasi" class="nav-link">Informasi <i data-lucide="chevron-down" size="16"></i></a>
                 <div class="dropdown-menu">
-                    <a href="{{ route('landing_page') }}#berita" class="dropdown-item">Berita</a>
+                    <a href="{{ route('berita') }}" class="dropdown-item">Berita & Kabar Sekolah</a>
                     <a href="{{ route('pengumuman') }}" class="dropdown-item">Pengumuman</a>
                     <a href="{{ route('agenda') }}" class="dropdown-item">Agenda</a>
                     <a href="{{ route('landing_page') }}#galeri" class="dropdown-item">Galeri</a>
+                    <a href="{{ route('landing_page') }}#asdhatv" class="dropdown-item text-danger fw-bold"><i class="bi bi-youtube me-1"></i> ASDHA TV Media</a>
                 </div>
             </li>
             <li class="nav-item">
                 <a href="{{ route('landing_page') }}#kontak" class="nav-link">Kontak</a>
             </li>
+
+            <!-- Mobile Drawer Action Buttons -->
+            <li class="mobile-action-group d-lg-none">
+                @auth
+                    <a href="{{ route('dashboard') }}" class="btn btn-primary rounded-pill w-100 py-2.5 fw-bold">Masuk Dashboard</a>
+                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('landing-logout-form').submit();" class="btn btn-outline-danger rounded-pill w-100 py-2">
+                        <i data-lucide="log-out" size="16"></i> Log Out
+                    </a>
+                @else
+                    <a href="{{ route('ppdb.index') }}" class="btn btn-primary rounded-pill w-100 py-2.5 fw-bold shadow">Daftar PPDB {{ date('Y') }}</a>
+                    <a href="{{ route('login') }}" class="btn btn-outline-light rounded-pill w-100 py-2">Login ke Sistem</a>
+                @endauth
+            </li>
         </ul>
 
-        <div class="nav-actions">
+        <div class="nav-actions d-none d-lg-flex">
             @auth
                 <a href="{{ route('dashboard') }}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.875rem;">Dashboard</a>
                 <form method="POST" action="{{ route('logout') }}" id="landing-logout-form" style="display: none;">
@@ -1023,15 +1319,31 @@
             
             <div class="footer-bottom">
                 <div>&copy; {{ date('Y') }} {{ $profilGlobal?->nama_sekolah ?? 'Sekolah Astika Dharma' }}. All rights reserved.</div>
-                <div class="social-links">
+                <div class="social-links d-flex align-items-center gap-3">
+                    @php
+                        $waNumFooter = preg_replace('/[^0-9]/', '', $profilGlobal?->whatsapp ?? $profilGlobal?->telepon ?? '081234567890');
+                        if (str_starts_with($waNumFooter, '0')) {
+                            $waNumFooter = '62' . substr($waNumFooter, 1);
+                        }
+                    @endphp
+                    <a href="https://wa.me/{{ $waNumFooter }}" target="_blank" title="WhatsApp Resmi" class="text-white opacity-85 hover-opacity-100 fs-5"><i class="bi bi-whatsapp text-success"></i></a>
                     @if($profilGlobal?->instagram)
-                        <a href="https://instagram.com/{{ ltrim($profilGlobal->instagram, '@') }}" target="_blank" title="Instagram Resmi"><i data-lucide="instagram" size="20"></i></a>
+                        @php
+                            $igLink = str_starts_with($profilGlobal->instagram, 'http') ? $profilGlobal->instagram : 'https://instagram.com/' . ltrim($profilGlobal->instagram, '@');
+                        @endphp
+                        <a href="{{ $igLink }}" target="_blank" title="Instagram Resmi" class="text-white opacity-85 hover-opacity-100 fs-5"><i class="bi bi-instagram text-danger"></i></a>
+                    @endif
+                    @if($profilGlobal?->tiktok)
+                        @php
+                            $ttLink = str_starts_with($profilGlobal->tiktok, 'http') ? $profilGlobal->tiktok : 'https://tiktok.com/@' . ltrim($profilGlobal->tiktok, '@');
+                        @endphp
+                        <a href="{{ $ttLink }}" target="_blank" title="TikTok Official" class="text-white opacity-85 hover-opacity-100 fs-5"><i class="bi bi-tiktok text-white"></i></a>
                     @endif
                     @if($profilGlobal?->youtube)
-                        <a href="{{ $profilGlobal->youtube }}" target="_blank" title="YouTube Resmi"><i data-lucide="youtube" size="20"></i></a>
+                        <a href="{{ $profilGlobal->youtube }}" target="_blank" title="YouTube ASDHA TV" class="text-white opacity-85 hover-opacity-100 fs-5"><i class="bi bi-youtube text-danger"></i></a>
                     @endif
                     @if($profilGlobal?->facebook)
-                        <a href="{{ $profilGlobal->facebook }}" target="_blank" title="Facebook Resmi"><i data-lucide="facebook" size="20"></i></a>
+                        <a href="{{ $profilGlobal->facebook }}" target="_blank" title="Facebook Resmi" class="text-white opacity-85 hover-opacity-100 fs-5"><i class="bi bi-facebook text-primary"></i></a>
                     @endif
                 </div>
             </div>
@@ -1040,31 +1352,61 @@
 
     <!-- Scripts -->
     <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
-
-        // Sticky Navbar
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-                navbar.classList.remove('transparent');
-            } else {
-                navbar.classList.remove('scrolled');
-                navbar.classList.add('transparent');
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize Lucide Icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
             }
-        });
 
-        // FAQ Accordion logic (close others when one opens)
-        const details = document.querySelectorAll('details.faq-item');
-        details.forEach((targetDetail) => {
-            targetDetail.addEventListener('click', () => {
-                details.forEach((detail) => {
-                    if (detail !== targetDetail) {
-                        detail.removeAttribute('open');
+            // Sticky Navbar Scroll Handler & Subpage Auto-Scrolled Mode
+            const navbar = document.getElementById('navbar');
+            const hasHero = document.querySelector('.hero');
+            
+            function handleNavbarStyle() {
+                if (!navbar) return;
+                if (!hasHero || window.scrollY > 30) {
+                    navbar.classList.add('scrolled');
+                    navbar.classList.remove('transparent');
+                } else {
+                    navbar.classList.remove('scrolled');
+                    navbar.classList.add('transparent');
+                }
+            }
+            
+            handleNavbarStyle();
+            window.addEventListener('scroll', handleNavbarStyle);
+
+            // Mobile Navigation Toggle Handler for Android & iOS Touch Devices
+            const btnMobileNavToggle = document.getElementById('btnMobileNavToggle');
+            const navLinksElem = document.querySelector('.nav-links');
+            if (btnMobileNavToggle && navLinksElem) {
+                btnMobileNavToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navLinksElem.classList.toggle('active');
+                    const icon = btnMobileNavToggle.querySelector('i');
+                    if (icon) {
+                        icon.className = navLinksElem.classList.contains('active') ? 'bi bi-x-lg' : 'bi bi-list';
                     }
                 });
-            });
+
+                // Close mobile menu when clicking outside or clicking any nav link
+                document.addEventListener('click', function(e) {
+                    if (!navLinksElem.contains(e.target) && !btnMobileNavToggle.contains(e.target)) {
+                        navLinksElem.classList.remove('active');
+                        const icon = btnMobileNavToggle.querySelector('i');
+                        if (icon) icon.className = 'bi bi-list';
+                    }
+                });
+
+                navLinksElem.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navLinksElem.classList.remove('active');
+                        const icon = btnMobileNavToggle.querySelector('i');
+                        if (icon) icon.className = 'bi bi-list';
+                    });
+                });
+            }
         });
     </script>
     

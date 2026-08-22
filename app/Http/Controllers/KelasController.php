@@ -224,4 +224,14 @@ class KelasController extends Controller
 
         return redirect()->route('kelas.index')->with('success', 'Kelas "' . $namaKelas . '" beserta seluruh data & akun siswa di dalamnya berhasil dihapus.');
     }
+
+    public function toggleStatus($id)
+    {
+        $kelas = Kelas::findOrFail($id);
+        $kelas->is_active = !$kelas->is_active;
+        $kelas->save();
+
+        $msg = $kelas->is_active ? 'ditampilkan (Show)' : 'disembunyikan (Hide)';
+        return redirect()->back()->with('success', "Status tampil kelas '{$kelas->nama_kelas}' berhasil {$msg}.");
+    }
 }

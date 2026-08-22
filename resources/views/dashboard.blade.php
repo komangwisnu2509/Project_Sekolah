@@ -338,6 +338,43 @@
             </div>
         </div>
 
+        @if(isset($myPrestasis) && count($myPrestasis) > 0)
+            <!-- Special Achievement Appreciation Banner for Award-Winning Student -->
+            <div class="card border-0 shadow-lg mb-4 rounded-4 text-white overflow-hidden" style="background: linear-gradient(135deg, #1e1b4b 0%, #1e3a8a 50%, #312e81 100%); border-left: 6px solid #fbbf24 !important;">
+                <div class="card-body p-4 p-lg-5 position-relative">
+                    <div class="d-flex align-items-start gap-4 flex-wrap flex-md-nowrap">
+                        <div class="rounded-circle bg-warning text-dark p-3 shadow-lg d-flex align-items-center justify-content-center flex-shrink-0 animate-pulse" style="width: 72px; height: 72px;">
+                            <i class="bi bi-trophy-fill fs-1 text-dark"></i>
+                        </div>
+                        <div class="w-100">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="badge bg-warning text-dark fw-bold px-3 py-1.5 fs-6 rounded-pill text-uppercase shadow-sm">
+                                    🏆 PRESTASI KEBANGGAAN SEKOLAH
+                                </span>
+                            </div>
+                            <h3 class="fw-bold text-white mb-2">
+                                Terima kasih {{ Auth::user()->name }}! 🌟
+                            </h3>
+                            <p class="fs-5 text-light mb-3" style="line-height: 1.6; max-width: 850px;">
+                                Terima kasih sudah mewakilkan sekolah kita untuk lomba yang diikuti! Prestasi Anda telah membawa nama harum <strong>Utama Widyalaya Astika Dharma</strong> & media <strong>ASDHA TV</strong>.
+                            </p>
+                            
+                            <div class="pt-2 border-top border-white border-opacity-20 mt-3">
+                                <span class="small text-warning fw-bold text-uppercase d-block mb-2"><i class="bi bi-award me-1"></i> Daftar Prestasi Yang Diukir:</span>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach($myPrestasis as $pItem)
+                                        <div class="bg-white bg-opacity-15 border border-white border-opacity-25 rounded-3 px-3 py-2 text-white">
+                                            <div class="fw-bold text-warning fs-6"><i class="bi bi-star-fill me-1"></i> {{ $pItem->judul_prestasi }}</div>
+                                            <small class="text-white-50 d-block">{{ $pItem->peringkat }} {{ $pItem->tingkat }} (Tahun {{ $pItem->tahun }}) - {{ $pItem->penyelenggara }}</small>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        @endif
+
         @php
             $dashboardNotifs = \App\Helpers\NotificationHelper::getNotifications();
         @endphp

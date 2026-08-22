@@ -85,6 +85,11 @@ class DashboardController extends Controller
                 ->get()
                 ->keyBy('guru_id');
 
+            // Fetch achievements for this logged in student
+            $myPrestasis = \App\Models\PrestasiSiswa::where('siswa_id', $siswa->id)
+                ->orWhere('nama_siswa', 'LIKE', '%' . strtok($siswa->nama, ' ') . '%')
+                ->get();
+
             if ($siswa->status === 'Lulus') {
                 $pelanggarans = $siswa->pelanggaran()->orderBy('tanggal', 'desc')->get();
                 $totalPoints = $pelanggarans->sum('point');
@@ -92,6 +97,7 @@ class DashboardController extends Controller
             }
 
         } else {
+            $myPrestasis = collect();
             // Admin sees all
             $totalJadwal = JadwalPelajaran::count();
             $recentTugas = Tugas::latest()->take(5)->get();
@@ -173,7 +179,8 @@ class DashboardController extends Controller
             'ekskulList',
             'beritaTerbaru',
             'agendaMendatang',
-            'ppdbRecord'
+            'ppdbRecord',
+            'myPrestasis'
         ));
     }
 }

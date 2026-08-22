@@ -93,7 +93,19 @@
                                 @endif
                             </td>
                             <td class="fw-bold text-dark">{{ $item->nis }}</td>
-                            <td class="fw-semibold text-dark">{{ $item->nama }}</td>
+                            <td class="fw-semibold text-dark">
+                                {{ $item->nama }}
+                                @php
+                                    $hasAchievement = \App\Models\PrestasiSiswa::where('siswa_id', $item->id)
+                                        ->orWhere('nama_siswa', 'LIKE', '%' . strtok($item->nama, ' ') . '%')
+                                        ->exists();
+                                @endphp
+                                @if($hasAchievement)
+                                    <span class="badge bg-warning text-dark border border-warning ms-1 px-2 py-1 small rounded-pill shadow-sm" title="Siswa Berprestasi Kebanggaan Sekolah">
+                                        <i class="bi bi-trophy-fill me-1 text-dark"></i>Berprestasi
+                                    </span>
+                                @endif
+                            </td>
                             <td><span class="badge bg-primary fs-6">{{ $item->kelas }}</span></td>
                             <td>{{ $item->jurusan }}</td>
                             <td>

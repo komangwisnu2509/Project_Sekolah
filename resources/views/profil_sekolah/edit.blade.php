@@ -26,7 +26,7 @@
                 <h5 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Form Pengaturan Profil Sekolah</h5>
             </div>
             <div class="card-body p-4">
-                <form action="{{ route('profil-sekolah.update') }}" method="POST">
+                <form action="{{ route('profil-sekolah.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -62,7 +62,7 @@
                     </div>
 
                     <h5 class="fw-bold text-primary mb-3 border-bottom pb-2">
-                        <i class="bi bi-geo-alt me-2"></i>Alamat & Kontak Sekolah
+                        <i class="bi bi-geo-alt me-2"></i>Alamat & Kontak Resmi Sekolah
                     </h5>
 
                     <div class="row g-3 mb-4">
@@ -79,6 +79,53 @@
                         <div class="col-md-3">
                             <label for="telepon" class="form-label fw-bold">Telepon / Fax</label>
                             <input type="text" name="telepon" id="telepon" class="form-control" value="{{ old('telepon', $profil->telepon) }}">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="whatsapp" class="form-label fw-bold"><i class="bi bi-whatsapp text-success me-1"></i> Nomor WhatsApp Chat</label>
+                            <input type="text" name="whatsapp" id="whatsapp" class="form-control" value="{{ old('whatsapp', $profil->whatsapp ?? $profil->telepon) }}" placeholder="6281234567890 / 081234567890">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="instagram" class="form-label fw-bold"><i class="bi bi-instagram me-1" style="color: #e1306c;"></i> Instagram Link / Username</label>
+                            <input type="text" name="instagram" id="instagram" class="form-control" value="{{ old('instagram', $profil->instagram) }}" placeholder="https://instagram.com/astikadharma">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="tiktok" class="form-label fw-bold"><i class="bi bi-tiktok me-1"></i> TikTok Channel Link / Username</label>
+                            <input type="text" name="tiktok" id="tiktok" class="form-control" value="{{ old('tiktok', $profil->tiktok) }}" placeholder="https://tiktok.com/@asdhatv">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="youtube" class="form-label fw-bold"><i class="bi bi-youtube text-danger me-1"></i> YouTube Channel Link / ASDHA TV</label>
+                            <input type="text" name="youtube" id="youtube" class="form-control" value="{{ old('youtube', $profil->youtube) }}" placeholder="https://youtube.com/@asdhatv">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="facebook" class="form-label fw-bold"><i class="bi bi-facebook text-primary me-1"></i> Facebook Link</label>
+                            <input type="text" name="facebook" id="facebook" class="form-control" value="{{ old('facebook', $profil->facebook) }}" placeholder="https://facebook.com/astikadharma">
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold text-primary mb-3 border-bottom pb-2">
+                        <i class="bi bi-info-square me-2"></i>Section & Halaman "Mengenal Lebih Dekat"
+                    </h5>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="deskripsi_tentang" class="form-label fw-bold">Ringkasan (Tampil di Landing Page)</label>
+                            <textarea name="deskripsi_tentang" id="deskripsi_tentang" class="form-control" rows="3" placeholder="Tuliskan ringkasan singkat untuk section beranda">{{ old('deskripsi_tentang', $profil->deskripsi_tentang) }}</textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="foto_tentang" class="form-label fw-bold">Foto "Mengenal Lebih Dekat"</label>
+                            <input type="file" name="foto_tentang" id="foto_tentang" class="form-control" accept="image/*">
+                            @if($profil->foto_tentang)
+                                <small class="text-muted">Foto saat ini: <a href="{{ str_starts_with($profil->foto_tentang, 'http') ? $profil->foto_tentang : asset('storage/'.$profil->foto_tentang) }}" target="_blank" class="text-primary fw-bold">Lihat Foto</a></small>
+                            @endif
+                        </div>
+                        <div class="col-12">
+                            <label for="tentang_lengkap" class="form-label fw-bold">Detail Lengkap "Mengenal Lebih Dekat" (Tampil di Halaman Khusus /tentang-sekolah)</label>
+                            <textarea name="tentang_lengkap" id="tentang_lengkap" class="form-control" rows="5" placeholder="Tuliskan penjelasan lengkap tentang sekolah...">{{ old('tentang_lengkap', $profil->tentang_lengkap) }}</textarea>
                         </div>
                     </div>
 

@@ -59,6 +59,32 @@ class LandingPageController extends Controller
         ));
     }
 
+    public function tentangSekolah() {
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        $siswaCount = Schema::hasTable('siswas') ? (Siswa::count() ?: 500) : 500;
+        $guruCount = Schema::hasTable('gurus') ? (Guru::count() ?: 50) : 50;
+        $alumniCount = 1000;
+        $tahunDedikasi = 25;
+        $jurusans = Schema::hasTable('jurusans') ? Jurusan::where('is_active', true)->get() : collect();
+        $fasilitas = Schema::hasTable('fasilitas') ? Fasilitas::where('is_active', true)->take(4)->get() : collect();
+
+        return view('landing page.pages.tentang_sekolah', compact('profil', 'siswaCount', 'guruCount', 'alumniCount', 'tahunDedikasi', 'jurusans', 'fasilitas'));
+    }
+
+    public function fasilitasSekolah() {
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        $fasilitas = Schema::hasTable('fasilitas') ? Fasilitas::where('is_active', true)->get() : collect();
+
+        return view('landing page.pages.fasilitas_sekolah', compact('profil', 'fasilitas'));
+    }
+
+    public function ekstrakurikulerSekolah() {
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        $ekstrakurikulers = Schema::hasTable('ekstrakurikulers') ? Ekstrakurikuler::where('status', 'Aktif')->get() : collect();
+
+        return view('landing page.pages.ekstrakurikuler_sekolah', compact('profil', 'ekstrakurikulers'));
+    }
+
     public function sambutan() {
         $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
         return view('landing page.pages.sambutan', compact('profil'));
@@ -96,5 +122,57 @@ class LandingPageController extends Controller
         $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
         $agendas = Schema::hasTable('agendas') ? Agenda::where('is_active', true)->orderBy('tanggal', 'desc')->get() : collect();
         return view('landing page.pages.agenda', compact('profil', 'agendas'));
+    }
+
+    public function berita(Request $request) {
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        $q = $request->get('q');
+        $kategori = $request->get('kategori');
+
+        $query = Berita::where('is_active', true);
+        if ($q) {
+            $query->where(function($querySql) use ($q) {
+                $querySql->where('judul', 'LIKE', "%{$q}%")
+                         ->orWhere('ringkasan', 'LIKE', "%{$q}%")
+                         ->orWhere('konten', 'LIKE', "%{$q}%");
+            });
+        }
+        if ($kategori) {
+            $query->where('kategori', $kategori);
+        }
+
+        $beritas = $query->orderBy('tanggal_publikasi', 'desc')->orderBy('created_at', 'desc')->get();
+        $kategoris = Berita::where('is_active', true)->whereNotNull('kategori')->distinct()->pluck('kategori');
+        $beritaHighlight = Berita::where('is_active', true)->where('is_highlight', true)->latest()->first();
+
+        return view('landing page.pages.berita', compact('profil', 'beritas', 'kategoris', 'q', 'kategori', 'beritaHighlight'));
+    }
+
+    public function beritaDetail($id) {
+        $profil = Schema::hasTable('profil_sekolahs') ? ProfilSekolah::first() : null;
+        $berita = Berita::where('is_active', true)->findOrFail($id);
+        
+        $beritaLainnya = Berita::where('is_active', true)
+            ->where('id', '!=', $berita->id)
+            ->orderBy('tanggal_publikasi', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('landing page.pages.berita_detail', compact('profil', 'berita', 'beritaLainnya'));
+    }
+
+    public function storeFaqQuestion(Request $request) {
+        $validated = $request->validate([
+            'nama_penanya' => 'required|string|max:255',
+            'email_penanya' => 'nullable|string|max:255',
+            'pertanyaan' => 'required|string|max:1000',
+        ]);
+
+        $validated['is_active'] = false;
+        $validated['urutan'] = (Faq::max('urutan') ?: 0) + 1;
+
+        Faq::create($validated);
+
+        return redirect()->back()->with('success', 'Pertanyaan Anda berhasil dikirim ke pihak sekolah! Admin akan meninjau dan menjawab pertanyaan Anda untuk ditampilkan di halaman FAQ.');
     }
 }

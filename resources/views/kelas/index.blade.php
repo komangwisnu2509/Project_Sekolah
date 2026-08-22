@@ -103,10 +103,21 @@
                                                     <div class="card h-100 border-0 shadow-sm hover-shadow transition-all bg-white rounded-3">
                                                         <div class="card-body p-3">
                                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                <span class="badge bg-secondary bg-opacity-10 text-dark fw-bold px-2 py-1 small border">Kelas</span>
+                                                                @if($k->is_active)
+                                                                    <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 small border border-success"><i class="bi bi-eye-fill me-1"></i>Show</span>
+                                                                @else
+                                                                    <span class="badge bg-secondary bg-opacity-25 text-secondary fw-bold px-2 py-1 small border"><i class="bi bi-eye-slash-fill me-1"></i>Hide</span>
+                                                                @endif
                                                                 @if(Auth::user()->isAdmin())
-                                                                    <div class="d-flex gap-2">
-                                                                        <a href="{{ route('kelas.edit', $k->id) }}" class="btn btn-link text-warning p-0 border-0" title="Edit Nama Kelas">
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <form action="{{ route('kelas.toggle-status', $k->id) }}" method="POST" class="d-inline">
+                                                                            @csrf
+                                                                            @method('PATCH')
+                                                                            <button type="submit" class="btn btn-link {{ $k->is_active ? 'text-warning' : 'text-success' }} p-0 border-0" title="Klik untuk {{ $k->is_active ? 'Sembunyikan (Hide)' : 'Tampilkan (Show)' }} Kelas">
+                                                                                <i class="bi {{ $k->is_active ? 'bi-eye-slash-fill' : 'bi-eye-fill' }} fs-6"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                        <a href="{{ route('kelas.edit', $k->id) }}" class="btn btn-link text-primary p-0 border-0" title="Edit Nama Kelas">
                                                                             <i class="bi bi-pencil-square fs-6"></i>
                                                                         </a>
                                                                         <form action="{{ route('kelas.destroy', $k->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus kelas {{ $k->nama_kelas }} beserta siswa aktif di dalamnya?')">

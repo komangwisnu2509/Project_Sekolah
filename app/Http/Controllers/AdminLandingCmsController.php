@@ -33,8 +33,17 @@ class AdminLandingCmsController extends Controller
         $prestasis = PrestasiSiswa::orderBy('tahun', 'desc')->get();
         $gurus = \App\Models\Guru::orderBy('nama')->get();
         $staffs = \App\Models\Staff::orderBy('nama')->get();
+        $kelases = \App\Models\Kelas::orderBy('nama_kelas')->get();
+        $siswaCounts = \App\Models\Siswa::where('status', '!=', 'Lulus')
+            ->selectRaw('kelas, count(*) as total')
+            ->groupBy('kelas')
+            ->pluck('total', 'kelas')
+            ->toArray();
+        foreach ($kelases as $k) {
+            $k->total_siswa = $siswaCounts[$k->nama_kelas] ?? 0;
+        }
 
-        return view('admin.cms.index', compact('profil', 'fasilitas', 'galeris', 'testimonis', 'faqs', 'beritas', 'agendas', 'ekstrakurikulers', 'prestasis', 'gurus', 'staffs'));
+        return view('admin.cms.index', compact('profil', 'fasilitas', 'galeris', 'testimonis', 'faqs', 'beritas', 'agendas', 'ekstrakurikulers', 'prestasis', 'gurus', 'staffs', 'kelases'));
     }
 
     /**
@@ -50,14 +59,19 @@ class AdminLandingCmsController extends Controller
             'visi' => 'nullable|string',
             'misi' => 'nullable|string',
             'sejarah' => 'nullable|string',
+            'deskripsi_tentang' => 'nullable|string',
+            'tentang_lengkap' => 'nullable|string',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:50',
+            'whatsapp' => 'nullable|string|max:50',
             'email' => 'nullable|email|max:100',
             'instagram' => 'nullable|string|max:100',
             'youtube' => 'nullable|string|max:100',
+            'tiktok' => 'nullable|string|max:100',
             'facebook' => 'nullable|string|max:100',
             'foto_kepala_sekolah' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'hero_banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:6144',
+            'foto_tentang' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:6144',
         ]);
 
         $profil = ProfilSekolah::first();
@@ -77,6 +91,13 @@ class AdminLandingCmsController extends Controller
                 Storage::disk('public')->delete($profil->hero_banner);
             }
             $validated['hero_banner'] = $request->file('hero_banner')->store('profil', 'public');
+        }
+
+        if ($request->hasFile('foto_tentang')) {
+            if ($profil->foto_tentang && Storage::disk('public')->exists($profil->foto_tentang)) {
+                Storage::disk('public')->delete($profil->foto_tentang);
+            }
+            $validated['foto_tentang'] = $request->file('foto_tentang')->store('profil', 'public');
         }
 
         $profil->fill($validated);
@@ -181,10 +202,31 @@ class AdminLandingCmsController extends Controller
             'pertanyaan' => 'required|string',
             'jawaban' => 'required|string',
             'urutan' => 'nullable|integer',
+            'nama_penanya' => 'nullable|string',
+            'email_penanya' => 'nullable|string',
         ]);
 
+        $validated['is_active'] = true;
+        $validated['urutan'] = $validated['urutan'] ?? ((Faq::max('urutan') ?: 0) + 1);
+
         Faq::create($validated);
-        return redirect()->back()->with('success', 'Pertanyaan FAQ baru berhasil ditambahkan.');
+        return redirect()->back()->with('success', 'Pertanyaan & Jawaban FAQ baru berhasil ditambahkan.');
+    }
+
+    public function updateFaq(Request $request, Faq $faq)
+    {
+        $validated = $request->validate([
+            'pertanyaan' => 'required|string',
+            'jawaban' => 'required|string',
+            'urutan' => 'nullable|integer',
+            'nama_penanya' => 'nullable|string',
+            'email_penanya' => 'nullable|string',
+        ]);
+
+        $validated['is_active'] = $request->has('is_active');
+
+        $faq->update($validated);
+        return redirect()->back()->with('success', 'Pertanyaan & Jawaban FAQ berhasil disimpan & diperbarui.');
     }
 
     public function destroyFaq(Faq $faq)
@@ -204,6 +246,7 @@ class AdminLandingCmsController extends Controller
             'tanggal_publikasi' => 'required|date',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'is_highlight' => 'nullable|boolean',
+            'tags' => 'nullable|string',
         ]);
 
         $validated['slug'] = Str::slug($request->judul) . '-' . Str::random(4);
@@ -231,6 +274,7 @@ class AdminLandingCmsController extends Controller
             'kategori' => 'nullable|string|max:100',
             'tanggal_publikasi' => 'required|date',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'tags' => 'nullable|string',
         ]);
 
         $validated['is_highlight'] = $request->has('is_highlight');

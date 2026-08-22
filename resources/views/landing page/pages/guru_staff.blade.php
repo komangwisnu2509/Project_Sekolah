@@ -35,7 +35,7 @@
             
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2rem; margin-bottom: 5rem;">
                 @forelse($gurusAktif as $guru)
-                <div style="background: var(--white); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); transition: var(--transition);" class="guru-card">
+                <div style="background: var(--white); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); transition: var(--transition); cursor: pointer;" class="guru-card" data-bs-toggle="modal" data-bs-target="#modalGuruPage_{{ $guru->id }}">
                     <div style="height: 250px; background: var(--bg-light); display: flex; align-items: center; justify-content: center; overflow: hidden;">
                         @if($guru->foto)
                             <img src="{{ asset('storage/'.$guru->foto) }}" alt="{{ $guru->nama }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
@@ -43,18 +43,94 @@
                             <i data-lucide="user" size="64" style="color: var(--border);"></i>
                         @endif
                     </div>
-                    <div style="padding: 1.5rem; text-align: center;">
-                        <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem;">{{ $guru->nama }}</h4>
-                        <p style="color: var(--accent); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 0.2rem;">{{ $guru->mata_pelajaran }}</p>
-                        @if($guru->nip)
-                            <small style="color: #64748b; font-size: 0.75rem; font-family: monospace;">NIP: {{ $guru->nip }}</small>
-                        @endif
+                    <div style="padding: 1.5rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem;">{{ $guru->nama }}</h4>
+                            <p style="color: var(--accent); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 0.2rem;">{{ $guru->mata_pelajaran }}</p>
+                            @if($guru->nip)
+                                <small style="color: #64748b; font-size: 0.75rem; font-family: monospace;">NIP: {{ $guru->nip }}</small>
+                            @endif
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill py-1.5 px-3 w-100 fw-semibold mt-3" style="font-size: 0.8rem;">
+                            <i class="bi bi-person-lines-fill me-1"></i> Detail Profil
+                        </button>
                     </div>
                 </div>
                 @empty
                 <div style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 2rem;">Belum ada data guru aktif terdaftar.</div>
                 @endforelse
             </div>
+
+            <!-- Modals Guru Aktif -->
+            @foreach($gurusAktif as $guru)
+            <div class="modal fade text-start" id="modalGuruPage_{{ $guru->id }}" tabindex="-1" aria-labelledby="modalGuruPageLabel_{{ $guru->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 shadow-lg overflow-hidden rounded-4">
+                        <div class="modal-header border-0 bg-primary text-white p-4 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="badge bg-white text-primary p-2.5 rounded-circle shadow-sm">
+                                    <i class="bi bi-person-workspace fs-5"></i>
+                                </span>
+                                <div>
+                                    <span class="badge bg-light text-primary fw-bold text-uppercase px-2.5 py-1 mb-1" style="font-size: 0.75rem;">Tenaga Pendidik / Guru</span>
+                                    <h4 class="modal-title fw-bold mb-0 text-white" id="modalGuruPageLabel_{{ $guru->id }}">{{ $guru->nama }}</h4>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white ms-auto shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4 bg-white">
+                            <div class="row g-4 align-items-center">
+                                <div class="col-md-5">
+                                    <div class="rounded-4 overflow-hidden border shadow-sm" style="height: 300px; background-color: #f1f5f9;">
+                                        @if($guru->foto)
+                                            <img src="{{ asset('storage/'.$guru->foto) }}" alt="{{ $guru->nama }}" class="w-100 h-100 object-fit-cover">
+                                        @else
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fw-bold fs-1">
+                                                {{ strtoupper(substr($guru->nama, 0, 1)) }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <h4 class="fw-bold text-dark mb-1">{{ $guru->nama }}</h4>
+                                    <p class="text-primary fw-bold mb-3"><i class="bi bi-journal-bookmark-fill me-1.5"></i>Mata Pelajaran: {{ $guru->mata_pelajaran ?? 'Pengajar' }}</p>
+                                    
+                                    <div class="p-3 bg-light rounded-3 border mb-3">
+                                        <div class="row g-2 small">
+                                            @if($guru->nip)
+                                            <div class="col-12">
+                                                <span class="text-muted d-block fw-bold">NIP / NUPTK:</span>
+                                                <span class="font-monospace fw-bold text-dark">{{ $guru->nip }}</span>
+                                            </div>
+                                            @endif
+                                            <div class="col-6 mt-2">
+                                                <span class="text-muted d-block fw-bold">STATUS:</span>
+                                                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 rounded">{{ $guru->status ?? 'Aktif' }}</span>
+                                            </div>
+                                            <div class="col-6 mt-2">
+                                                <span class="text-muted d-block fw-bold">INSTANSI:</span>
+                                                <span class="fw-bold text-dark">{{ $profil?->nama_sekolah ?? 'SMK Astika Dharma' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 bg-light rounded-3 border">
+                                        <h6 class="fw-bold text-dark mb-1"><i class="bi bi-person-badge-fill me-1 text-primary"></i> Peran & Pengabdian</h6>
+                                        <p class="text-secondary small leading-relaxed mb-0">
+                                            Berdedikasi penuh untuk membimbing peserta didik dalam meningkatkan kompetensi keahlian, pembentukan karakter mulia, dan persiapan karir masa depan.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top bg-light px-4 py-3 d-flex justify-content-between align-items-center">
+                            <span class="text-muted small"><i class="bi bi-building me-1"></i> {{ $profil?->nama_sekolah ?? 'SMK Astika Dharma' }}</span>
+                            <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
 
             <!-- Seksi 2: Staff & Tenaga Kependidikan Aktif -->
             <div style="text-align: center; margin-bottom: 3rem; border-top: 2px dashed #e2e8f0; padding-top: 4rem;">
@@ -65,7 +141,7 @@
 
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2rem; margin-bottom: 5rem;">
                 @forelse($staffsAktif as $staff)
-                <div style="background: var(--white); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); transition: var(--transition);" class="guru-card">
+                <div style="background: var(--white); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); transition: var(--transition); cursor: pointer;" class="guru-card" data-bs-toggle="modal" data-bs-target="#modalStaffPage_{{ $staff->id }}">
                     <div style="height: 250px; background: var(--bg-light); display: flex; align-items: center; justify-content: center; overflow: hidden;">
                         @if($staff->foto)
                             <img src="{{ asset('storage/'.$staff->foto) }}" alt="{{ $staff->nama }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
@@ -73,18 +149,94 @@
                             <i data-lucide="user-check" size="64" style="color: #10b981;"></i>
                         @endif
                     </div>
-                    <div style="padding: 1.5rem; text-align: center;">
-                        <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem;">{{ $staff->nama }}</h4>
-                        <p style="color: #10b981; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 0.2rem;">{{ $staff->jabatan }}</p>
-                        @if($staff->nip_nik)
-                            <small style="color: #64748b; font-size: 0.75rem; font-family: monospace;">NIP/NIK: {{ $staff->nip_nik }}</small>
-                        @endif
+                    <div style="padding: 1.5rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem;">{{ $staff->nama }}</h4>
+                            <p style="color: #10b981; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 0.2rem;">{{ $staff->jabatan }}</p>
+                            @if($staff->nip_nik)
+                                <small style="color: #64748b; font-size: 0.75rem; font-family: monospace;">NIP/NIK: {{ $staff->nip_nik }}</small>
+                            @endif
+                        </div>
+                        <button type="button" class="btn btn-outline-success btn-sm rounded-pill py-1.5 px-3 w-100 fw-semibold mt-3" style="font-size: 0.8rem;">
+                            <i class="bi bi-person-lines-fill me-1"></i> Detail Profil
+                        </button>
                     </div>
                 </div>
                 @empty
                 <div style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 2rem;">Belum ada data staff aktif terdaftar.</div>
                 @endforelse
             </div>
+
+            <!-- Modals Staff Aktif -->
+            @foreach($staffsAktif as $staff)
+            <div class="modal fade text-start" id="modalStaffPage_{{ $staff->id }}" tabindex="-1" aria-labelledby="modalStaffPageLabel_{{ $staff->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 shadow-lg overflow-hidden rounded-4">
+                        <div class="modal-header border-0 bg-success text-white p-4 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="badge bg-white text-success p-2.5 rounded-circle shadow-sm">
+                                    <i class="bi bi-person-badge fs-5"></i>
+                                </span>
+                                <div>
+                                    <span class="badge bg-light text-success fw-bold text-uppercase px-2.5 py-1 mb-1" style="font-size: 0.75rem;">Tenaga Kependidikan / Staff</span>
+                                    <h4 class="modal-title fw-bold mb-0 text-white" id="modalStaffPageLabel_{{ $staff->id }}">{{ $staff->nama }}</h4>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white ms-auto shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4 bg-white">
+                            <div class="row g-4 align-items-center">
+                                <div class="col-md-5">
+                                    <div class="rounded-4 overflow-hidden border shadow-sm" style="height: 300px; background-color: #f1f5f9;">
+                                        @if($staff->foto)
+                                            <img src="{{ asset('storage/'.$staff->foto) }}" alt="{{ $staff->nama }}" class="w-100 h-100 object-fit-cover">
+                                        @else
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success fw-bold fs-1">
+                                                {{ strtoupper(substr($staff->nama, 0, 1)) }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <h4 class="fw-bold text-dark mb-1">{{ $staff->nama }}</h4>
+                                    <p class="text-success fw-bold mb-3"><i class="bi bi-briefcase-fill me-1.5"></i>Jabatan: {{ $staff->jabatan ?? 'Staff Kependidikan' }}</p>
+                                    
+                                    <div class="p-3 bg-light rounded-3 border mb-3">
+                                        <div class="row g-2 small">
+                                            @if($staff->nip_nik)
+                                            <div class="col-12">
+                                                <span class="text-muted d-block fw-bold">NIP / NIK:</span>
+                                                <span class="font-monospace fw-bold text-dark">{{ $staff->nip_nik }}</span>
+                                            </div>
+                                            @endif
+                                            <div class="col-6 mt-2">
+                                                <span class="text-muted d-block fw-bold">STATUS:</span>
+                                                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1 rounded">{{ $staff->status ?? 'Aktif' }}</span>
+                                            </div>
+                                            <div class="col-6 mt-2">
+                                                <span class="text-muted d-block fw-bold">INSTANSI:</span>
+                                                <span class="fw-bold text-dark">{{ $profil?->nama_sekolah ?? 'SMK Astika Dharma' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 bg-light rounded-3 border">
+                                        <h6 class="fw-bold text-dark mb-1"><i class="bi bi-shield-check me-1 text-success"></i> Tugas & Tanggung Jawab</h6>
+                                        <p class="text-secondary small leading-relaxed mb-0">
+                                            Mendukung efektivitas tata kelola administrasi, operasional, fasilitas, dan pelayanan terbaik bagi seluruh warga sekolah.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top bg-light px-4 py-3 d-flex justify-content-between align-items-center">
+                            <span class="text-muted small"><i class="bi bi-building me-1"></i> {{ $profil?->nama_sekolah ?? 'SMK Astika Dharma' }}</span>
+                            <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
 
             <!-- Seksi 3: Honor Roll / Alumni Guru & Staff (Purna Bhakti & Pensiun) -->
             @if($gurusPurna->count() > 0 || $staffsPurna->count() > 0)

@@ -97,16 +97,19 @@ class SiswaController extends Controller
 
         $siswa = Siswa::create($data);
 
-        // Create linked user account if email is provided
-        if ($request->filled('email') && $request->filled('password')) {
-            User::create([
+        // Create linked user account for student (default password 'password123' if not specified)
+        $userEmail = $request->filled('email') ? $request->email : strtolower($siswa->nis) . '@astikadharma.sch.id';
+        $userPassword = $request->filled('password') ? $request->password : 'password123';
+
+        \App\Models\User::firstOrCreate(
+            ['email' => $userEmail],
+            [
                 'name' => $siswa->nama,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => \Illuminate\Support\Facades\Hash::make($userPassword),
                 'role' => 'siswa',
                 'siswa_id' => $siswa->id
-            ]);
-        }
+            ]
+        );
 
         return redirect()->route('siswa.index')->with('success', 'Siswa berhasil ditambahkan.');
     }
