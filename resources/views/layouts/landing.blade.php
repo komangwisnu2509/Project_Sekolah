@@ -1182,19 +1182,10 @@
             </div>
         </a>
 
-        <!-- Right Header Action & Mobile Hamburger Button -->
-        <div class="d-flex align-items-center gap-2 ms-auto">
-            @auth
-                <a href="{{ route('dashboard') }}" class="btn btn-primary btn-sm d-none d-sm-inline-flex px-3 rounded-pill">Dashboard</a>
-            @else
-                <a href="{{ route('login') }}" class="btn btn-outline btn-sm d-none d-sm-inline-flex px-3 rounded-pill">Login</a>
-                <a href="{{ route('ppdb.index') }}" class="btn btn-primary btn-sm d-none d-sm-inline-flex px-3 rounded-pill">PPDB</a>
-            @endauth
-
-            <button class="mobile-nav-toggle border-0 bg-transparent fs-1 p-1 d-lg-none shadow-none ms-1" type="button" id="btnMobileNavToggle" aria-label="Toggle Navigation">
-                <i class="bi bi-list"></i>
-            </button>
-        </div>
+        <!-- Mobile Hamburger Button -->
+        <button class="mobile-nav-toggle border-0 bg-transparent fs-1 p-1 d-lg-none shadow-none ms-auto" type="button" id="btnMobileNavToggle" aria-label="Toggle Navigation">
+            <i class="bi bi-list"></i>
+        </button>
         
         <ul class="nav-links">
             <li class="nav-item">
